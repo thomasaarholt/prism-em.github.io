@@ -1,240 +1,145 @@
-# Beautiful Jekyll
+# PRISM
+C++/CUDA implementation of compact S-matrix formulism for fast Multislice simulation of electron micrographs.
 
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/daattali/20)
-[![Gem Version](https://badge.fury.io/rb/beautiful-jekyll-theme.svg)](https://badge.fury.io/rb/beautiful-jekyll-theme)
+## Installation
 
-> *Copyright 2016 [Dean Attali](http://deanattali.com)*
+## Binary Installers
 
-**Beautiful Jekyll** is a ready-to-use template to help you create an awesome website quickly. Perfect for personal blogs or simple project websites.  [Check out a demo](http://deanattali.com/beautiful-jekyll) of what you'll get after just two minutes.  You can also look at [my personal website](http://deanattali.com) to see it in use, or see examples of websites other people created using this theme [here](#showcased-users-success-stories).
+*Links to binary installers should go here in the future*
 
-**If you enjoy this theme, please consider [supporting me](https://www.paypal.me/daattali/20) for developing and maintaining this template.**
+## Building PRISM from the source code
 
-<p align="center">
-  <a href="https://www.paypal.me/daattali">
-    <img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" />
-  </a>
-</p>
+PRISM is built on top of [CMake](https://cmake.org/), a cross-platform compilation utility that 
+allows a single source tree to be compiled into a variety of formats including UNIX Makefiles, 
+Microsoft Visual Studio projects, Mac OS XCode projects, etc. Only having to maintain one project 
+means PRISM developers spend less time managing multiple code-bases and more time optimizing, debugging, 
+and extending PRISM, resulting in a better end-user experience.  
 
-### Table of contents
+### External dependencies
 
-- [Prerequisites](#prerequisites)
-- [Build your website in 3 steps](#build-your-website-in-3-steps)
-- [Add your own content](#add-your-own-content)
-- [Last important thing: YAML front matter ("parameters" for a page)](#last-important-thing-yaml-front-matter-parameters-for-a-page)
-- [Features](#features)
-- [Creating a User Page vs a Project Page](#creating-a-user-page-vs-a-project-page)
-- [Showcased users (success stories!)](#showcased-users-success-stories)
-- [Advanced: local development](#advanced-local-development-using-docker)
-- [Credits and contributions](#credits)
+To install PRISM, you must first install [Cmake](https://cmake.org/install/) and [FFTW](http://www.fftw.org/fftw2_doc/fftw_6.html). 
 
-## Prerequisites
+To accelerate PRISM with CUDA GPUs, you must also install [the CUDA toolkit](https://developer.nvidia.com/cuda-toolkit) and have a CUDA enabled GPU of compute capability 2.0 or higher.
+PRISM was developed using CUDA 8.0, but likely works with older versions as well and we welcome feedback from any user who attempts to do so (CUDA 7.0, 7.5 also have been reported to work).
+*Note: Even if you download a binary version of the GPU codes, you will still need to have the CUDA toolkit installed so that the `cuFFT` libraries can be found at runtime.*
 
-- You need to have a GitHub account. If you don't have one, [sign up here](https://github.com/join) - it takes one minute. This is where your website will live - if you sign up with username `johnsmith` then your website will be `http://johnsmith.github.io`.  
-- It would be helpful to understand what Markdown is and how to write it. Markdown is just a way to take a piece of text and format it to look a little nicer.  For example, this whole instruction set that you're reading is written in markdown - it's just text with some words being bold/larger/italicized/etc. I recommend taking 5 minutes to learn markdown [with this amazingly easy yet useful tutorial](http://markdowntutorial.com/).
+If you are building the GUI from source, you will also need [Qt5](https://www.qt.io).
 
-## Build your website in 3 steps
+### Getting the source code 
 
-Getting started is *literally* as easy as 1-2-3 :smile:   
-Scroll down to see the steps involved, but here is a 40-second video just as a reference as you work through the steps.
+Once the dependencies are installed get the PRISM source either from [compressed source files](www.example.com) or directly 
+from [Github](www.example.com) using `git clone`
 
-![Installation steps](img/install-steps.gif)
+## Building with CMake from the command line
 
-### 1. Fork this repository
-
-(Assuming you are on this page and logged into GitHub) Fork this repository by clicking the *Fork* button on the top right corner. Forking means that you now copied this whole project and all the files into your account.
-
-### 2. Rename the repository to `<yourusername>.github.io`
-
-This will create a GitHub User page ready with the **Beautiful Jekyll** template that will be available at `http://<yourusername>.github.io` within a couple minutes.  To do this, click on *Settings* at the top (the cog icon) and there you'll have an option to rename.
-
-### 3. Customize your website settings
-
-Edit the `_config.yml` file to change all the settings to reflect your site. To edit the file, click on it and then click on the pencil icon (watch the video tutorial above if you're confused).  The settings in the file are fairly self-explanatory and I added comments inside the file to help you further. Any line that begins with a pound sign (`#`) is a comment, and the rest of the lines are actual settings.
-
-Another way to edit the config file (or any other file) is to use [prose.io](http://prose.io/), which is just a simple interface to allow you to more intuitively edit files or add new files to your project.
-
-After you save your changes to the config file (by clicking on *Commit changes* as the video tutorial shows), your website should be ready in a minute or two at `http://<yourusername>.github.io`. Every time you make a change to any file, your website will get rebuilt and should be updated in about a minute or so.
-
-You can now visit your shiny new website, which will be seeded with several sample blog posts and a couple other pages. Your website is at `http://<yourusername>.github.io` (replace `<yourusername>` with your user name). Do not add `www` to the URL - it will not work!
-
-**Note:** The video above goes through the setup for a user with username `daattalitest`. I only edited one setting in the `_config.yml` file in the video, but **you should actually go through the rest of the settings as well. Don't be lazy, go through all the settings :)**
-
-## Add your own content
-
-To add pages to your site, you can either write a markdown file (`.md`) or you can write an HTML file directly.  It is much easier to write markdown than HTML, so I suggest you do that (use the [tutorial I mentioned above](http://markdowntutorial.com/) if you need to learn markdown). You can look at some files on this site to get an idea of how to write markdown. To look at existing files, click on any file that ends in `.md`, for example [`aboutme.md`](./aboutme.md). On the next page you can see some nicely formatted text (there is a word in bold, a link, bullet points), and if you click on the pencil icon to edit the file, you will see the markdown that generated the pretty text. Very easy!
-
-In contrast, look at [`index.html`](./index.html). That's how your write HTML - not as pretty. So stick with markdown if you don't know HTML.
-
-Any file that you add inside the [`_posts`](./_posts) directory will be treated as a blog entry.  You can look at the existing files there to get an idea of how to write blog posts.  After you successfully add your own post, you can delete the existing files inside [`_posts`](./_posts) to remove the sample posts, as those are just demo posts to help you learn.
-
-As mentioned previously, you can use [prose.io](http://prose.io/) to add or edit files instead of doing it directly on GitHub, it can be a little easier that way.
-
-## Last important thing: YAML front matter ("parameters" for a page)
-
-In order to have your new pages use this template and not just be plain pages, you need to add [YAML front matter](http://jekyllrb.com/docs/frontmatter/) to the top of each page. This is where you'll give each page some parameters that I made available, such as a title and subtitle. I'll go into more detail about what parameters are available later. If you don't want to use any parameters on your new page (this also means having no title), then use the empty YAML front matter:
+To build PRISM from the command line with CMake, open a terminal and navigate to the top of the source directory 
 
 ```
----
----
+cd /path/to/PRISM/
 ```
 
-If you want to use any parameters, write them between the two lines. For example, you can have this at the top of a page:
+Conventional CMake practice is to use out-of-source builds, which means we will compile the source code into
+a separate directory. This has a number of advantages including providing the flexibility to build multiple
+version of PRISM (such as compiling with/without GPU support), and allowing for easier cleanup. First, 
+make a build directory (the name doesn't matter) at the top of the PRISM source tree.
 
 ```
----
-title: Contact me
-subtitle: Here you'll find all the ways to get in touch with me
----
+mkdir build
+cd build
+```
+Then invoke CMake
+
+```
+cmake ../
 ```
 
-You can look at the top of [`aboutme.md`](./aboutme.md) or [`index.html`](./index.html) as more examples.
+This will generate a Makefile/Visual Studio Project/Xcode project with the necessary dependencies and paths to compile PRISM. The default
+behavior is to build only the CLI without GPU support. These options can be enabled as described in later sections.
+Finally, compile and install PRISM with:
 
-**Important takeaway: ALWAYS add the YAML front matter, which is two lines with three dashes, to EVERY page. If you have any parameters, they go between the two lines.**    
-If you don't include YAML then your file will not use the template.
+```
+make
+```
 
-## Features
+For faster compilation, add the `-j` switch to `make` to use multiple threads, for example to compile with 8 threads
 
-### Mobile-first
-**Beautiful Jekyll** is designed to look great on both large-screen and small-screen (mobile) devices. Load up your site on your phone or your gigantic iMac, and the site will work well on both, though it will look slightly different.
+```
+make -j 8
+```
 
-### Customizable
+If this succeeds, the executable file `prism` has been built and can be run from within the build directory. To permanently 
+install them, invoke
 
-Many personalization settings in `_config.yml`, such as setting your name and site's description, setting your avatar to add a little image in the navigation bar, customizing the links in the menus, customizing what social media links to show in the footer, etc.
+``` 
+make install
+```
 
-### Allowing users to leave comments
-
-If you want to enable comments on your site, Beautiful Jekyll supports the [Disqus](https://disqus.com/) comments plugin.  To use it, simply sign up to Disqus and add your Disqus shortname to the `disqus` parameter in the `_config.yml`.
-
-If the `disqus` parameter is set in the configuration file, then all blog posts will have comments turned on by default. To turn off comments on a particular blog post, add `comments: false` to the YAML front matter. If you want to add comments on the bottom of a non-blog page, add `comments: true` to the YAML front matter.
-
-### Adding Google Analytics to track page views
-
-Beautiful Jekyll lets you easily add Google Analytics to all your pages. This will let you track all sorts of information about visits to your website, such as how many times each page is viewed and where (geographically) your users come from.  To add Google Analytics, simply sign up to [Google Analytics](http://www.google.com/analytics/) to obtain your Google Tracking ID, and add this tracking ID to the `google_analytics` parameter in `_config.yml`.
-
-### Sharing blog posts on social media
-
-By default, all blog posts will have buttons at the bottom of the post to allow people to share the current page on Twitter/Facebook/LinkedIn.  You can choose to enable/disable specific social media websites in the `_config.yml` file. You can also turn off the social media buttons on specific blog posts using `social-share: false` in the YAML front matter.
-
-### RSS feed
-
-Beautiful Jekyll automatically generates a simple RSS feed of your blog posts, to allow others to subscribe to your posts.  If you want to add a link to your RSS feed in the footer of every page, find the `rss: false` line in `_config.yml` and change it to `rss: true`.
-
-### Page types
-
-- **post** - To write a blog post, add a markdown or HTML file in the `_posts` folder. As long as you give it YAML front matter (the two lines of three dashes), it will automatically be rendered like a blog post. Look at the existing blog post files to see examples of how to use YAML parameters in blog posts.
-- **page** - Any page outside the `_posts` folder that uses YAML front matter will have a very similar style to blog posts.
-- **minimal** - If you want to create a page with minimal styling (ie. without the bulky navigation bar and footer), assign `layout: minimal` to the YAML front matter.
-- If you want to completely bypass the template engine and just write your own HTML page, simply omit the YAML front matter. Only do this if you know how to write HTML!
-
-### YAML front matter parameters
-
-These are the main parameters you can place inside a page's YAML front matter that **Beautiful Jekyll** supports.
-
-Parameter   | Description
------------ | -----------
-title       | Page or blog post title
-subtitle    | Short description of page or blog post that goes under the title
-bigimg      | Include a large full-width image at the top of the page.  You can either give the path to a single image, or provide a list of images to cycle through (see [my personal website](http://deanattali.com/) as an example).
-comments    | If you want do add Disqus comments to a specific page, use `comments: true`. Comments are automatically enabled on blog posts; to turn comments off for a specific post, use `comments: false`. Comments only work if you set your Disqus id in the `_config.yml` file.
-show-avatar | If you have an avatar configured in the `_config.yml` but you want to turn it off on a specific page, use `show-avatar: false`. If you want to turn it off by default, locate the line `show-avatar: true` in the file `_config.yml` and change the `true` to `false`; then you can selectively turn it on in specific pages using `show-avatar: true`.
-image       | If you want to add a personalized image to your blog post that will show up next to the post's excerpt and on the post itself, use `image: /path/to/img`.
-share-img   | If you want to specify an image to use when sharing the page on Facebook or Twitter, then provide the image's full URL here.
-social-share | If you don't want to show buttons to share a blog post on social media, use `social-share: false` (this feature is turned on by default).
-use-site-title | If you want to use the site title rather than page title as HTML document title (ie. browser tab title), use `use-site-title: true`. When set, the document title will take the format `Site Title - Site Description` (eg. `My website - A virtual proof that name is awesome!`). By default, it will use `Page Title` if it exists, or `Site Title` otherwise.
-layout      | What type of page this is (default is `blog` for blog posts and `page` for other pages. You can use `minimal` if you don't want a header and footer)  
-js          | List of local JavaScript files to include in the page (eg. `/js/mypage.js`)
-ext-js      | List of external JavaScript files to include in the page (eg. `//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min.js`). External JavaScript files that support [Subresource Integrity (SRI)](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity) can be specified using the `href` and `sri` parameters eg.<br/>`href: "//code.jquery.com/jquery-3.1.1.min.js"`<br/>`sri: "sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="`
-css         | List of local CSS files to include in the page
-ext-css      | List of external CSS files to include in the page. External CSS files using SRI (see `ext-js` parameter) are also supported. 
-googlefonts | List of Google fonts to include in the page (eg. `["Monoton", "Lobster"]`)
-
-### Advanced features (including how to use a custom URL address for your site)
-
-I wrote [a blog post](http://deanattali.com/2015/03/12/beautiful-jekyll-how-to-build-a-site-in-minutes/) describing some more advanced features that I used in my website that are applicable to any Jekyll site.  It describes how I used a custom URL for my site (deanattali.com instead of daattali.github.io), how to add a Google-powered search into your site, and provides a few more details about having an RSS feed.
-
-## Creating a User Page vs a Project Page
-
-If you're not sure what the difference is, you can probably safely ignore this section.
-
-If you want to use this theme to host a website that will be available at `https://YOURUSERNAME.github.io`, then you do not need to read this section. That is called a User Page, you can only have one User Page in your GitHub account, and it is what you get by default when forking this project.
-
-If you want to use this theme to create a website for a particular repository, it will be available at `https://YOURUSERNAME.github.io/REPONAME`, and that is called a [Project Page](https://help.github.com/articles/user-organization-and-project-pages/). You can have a Project Page for each repository you have on GitHub. There are two important things to note when creating a project page:
-
-1. In the configuration file (`_config.yml`), you should set `baseurl` to be `/projectname` instead of `""`.
-2. Project Pages are served from a branch named `gh-pages`, and you should be generating all the website content on that branch. When you fork Beautiful Jekyll, you'll already have a `gh-pages` branch but you should delete it and generate it again from the `master` branch. The reason is that the `gh-pages` branch in its current form does not have the updated code of Beautiful Jekyll, so you need to create that branch from the `master` branch (which is where all my new features and work go into).
-
-## Showcased users (success stories!)
-
-To my huge surprise, Beautiful Jekyll has been used in over 500 websites in its first 6 months alone! Here is a hand-picked selection of some websites that use Beautiful Jekyll.
-
-Want your website featured here? [Contact me](http://deanattali.com/aboutme#contact) to let me know about your website.
-
-### Project/company websites
-
-| Website | Description |
-| :------ |:----------- |
-| [teampass.net](http://teampass.net) | Collaborative Passwords Manager |
-| [derekogle.com/fishR](http://derekogle.com/fishR/) | Using R for Fisheries Analyses |
-| [bigdata.juju.solutions](http://bigdata.juju.solutions) | Creating Big Data solutions Juju Solutions |
-| [joecks.github.io/clipboard-actions](http://joecks.github.io/clipboard-actions/) | Clipboard Actions - an Android app |
-| [deanattali.com/shinyjs](http://deanattali.com/shinyjs/) | shinyjs - an R package |
-| [blabel.github.io](http://blabel.github.io) | Library for canonicalising blank node labels in RDF graphs |
-| [reactionic.github.io](http://reactionic.github.io) | Create iOS and Android apps with React and Ionic |
-| [ja2-stracciatella.github.io](http://ja2-stracciatella.github.io) | Jagged Alliance 2 Stracciatella |
-| [PatientOutcomeFunding.org](http://www.patientoutcomefunding.org/) | Patient Outcome Funding |
-| [ddocent.com](http://ddocent.com/) | RADSeq Bioinformatics and Beyond |
-| [fightthecube.com](http://fightthecube.com/) | Fight The Cube (personal finance education) |
-
-### Personal websites
-
-| Website | Who | What |
-| :------ |:--- | :--- |
-| [deanattali.com](http://deanattali.com) | Dean Attali | Creator of Beautiful Jekyll |
-| [ouzor.github.io](http://ouzor.github.io) | Juuso Parkkinen | Data scientist |
-| [derekogle.com](http://derekogle.com/) | Derek Ogle | Professor of Mathematical Sciences and Natural Resources |
-| [melyanna.github.io](http://melyanna.github.io/) | Melyanna | Shows off her nice art |
-| [chauff.github.io](http://chauff.github.io/) | Claudia Hauff | Professor at Delft University of Technology |
-| [kootenpv.github.io](http://kootenpv.github.io/) | Pascal van Kooten | Data analytics |
-| [sjackman.ca](http://sjackman.ca) | Shaun Jackman | PhD candidate in bioinformatics |
-| [epwalsh.com](https://epwalsh.com) | Evan Pete Walsh | PhD candidate (Statistics and Mathematics) at Iowa State University ||
-| [anudit.in](http://www.anudit.in/) | Anudit Verma | Engineering student |
-| [sharepointoscar.github.io](http://sharepointoscar.github.io) | Oscar Medina | Independent Hacker |
+which may require `sudo` privileges. This will place the files in `/usr/local/bin` on Unix systems. 
 
 
-## Advanced: Local development using Docker
+### Setting CMake options
 
-Beautiful Jekyll is meant to be so simple to use that you can do it all within the browser. However, if you'd like to develop locally on your own machine, that's possible too if you're comfortable with command line. Follow these simple steps to do that with Docker:
+All aspects of how PRISM is compiled, such as whether or not to include GUI or GPU support, are controlled through CMake variables.
+There are at least four different ways to adjust these:
 
-1. Make sure that you have Docker installed on your local environment. Installation instructions can be found [here](https://docs.docker.com/engine/installation/)
-2. Clone your fork `git clone git@github.com:yourusername/yourusername.github.io.git`
-3. Inside your repository folder, run:
+If you are using the CMake GUI, then options are turned on/off with check boxes
+and paths are set by clicking browse and navigating to the file/folder of interest.   
 
-    ```
-    docker run -p 4000:4000 -v `pwd`:/app mangar/jekyll:1.1 bash -c "bundle install; bundle exec jekyll serve"
-    ```
-4. View your website at <http://localhost:4000>.
+If you are using the command line tool, `cmake`, then options are set with the `-D` (Define) flag. For example, 
+to set `My_Variable` to 0 one would add `-DMY_VARIABLE=0` to the call to `cmake` (see the sections on enabling GUI or GPU support for more examples).
 
-Disclaimer: I personally am NOT using local development so I don't know much about running Jekyll locally. If you follow this route, please don't ask me questions because unfortunately I honestly won't be able to help!		
-  		  
-Aditionally, if you choose to deploy Jekyll using a local ruby installation, you can tell Jekyll to automatically categorize your blog posts by tags. You just need to set `link-tags: true` in `_config.yml`. Jekyll will then generate a new page for each unique tag which lists all of the posts that belong to that tag.
+There is also the hybrid "command-line GUI" option, `ccmake`, which provides an interactive way to adjust CMake options from the command line.
 
+Finally, you can also directly edit a file called `CMakeCache.txt`. The first time you run CMake for a given project
+this special file will be created containing all of the option settings. Whenever you generate a project or Makefile, the options
+will be read for the `CMakeCache.txt` file, so options can be changed here directly.
 
-## Credits
+**_Note_**: Any time you change CMake options for a particular project you must regenerate the build files and recompile
+before the changes will actually take effect
 
-This template was not made entirely from scratch. I would like to give special thanks to:
-- [Barry Clark](https://github.com/barryclark) and his project [Jekyll Now](https://github.com/barryclark/jekyll-now), from whom I've taken several ideas and code snippets, as well as some documenation tips.
-- [Iron Summit Media](https://github.com/IronSummitMedia) and their project [Bootstrap Clean Blog](https://github.com/IronSummitMedia/startbootstrap-clean-blog), from which I've used some design ideas and some of the templating code for posts and pagination.
+## Enabling GPU support
 
-I'd also like to thank [Dr. Jekyll's Themes](http://drjekyllthemes.github.io/), [Jekyll Themes](http://jekyllthemes.org/), and another [Jekyll Themes](http://jekyllrc.github.io/jekyllthemes/) for featuring Beautiful Jekyll in their Jekyll theme directories.
+To enable GPU support, set the CMake variable `PRISM_ENABLE_GPU=1`. You must have the CUDA toolkit installed and the 
+appropriate paths setup as described [in the CUDA documentation](http://docs.nvidia.com/cuda/cuda-installation-guide-linux/#post-installation-actions) so that CMake
+may find `nvcc` and the necessary libraries to build/run PRISM. 
 
-## Contributions
+## Enabling the GUI
 
-If you find anything wrong or would like to contribute in any way, feel free to create a pull request/open an issue/send me a message.  Any comments are welcome!
+To build the GUI from source, you must install [Qt5](https://www.qt.io) and set the CMake variable `PRISM_ENABLE_GUI=1`.
+I find that CMake sometimes has trouble automatically finding Qt5, and at configuration time may complain about 
+being unable to find packages such as `Qt5Widgets`. An easy solution is to follow CMake's suggestion and set
+`CMAKE_PREFIX_PATH=/path/to/Qt5` where `/path/to/Qt5` should be replaced with the path on your machine. For example,
+on my Macbook with Qt5 installed through Homebrew I might invoke
 
-Thank you to [all contributors](https://github.com/daattali/beautiful-jekyll/graphs/contributors). Special thanks to the following people with non-trivial contributions (in chronological order): [@hristoyankov](https://github.com/hristoyankov), [@jamesonzimmer](https://github.com/jamesonzimmer), [@XNerv](https://github.com/XNerv), [@epwalsh](https://github.com/epwalsh), [@rtlee9](https://github.com/rtlee9).
+```
+cmake ../ -DPRISM_ENABLE_GUI=1 -DCMAKE_PREFIX_PATH=/usr/local/Cellar/qt5/5.8.0_1
+make -j 8
+make install
+```
 
-If you do fork or clone this project to use as a template for your site, I would appreciate if you keep the link in the footer to this project.  I've noticed that several people who forked this repo removed the attribution and I would prefer to get the recognition if you do use this :)
+## Using PRISM from the command line
 
-## Known limitations
+PRISM contains a command line tool, `prism`, that can be used to run simulations from within a terminal, bash script, etc. Building it requires the CMake variable `PRISM_ENABLE_CLI=1` at compilation time, which is the default behavior.
 
-- If you have a project page and you want a custom 404 page, you must have a custom domain.  See https://help.github.com/articles/custom-404-pages/.  This means that if you have a regular User Page you can use the 404 page from this theme, but if it's a website for a specific repository, the 404 page will not be used.
+### Options
+The following options are available with `prism`, each documented as **_long form_** **_(short form)_** *parameters* : description
+
+* --**_input-file (-i)_** *filename* : the filename containing the atomic coordinates, which should be a plain text file with comma-separated values in the format x, y, z, Z 
+* --**_output-file(-o)_** *filename* : output filename
+* --**_interp-factor (-f)_** *number* : PRISM interpolation factor
+* --**_num-threads (-j)_** *number* : number of CPU threads to use
+* --**_num-streams (-S)_** *number* : number of CUDA streams to create per GPU
+* --**_slice-thickness (-s)_** *thickness* : thickness of each slice of projected potential (in Angstroms)
+* --**_num-gpus (-g)_** *number* : number of GPUs to use. A runtime check is performed to check how many are actually available, and minimum of these two numbers is used.
+* --**_help(-h)_** : print information about the available options
+* --**_pixel-size (-p)_** *pixel_size* : size of simulation pixel size
+* --**_cell-dimension (-c)_** *x y z* : size of sample in x, y, z directions (in Angstroms)
+* --**_algorithm (-a)_** *p/m* : the simulation algorithm to use, either (p)rism or (m)ultislice
+* --**_energy (-E)_** *value* : the energy of the electron beam (in keV)
+* --**_alpha-max (-A)_** *angle* : the maximum probe angle to consider (in mrad)
+* --**_potential-bound (-P)_** *value* : the maximum radius from the center of each atom to compute the potental (in Angstroms)
+* --**_also-do-cpu-work (-C)_** *0/1* : boolean value used to determine whether or not to also create CPU workers in addition to GPU ones
+* --**_force-streaming-mode_** *0/1* : boolean value to force code to use (true) or not use (false) streaming versions of GPU codes. The default behavior is to estimate the needed memory from input parameters and choose automatically.
+* --**_probe-step (-r)_** *step_size* : step size of the probe (in Angstroms)
+* --**_num-FP (-F)_** *number* : number of frozen phonon configurations to calculate
+

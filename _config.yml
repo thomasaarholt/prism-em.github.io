@@ -17,8 +17,7 @@ baseurl: ""
 title: PRISM Software For STEM Simulation
 
 # Short description of your site
-description: Documentation, tutorials, and source code for the software package PRISM, a
-GPU implementation of image simulation algorithms in scanning transmission electron microscopy (STEM)
+description: Documentation, tutorials, and source code for the software package PRISM, a GPU implementation of image simulation algorithms in scanning transmission electron microscopy (STEM)
 
 # --- Navigation bar options --- #
 

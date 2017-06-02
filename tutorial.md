@@ -1,5 +1,5 @@
 # PRISM
-C++/CUDA implementation of compact S-matrix formulism for fast Multislice simulation of electron micrographs.
+C++/CUDA implementation of compact S-matrix formulism for fast image simulation in Scanning Transmission Electron Microscopy (STEM).
 
 ## Installation
 
@@ -76,6 +76,8 @@ make install
 
 which may require `sudo` privileges. This will place the files in `/usr/local/bin` on Unix systems. 
 
+CMake will attempt to locate the various dependencies needed by *PRISM*, but if it cannot then it will produce an error and set the variable to NOTFOUND. For example, if the `Boost_INCLUDE_DIR` (the location of the Boost libraries), is not found, it will be set to `Boost_INCLUDE_DIR-NOTFOUND`. You will need to manually set the path to boost (see below for how to set options), and then rerun `cmake`.
+
 
 ### Setting CMake options
 
@@ -97,6 +99,11 @@ will be read for the `CMakeCache.txt` file, so options can be changed here direc
 **_Note_**: Any time you change CMake options for a particular project you must regenerate the build files and recompile
 before the changes will actually take effect
 
+## Operating System Specific Comments
+These are some various quirks you may want to be aware of, depending on your OS
+####Windows
+* When installing FFTW, be sure to create the .lib files as described [in the FFTW documentation.](http://www.fftw.org/install/windows.html). You will then set `FFTW_INCLUDE_DIR` to the directory containing "fftw3.h", and `FFTW_LIBRARY` to the path to "libfftw3f-3.lib". The "f" after fftw3 indicates single-precision, which is the default in PRISM. If you are compiling with `PRISM_ENABLE_DOUBLE_PRECISION=1` then this will be ""libfftw3-3.lib" instead.
+
 ## Enabling GPU support
 
 To enable GPU support, set the CMake variable `PRISM_ENABLE_GPU=1`. You must have the CUDA toolkit installed and the 
@@ -117,6 +124,9 @@ make -j 8
 make install
 ```
 
+## Enabling Double Precision
+The default behavior for *PRISM* is to use single precision (type float). You can use double precision instead by setting `PRISM_ENABLE_DOUBLE_PRECISION=1`. Note that as of this writing double precision operations are ~4x slower on the GPU, and by every test I have done the precision difference is entirely unnoticeable. However, I leave it as an option . If you find a case where using double precision is impactful, I would be very interested to hear about it.
+
 ## Using PRISM from the command line
 
 PRISM contains a command line tool, `prism`, that can be used to run simulations from within a terminal, bash script, etc. Building it requires the CMake variable `PRISM_ENABLE_CLI=1` at compilation time, which is the default behavior.
@@ -131,8 +141,11 @@ The following options are available with `prism`, each documented as **_long for
 * --interp-factor-y (-fy) number : PRISM interpolation factor in Y
 * --num-threads (-j) value : number of CPU threads to use
 * --num-streams (-S) value : number of CUDA streams to create per GPU
-* --slice-thickness (-s) thickness : thickness of each slice of projected potential (in Angstroms)
 * --num-gpus (-g) value : number of GPUs to use. A runtime check is performed to check how many are actually available, and the minimum of these two numbers is used.
+* --batch-size (-b) value : number of probes/beams to propagate simultaneously for both CPU and GPU workers.
+* --batch-size-cpu (-bc) value : number of probes/beams to propagate simultaneously for CPU workers.
+* --batch-size-gpu (-bg) value : number of probes/beams to propagate simultaneously for GPU workers.
+* --slice-thickness (-s) thickness : thickness of each slice of projected potential (in Angstroms)
 * --help(-h) : print information about the available options
 * --pixel-size (-p) pixel_size : size of simulation pixel size
 * --detector-angle-step (-d) step_size : angular step size for detector integration bins

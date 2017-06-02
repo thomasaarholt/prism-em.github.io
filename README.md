@@ -131,8 +131,11 @@ The following options are available with `prism`, each documented as **_long for
 * --interp-factor-y (-fy) number : PRISM interpolation factor in Y
 * --num-threads (-j) value : number of CPU threads to use
 * --num-streams (-S) value : number of CUDA streams to create per GPU
-* --slice-thickness (-s) thickness : thickness of each slice of projected potential (in Angstroms)
 * --num-gpus (-g) value : number of GPUs to use. A runtime check is performed to check how many are actually available, and the minimum of these two numbers is used.
+* --batch-size (-b) value : number of probes/beams to propagate simultaneously for both CPU and GPU workers.
+* --batch-size-cpu (-bc) value : number of probes/beams to propagate simultaneously for CPU workers.
+* --batch-size-gpu (-bg) value : number of probes/beams to propagate simultaneously for GPU workers.
+* --slice-thickness (-s) thickness : thickness of each slice of projected potential (in Angstroms)
 * --help(-h) : print information about the available options
 * --pixel-size (-p) pixel_size : size of simulation pixel size
 * --detector-angle-step (-d) step_size : angular step size for detector integration bins

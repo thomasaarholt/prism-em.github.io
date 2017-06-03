@@ -812,50 +812,50 @@ inline void createStreamsAndPlans2(Parameters<PRISM_FLOAT_PRECISION> &pars,
 ~~~c++
 inline void copyToDeviceMemory_streaming2(Parameters<PRISM_FLOAT_PRECISION> &pars,
                                          CudaParameters<PRISM_FLOAT_PRECISION> &cuda_pars){
-	const int total_num_streams = pars.meta.NUM_GPUS * pars.meta.NUM_STREAMS_PER_GPU;
+const int total_num_streams = pars.meta.NUM_GPUS * pars.meta.NUM_STREAMS_PER_GPU;
 
-	// Copy memory to each GPU asynchronously from the pinned host memory spaces.
-	// The streams are laid out so that consecutive streams represent different GPUs. If we
-	// have more than one stream per GPU, then we want to interleave as much as possible
-	int stream_id = 0;
-	for (auto g = 0; g < pars.meta.NUM_GPUS; ++g) {
-		stream_id = g;
-		cudaErrchk(cudaSetDevice(g));
+// Copy memory to each GPU asynchronously from the pinned host memory spaces.
+// The streams are laid out so that consecutive streams represent different GPUs. If we
+// have more than one stream per GPU, then we want to interleave as much as possible
+int stream_id = 0;
+for (auto g = 0; g < pars.meta.NUM_GPUS; ++g) {
+	stream_id = g;
+	cudaErrchk(cudaSetDevice(g));
 
-		stream_id = (stream_id + pars.meta.NUM_GPUS) % total_num_streams;
-		cudaErrchk(cudaMemcpyAsync(cuda_pars.prop_d[g],
-		                           &cuda_pars.prop_ph[0],
-		                           pars.prop.size() * sizeof(std::complex<PRISM_FLOAT_PRECISION>),
-		                           cudaMemcpyHostToDevice,
-		             				    cuda_pars.streams[stream_id]));
+	stream_id = (stream_id + pars.meta.NUM_GPUS) % total_num_streams;
+	cudaErrchk(cudaMemcpyAsync(cuda_pars.prop_d[g],
+	                           &cuda_pars.prop_ph[0],
+	                           pars.prop.size() * sizeof(std::complex<PRISM_FLOAT_PRECISION>),
+	                           cudaMemcpyHostToDevice,
+	             				    cuda_pars.streams[stream_id]));
 
-		stream_id = (stream_id + pars.meta.NUM_GPUS) % total_num_streams;
-		cudaErrchk(cudaMemcpyAsync(cuda_pars.qxInd_d[g],
-		                           &cuda_pars.qxInd_ph[0],
-		                           pars.qxInd.size() * sizeof(size_t),
-		                           cudaMemcpyHostToDevice,
-		                           cuda_pars.streams[stream_id]));
+	stream_id = (stream_id + pars.meta.NUM_GPUS) % total_num_streams;
+	cudaErrchk(cudaMemcpyAsync(cuda_pars.qxInd_d[g],
+	                           &cuda_pars.qxInd_ph[0],
+	                           pars.qxInd.size() * sizeof(size_t),
+	                           cudaMemcpyHostToDevice,
+	                           cuda_pars.streams[stream_id]));
 
-		stream_id = (stream_id + pars.meta.NUM_GPUS) % total_num_streams;
-		cudaErrchk(cudaMemcpyAsync(cuda_pars.qyInd_d[g],
-		                           &cuda_pars.qyInd_ph[0],
-		                           pars.qyInd.size() * sizeof(size_t),
-		                           cudaMemcpyHostToDevice,
-		                           cuda_pars.streams[stream_id]));
+	stream_id = (stream_id + pars.meta.NUM_GPUS) % total_num_streams;
+	cudaErrchk(cudaMemcpyAsync(cuda_pars.qyInd_d[g],
+	                           &cuda_pars.qyInd_ph[0],
+	                           pars.qyInd.size() * sizeof(size_t),
+	                           cudaMemcpyHostToDevice,
+	                           cuda_pars.streams[stream_id]));
 
-		stream_id = (stream_id + pars.meta.NUM_GPUS) % total_num_streams;
-		cudaErrchk(cudaMemcpyAsync(cuda_pars.beamsIndex_d[g],
-		                           &cuda_pars.beamsIndex_ph[0],
-		                           pars.beamsIndex.size() * sizeof(size_t),
-		                           cudaMemcpyHostToDevice,
-		                           cuda_pars.streams[stream_id]));
-	}
+	stream_id = (stream_id + pars.meta.NUM_GPUS) % total_num_streams;
+	cudaErrchk(cudaMemcpyAsync(cuda_pars.beamsIndex_d[g],
+	                           &cuda_pars.beamsIndex_ph[0],
+	                           pars.beamsIndex.size() * sizeof(size_t),
+	                           cudaMemcpyHostToDevice,
+	                           cuda_pars.streams[stream_id]));
+}
 
-	// make sure transfers are complete
-	for (auto g = 0; g < pars.meta.NUM_GPUS; ++g) {
-		cudaSetDevice(g);
-		cudaDeviceSynchronize();
-	}
+// make sure transfers are complete
+for (auto g = 0; g < pars.meta.NUM_GPUS; ++g) {
+	cudaSetDevice(g);
+	cudaDeviceSynchronize();
+}
 }
 ~~~
 

@@ -65,43 +65,43 @@ The full class can be found in "ArrayND.h" and as it is some 600 lines that are 
 
 ~~~ c++
 namespace PRISM {
-    template <size_t N, class T>
-    class ArrayND {
-            // ND array class for data indexed as C-style, i.e. arr.at(k,j,i) where i is the fastest varying index
-            // and k is the slowest
+template <size_t N, class T>
+class ArrayND {
+        // ND array class for data indexed as C-style, i.e. arr.at(k,j,i) where i is the fastest varying index
+        // and k is the slowest
 
-            // T is expected to be a std::vector
-        public:
-            ArrayND(T _data,
-                    std::array<size_t, N> _dims);
-            ArrayND(){};
-			size_t get_dimi() const {return this->dims[N-1];}
-			size_t get_dimj() const {return this->dims[N-2];}
-			size_t get_dimk() const {return this->dims[N-3];}
-			size_t get_diml() const {return this->dims[N-4]; }
-			size_t get_dimm() const {return this->dims[N-5]; }
-            size_t size()     const {return this->arr_size;}
-            typename T::iterator begin();
-            typename T::iterator end();
-            typename T::const_iterator begin() const;
-            typename T::const_iterator end()   const;
-            typename T::value_type& at(const size_t& i);
-            typename T::value_type& at(const size_t& j, const size_t& i);
-            ///... many more declarations
-            ///...
-        
-        private:
-            std::array<size_t, N> dims;
-            std::array<size_t, N-1> strides;
-            size_t arr_size;
-            T data;
-    }
+        // T is expected to be a std::vector
+    public:
+        ArrayND(T _data,
+                std::array<size_t, N> _dims);
+        ArrayND(){};
+		size_t get_dimi() const {return this->dims[N-1];}
+		size_t get_dimj() const {return this->dims[N-2];}
+		size_t get_dimk() const {return this->dims[N-3];}
+		size_t get_diml() const {return this->dims[N-4]; }
+		size_t get_dimm() const {return this->dims[N-5]; }
+        size_t size()     const {return this->arr_size;}
+        typename T::iterator begin();
+        typename T::iterator end();
+        typename T::const_iterator begin() const;
+        typename T::const_iterator end()   const;
+        typename T::value_type& at(const size_t& i);
+        typename T::value_type& at(const size_t& j, const size_t& i);
+        ///... many more declarations
+        ///...
     
-    // ... an example .at() implementation late in the filer
-      template <size_t N, class T>
-    typename T::value_type& ArrayND<N, T>::at(const size_t& k, const size_t& j,const size_t& i){
-        return data[k*strides[0] + j*strides[1] + i];
-    }
+    private:
+        std::array<size_t, N> dims;
+        std::array<size_t, N-1> strides;
+        size_t arr_size;
+        T data;
+}
+    
+// ... an example .at() implementation late in the filer
+  template <size_t N, class T>
+typename T::value_type& ArrayND<N, T>::at(const size_t& k, const size_t& j,const size_t& i){
+    return data[k*strides[0] + j*strides[1] + i];
+}
 ~~~
 
 So the template parameter `T` represents the underlying buffer data type, which must behave as `std::vector`. The dimensions and array strides are stored in fixed arrays, and the `.at()` methods use these strides to compute offsets, such as in the example above for the 2D array case.
@@ -142,32 +142,32 @@ The various command line options are parsed by the function `parseInputs`, which
 My take on a command line parser is simple. It uses a `std::map` to connect command argument keywords with functions that handle that particular argument. These functions all have the same signature. Using `std::map` allows for better lookup speed than a switch statement, but more importantly it makes it very easy to connect multiple keywords with the same parsing function. For example, I might have
 
 ~~~ c++
-    using parseFunction = bool (*)(Metadata<PRISM_FLOAT_PRECISION>& meta,
-                                          int& argc, const char*** argv);
-    static std::map<std::string, parseFunction> parser{
-            {"--input-file", parse_i}, {"-i", parse_i},
-            {"--interp-factor", parse_f}, {"-f", parse_f}
-            // ... more values follow
+using parseFunction = bool (*)(Metadata<PRISM_FLOAT_PRECISION>& meta,
+                                      int& argc, const char*** argv);
+static std::map<std::string, parseFunction> parser{
+        {"--input-file", parse_i}, {"-i", parse_i},
+        {"--interp-factor", parse_f}, {"-f", parse_f}
+        // ... more values follow
 ~~~ 
 
 So the variable `parser` connects both the verbose and shorthand keywords "--interp-factor" and "-f" to the function `parse_f`, which is the function responsible for populating the PRISM interpolation factor in the metadata.
 
 ~~~ c++
-    bool parse_f(Metadata<PRISM_FLOAT_PRECISION>& meta,
-                        int& argc, const char*** argv){
-        if (argc < 2){
-            cout << "No interpolation factor provided for -f (syntax is -f interpolation_factor)\n";
-            return false;
-        }
-        if ( (meta.interpolationFactorX = atoi((*argv)[1])) == 0){
-            cout << "Invalid value \"" << (*argv)[1] << "\" provided for PRISM interpolation factors (syntax is -f interpolation_factor)\n";
-            return false;
-        }
-	    meta.interpolationFactorY = meta.interpolationFactorX;
-        argc-=2;
-        argv[0]+=2;
-        return true;
-    };
+bool parse_f(Metadata<PRISM_FLOAT_PRECISION>& meta,
+                    int& argc, const char*** argv){
+    if (argc < 2){
+        cout << "No interpolation factor provided for -f (syntax is -f interpolation_factor)\n";
+        return false;
+    }
+    if ( (meta.interpolationFactorX = atoi((*argv)[1])) == 0){
+        cout << "Invalid value \"" << (*argv)[1] << "\" provided for PRISM interpolation factors (syntax is -f interpolation_factor)\n";
+        return false;
+    }
+    meta.interpolationFactorY = meta.interpolationFactorX;
+    argc-=2;
+    argv[0]+=2;
+    return true;
+};
 ~~~
 
 I check that there are at least two remaining arguments, otherwise there isn't a factor provided and `false` is returned. Then the attempt is made to convert the factor to a number. If that fails we return `false`. Otherwise the parsing was successful, the value is set, and `argc` decremented and `argv` shifted. Some parsing functions might require more or fewer arguments, and with this design that's no problem because each option has a separate function. It also makes it very easy to add new options -- I just write the logic for parsing that argument, and then connect whatever keywords with the function name.
@@ -186,14 +186,14 @@ and this is set in "configure.cpp"
 
 ~~~ c++
 //configure.cpp
-		if (meta.algorithm == Algorithm::PRISM) {
-			fill_Scompact = fill_Scompact_CPUOnly;
-			//...
-			// bunch of other stuff..
-			// ...
-		} else if (meta.algorithm == Algorithm::Multislice){	
-			execute_plan = Multislice_entry;
-		}
+if (meta.algorithm == Algorithm::PRISM) {
+	fill_Scompact = fill_Scompact_CPUOnly;
+	//...
+	// bunch of other stuff..
+	// ...
+} else if (meta.algorithm == Algorithm::Multislice){	
+	execute_plan = Multislice_entry;
+}
 ~~~
 
 If you think this is overkill, and I could just have an if-else for this case, consider that there are choice of PRISM/Multislice, the possibility of CPU-only or GPU-enabled, the possibility of streaming/singlexfer if we are using the GPU codes, etc. It would create a lot of divergences very quickly, and this is a better solution.
@@ -333,131 +333,131 @@ Now we assemble the projected potentials by computing the digitized potential fo
 Next is a big chunk of code that is conceptually accomplishing a simple task. Based on the relevant coordinates determined by the simulation pixel size, we compute the potential of each relevant element following Kirkland's book ["Advanced Computing in Electron Microscopy"](https://link.springer.com/book/10.1007%2F978-1-4419-6533-2) on an 8x supersampled grid, then integrate it, and store it.
 
 ~~~c++
-	void fetch_potentials(Array3D<PRISM_FLOAT_PRECISION>& potentials,
-	                      const vector<size_t>& atomic_species,
-	                      const Array1D<PRISM_FLOAT_PRECISION>& xr,
-	                      const Array1D<PRISM_FLOAT_PRECISION>& yr){
-		Array2D<PRISM_FLOAT_PRECISION> cur_pot;
-		for (auto k =0; k < potentials.get_dimk(); ++k){
-			Array2D<PRISM_FLOAT_PRECISION> cur_pot = projPot(atomic_species[k], xr, yr);
-			for (auto j = 0; j < potentials.get_dimj(); ++j){
-				for (auto i = 0; i < potentials.get_dimi(); ++i){
-					potentials.at(k,j,i) = cur_pot.at(j,i);
+void fetch_potentials(Array3D<PRISM_FLOAT_PRECISION>& potentials,
+                      const vector<size_t>& atomic_species,
+                      const Array1D<PRISM_FLOAT_PRECISION>& xr,
+                      const Array1D<PRISM_FLOAT_PRECISION>& yr){
+	Array2D<PRISM_FLOAT_PRECISION> cur_pot;
+	for (auto k =0; k < potentials.get_dimk(); ++k){
+		Array2D<PRISM_FLOAT_PRECISION> cur_pot = projPot(atomic_species[k], xr, yr);
+		for (auto j = 0; j < potentials.get_dimj(); ++j){
+			for (auto i = 0; i < potentials.get_dimi(); ++i){
+				potentials.at(k,j,i) = cur_pot.at(j,i);
+			}
+		}
+	}
+}
+	
+Array2D<PRISM_FLOAT_PRECISION> projPot(const size_t &Z,
+                                       const Array1D<PRISM_FLOAT_PRECISION> &xr,
+                                       const Array1D<PRISM_FLOAT_PRECISION> &yr) {
+	// compute the projected potential for a given atomic number following Kirkland
+
+	// setup some constants
+	static const PRISM_FLOAT_PRECISION pi = std::acos(-1);
+	PRISM_FLOAT_PRECISION ss    = 8;
+	PRISM_FLOAT_PRECISION a0    = 0.5292;
+	PRISM_FLOAT_PRECISION e     = 14.4;
+	PRISM_FLOAT_PRECISION term1 = 4*pi*pi*a0*e;
+	PRISM_FLOAT_PRECISION term2 = 2*pi*pi*a0*e;
+
+	// initialize array
+	ArrayND<2, std::vector<PRISM_FLOAT_PRECISION> > result = zeros_ND<2, PRISM_FLOAT_PRECISION>({{yr.size(), xr.size()}});
+
+	// setup some coordinates
+	const PRISM_FLOAT_PRECISION dx = xr[1] - xr[0];
+	const PRISM_FLOAT_PRECISION dy = yr[1] - yr[0];
+
+	PRISM_FLOAT_PRECISION start = -(ss-1)/ss/2;
+	const PRISM_FLOAT_PRECISION step  = 1/ss;
+	const PRISM_FLOAT_PRECISION end   = -start;
+	vector<PRISM_FLOAT_PRECISION> sub_data;
+	while (start <= end){
+		sub_data.push_back(start);
+		start+=step;
+	}
+	ArrayND<1, std::vector<PRISM_FLOAT_PRECISION> > sub(sub_data,{{sub_data.size()}});
+
+	std::pair<Array2D<PRISM_FLOAT_PRECISION>, Array2D<PRISM_FLOAT_PRECISION> > meshx = meshgrid(xr, sub*dx);
+	std::pair<Array2D<PRISM_FLOAT_PRECISION>, Array2D<PRISM_FLOAT_PRECISION> > meshy = meshgrid(yr, sub*dy);
+
+	ArrayND<1, std::vector<PRISM_FLOAT_PRECISION> > xv = zeros_ND<1, PRISM_FLOAT_PRECISION>({{meshx.first.size()}});
+	ArrayND<1, std::vector<PRISM_FLOAT_PRECISION> > yv = zeros_ND<1, PRISM_FLOAT_PRECISION>({{meshy.first.size()}});
+	{
+		auto t_x = xv.begin();
+		for (auto j = 0; j < meshx.first.get_dimj(); ++j) {
+			for (auto i = 0; i < meshx.first.get_dimi(); ++i) {
+				*t_x++ = meshx.first.at(j, i) + meshx.second.at(j, i);
+			}
+		}
+	}
+
+	{
+		auto t_y = yv.begin();
+		for (auto j = 0; j < meshy.first.get_dimj(); ++j) {
+			for (auto i = 0; i < meshy.first.get_dimi(); ++i) {
+				*t_y++ = meshy.first.at(j, i) + meshy.second.at(j, i);
+			}
+		}
+	}
+
+	std::pair<Array2D<PRISM_FLOAT_PRECISION>, Array2D<PRISM_FLOAT_PRECISION> > meshxy = meshgrid(yv, xv);
+	ArrayND<2, std::vector<PRISM_FLOAT_PRECISION> > r2 = zeros_ND<2, PRISM_FLOAT_PRECISION>({{yv.size(), xv.size()}});
+	ArrayND<2, std::vector<PRISM_FLOAT_PRECISION> > r  = zeros_ND<2, PRISM_FLOAT_PRECISION>({{yv.size(), xv.size()}});
+
+	{
+		auto t_y = r2.begin();
+		for (auto j = 0; j < meshxy.first.get_dimj(); ++j) {
+			for (auto i = 0; i < meshxy.first.get_dimi(); ++i) {
+				*t_y++ = pow(meshxy.first.at(j,i),2) + pow(meshxy.second.at(j,i),2);
+			}
+		}
+	}
+
+	for (auto i = 0; i < r.size(); ++i)r[i] = sqrt(r2[i]);
+	// construct potential
+	ArrayND<2, std::vector<PRISM_FLOAT_PRECISION> > potSS  = ones_ND<2, PRISM_FLOAT_PRECISION>({{r2.get_dimj(), r2.get_dimi()}});
+
+	// get the relevant table values
+	std::vector<PRISM_FLOAT_PRECISION> ap;
+	ap.resize(n_parameters);
+	for (auto i = 0; i < n_parameters; ++i){
+		ap[i] = fparams[(Z-1)*n_parameters + i];
+	}
+
+	// compute the potential
+	using namespace boost::math;
+	std::transform(r.begin(), r.end(),
+	               r2.begin(), potSS.begin(), [&ap, &term1, &term2](const PRISM_FLOAT_PRECISION& r_t, const PRISM_FLOAT_PRECISION& r2_t){
+
+				return term1*(ap[0] *
+				              cyl_bessel_k(0,2*pi*sqrt(ap[1])*r_t)          +
+				              ap[2]*cyl_bessel_k(0,2*pi*sqrt(ap[3])*r_t)    +
+				              ap[4]*cyl_bessel_k(0,2*pi*sqrt(ap[5])*r_t))   +
+				       term2*(ap[6]/ap[7]*exp(-pow(pi,2)/ap[7]*r2_t) +
+				              ap[8]/ap[9]*exp(-pow(pi,2)/ap[9]*r2_t)        +
+				              ap[10]/ap[11]*exp(-pow(pi,2)/ap[11]*r2_t));
+			});
+
+	// integrate
+	ArrayND<2, std::vector<PRISM_FLOAT_PRECISION> > pot = zeros_ND<2, PRISM_FLOAT_PRECISION>({{yr.size(), xr.size()}});
+	for (auto sy = 0; sy < ss; ++sy){
+		for (auto sx = 0; sx < ss; ++sx) {
+			for (auto j = 0; j < pot.get_dimj(); ++j) {
+				for (auto i = 0; i < pot.get_dimi(); ++i) {
+					pot.at(j, i) += potSS.at(j*ss + sy, i*ss + sx);
 				}
 			}
 		}
 	}
-	
-	Array2D<PRISM_FLOAT_PRECISION> projPot(const size_t &Z,
-                                           const Array1D<PRISM_FLOAT_PRECISION> &xr,
-                                           const Array1D<PRISM_FLOAT_PRECISION> &yr) {
-		// compute the projected potential for a given atomic number following Kirkland
+	pot/=(ss*ss);
 
-		// setup some constants
-		static const PRISM_FLOAT_PRECISION pi = std::acos(-1);
-		PRISM_FLOAT_PRECISION ss    = 8;
-		PRISM_FLOAT_PRECISION a0    = 0.5292;
-		PRISM_FLOAT_PRECISION e     = 14.4;
-		PRISM_FLOAT_PRECISION term1 = 4*pi*pi*a0*e;
-		PRISM_FLOAT_PRECISION term2 = 2*pi*pi*a0*e;
+	PRISM_FLOAT_PRECISION potMin = get_potMin(pot,xr,yr);
+	pot -= potMin;
+	transform(pot.begin(),pot.end(),pot.begin(),[](PRISM_FLOAT_PRECISION& a){return a<0?0:a;});
 
-		// initialize array
-		ArrayND<2, std::vector<PRISM_FLOAT_PRECISION> > result = zeros_ND<2, PRISM_FLOAT_PRECISION>({{yr.size(), xr.size()}});
-
-		// setup some coordinates
-		const PRISM_FLOAT_PRECISION dx = xr[1] - xr[0];
-		const PRISM_FLOAT_PRECISION dy = yr[1] - yr[0];
-
-		PRISM_FLOAT_PRECISION start = -(ss-1)/ss/2;
-		const PRISM_FLOAT_PRECISION step  = 1/ss;
-		const PRISM_FLOAT_PRECISION end   = -start;
-		vector<PRISM_FLOAT_PRECISION> sub_data;
-		while (start <= end){
-			sub_data.push_back(start);
-			start+=step;
-		}
-		ArrayND<1, std::vector<PRISM_FLOAT_PRECISION> > sub(sub_data,{{sub_data.size()}});
-
-		std::pair<Array2D<PRISM_FLOAT_PRECISION>, Array2D<PRISM_FLOAT_PRECISION> > meshx = meshgrid(xr, sub*dx);
-		std::pair<Array2D<PRISM_FLOAT_PRECISION>, Array2D<PRISM_FLOAT_PRECISION> > meshy = meshgrid(yr, sub*dy);
-
-		ArrayND<1, std::vector<PRISM_FLOAT_PRECISION> > xv = zeros_ND<1, PRISM_FLOAT_PRECISION>({{meshx.first.size()}});
-		ArrayND<1, std::vector<PRISM_FLOAT_PRECISION> > yv = zeros_ND<1, PRISM_FLOAT_PRECISION>({{meshy.first.size()}});
-		{
-			auto t_x = xv.begin();
-			for (auto j = 0; j < meshx.first.get_dimj(); ++j) {
-				for (auto i = 0; i < meshx.first.get_dimi(); ++i) {
-					*t_x++ = meshx.first.at(j, i) + meshx.second.at(j, i);
-				}
-			}
-		}
-
-		{
-			auto t_y = yv.begin();
-			for (auto j = 0; j < meshy.first.get_dimj(); ++j) {
-				for (auto i = 0; i < meshy.first.get_dimi(); ++i) {
-					*t_y++ = meshy.first.at(j, i) + meshy.second.at(j, i);
-				}
-			}
-		}
-
-		std::pair<Array2D<PRISM_FLOAT_PRECISION>, Array2D<PRISM_FLOAT_PRECISION> > meshxy = meshgrid(yv, xv);
-		ArrayND<2, std::vector<PRISM_FLOAT_PRECISION> > r2 = zeros_ND<2, PRISM_FLOAT_PRECISION>({{yv.size(), xv.size()}});
-		ArrayND<2, std::vector<PRISM_FLOAT_PRECISION> > r  = zeros_ND<2, PRISM_FLOAT_PRECISION>({{yv.size(), xv.size()}});
-
-		{
-			auto t_y = r2.begin();
-			for (auto j = 0; j < meshxy.first.get_dimj(); ++j) {
-				for (auto i = 0; i < meshxy.first.get_dimi(); ++i) {
-					*t_y++ = pow(meshxy.first.at(j,i),2) + pow(meshxy.second.at(j,i),2);
-				}
-			}
-		}
-
-		for (auto i = 0; i < r.size(); ++i)r[i] = sqrt(r2[i]);
-		// construct potential
-		ArrayND<2, std::vector<PRISM_FLOAT_PRECISION> > potSS  = ones_ND<2, PRISM_FLOAT_PRECISION>({{r2.get_dimj(), r2.get_dimi()}});
-
-		// get the relevant table values
-		std::vector<PRISM_FLOAT_PRECISION> ap;
-		ap.resize(n_parameters);
-		for (auto i = 0; i < n_parameters; ++i){
-			ap[i] = fparams[(Z-1)*n_parameters + i];
-		}
-
-		// compute the potential
-		using namespace boost::math;
-		std::transform(r.begin(), r.end(),
-		               r2.begin(), potSS.begin(), [&ap, &term1, &term2](const PRISM_FLOAT_PRECISION& r_t, const PRISM_FLOAT_PRECISION& r2_t){
-
-					return term1*(ap[0] *
-					              cyl_bessel_k(0,2*pi*sqrt(ap[1])*r_t)          +
-					              ap[2]*cyl_bessel_k(0,2*pi*sqrt(ap[3])*r_t)    +
-					              ap[4]*cyl_bessel_k(0,2*pi*sqrt(ap[5])*r_t))   +
-					       term2*(ap[6]/ap[7]*exp(-pow(pi,2)/ap[7]*r2_t) +
-					              ap[8]/ap[9]*exp(-pow(pi,2)/ap[9]*r2_t)        +
-					              ap[10]/ap[11]*exp(-pow(pi,2)/ap[11]*r2_t));
-				});
-
-		// integrate
-		ArrayND<2, std::vector<PRISM_FLOAT_PRECISION> > pot = zeros_ND<2, PRISM_FLOAT_PRECISION>({{yr.size(), xr.size()}});
-		for (auto sy = 0; sy < ss; ++sy){
-			for (auto sx = 0; sx < ss; ++sx) {
-				for (auto j = 0; j < pot.get_dimj(); ++j) {
-					for (auto i = 0; i < pot.get_dimi(); ++i) {
-						pot.at(j, i) += potSS.at(j*ss + sy, i*ss + sx);
-					}
-				}
-			}
-		}
-		pot/=(ss*ss);
-
-		PRISM_FLOAT_PRECISION potMin = get_potMin(pot,xr,yr);
-		pot -= potMin;
-		transform(pot.begin(),pot.end(),pot.begin(),[](PRISM_FLOAT_PRECISION& a){return a<0?0:a;});
-
-		return pot;
-	}	
+	return pot;
+}	
 ~~~
 
 #### Building the sliced potentials
@@ -465,40 +465,40 @@ Next is a big chunk of code that is conceptually accomplishing a simple task. Ba
 First there's a bit of setup and we figure out which slice index each atom belongs to
 
 ~~~ c++
-	void generateProjectedPotentials(Parameters<PRISM_FLOAT_PRECISION>& pars,
-	                                 const Array3D<PRISM_FLOAT_PRECISION>& potentialLookup,
-	                                 const vector<size_t>& unique_species,
-	                                 const Array1D<long>& xvec,
-	                                 const Array1D<long>& yvec){
-		// splits the atomic coordinates into slices and computes the projected potential for each.
+void generateProjectedPotentials(Parameters<PRISM_FLOAT_PRECISION>& pars,
+                                 const Array3D<PRISM_FLOAT_PRECISION>& potentialLookup,
+                                 const vector<size_t>& unique_species,
+                                 const Array1D<long>& xvec,
+                                 const Array1D<long>& yvec){
+	// splits the atomic coordinates into slices and computes the projected potential for each.
 
-		// create arrays for the coordinates
-		Array1D<PRISM_FLOAT_PRECISION> x     = zeros_ND<1, PRISM_FLOAT_PRECISION>({{pars.atoms.size()}});
-		Array1D<PRISM_FLOAT_PRECISION> y     = zeros_ND<1, PRISM_FLOAT_PRECISION>({{pars.atoms.size()}});
-		Array1D<PRISM_FLOAT_PRECISION> z     = zeros_ND<1, PRISM_FLOAT_PRECISION>({{pars.atoms.size()}});
-		Array1D<PRISM_FLOAT_PRECISION> ID    = zeros_ND<1, PRISM_FLOAT_PRECISION>({{pars.atoms.size()}});
-		Array1D<PRISM_FLOAT_PRECISION> sigma = zeros_ND<1, PRISM_FLOAT_PRECISION>({{pars.atoms.size()}});
+	// create arrays for the coordinates
+	Array1D<PRISM_FLOAT_PRECISION> x     = zeros_ND<1, PRISM_FLOAT_PRECISION>({{pars.atoms.size()}});
+	Array1D<PRISM_FLOAT_PRECISION> y     = zeros_ND<1, PRISM_FLOAT_PRECISION>({{pars.atoms.size()}});
+	Array1D<PRISM_FLOAT_PRECISION> z     = zeros_ND<1, PRISM_FLOAT_PRECISION>({{pars.atoms.size()}});
+	Array1D<PRISM_FLOAT_PRECISION> ID    = zeros_ND<1, PRISM_FLOAT_PRECISION>({{pars.atoms.size()}});
+	Array1D<PRISM_FLOAT_PRECISION> sigma = zeros_ND<1, PRISM_FLOAT_PRECISION>({{pars.atoms.size()}});
 
-		// populate arrays from the atoms structure
-		for (auto i = 0; i < pars.atoms.size(); ++i){
-			x[i]     = pars.atoms[i].x * pars.tiledCellDim[2];
-			y[i]     = pars.atoms[i].y * pars.tiledCellDim[1];
-			z[i]     = pars.atoms[i].z * pars.tiledCellDim[0];
-			ID[i]    = pars.atoms[i].species;
-			sigma[i] = pars.atoms[i].sigma;
-		}
+	// populate arrays from the atoms structure
+	for (auto i = 0; i < pars.atoms.size(); ++i){
+		x[i]     = pars.atoms[i].x * pars.tiledCellDim[2];
+		y[i]     = pars.atoms[i].y * pars.tiledCellDim[1];
+		z[i]     = pars.atoms[i].z * pars.tiledCellDim[0];
+		ID[i]    = pars.atoms[i].species;
+		sigma[i] = pars.atoms[i].sigma;
+	}
 
-		// compute the z-slice index for each atom
-		auto max_z = std::max_element(z.begin(), z.end());
-		Array1D<PRISM_FLOAT_PRECISION> zPlane(z);
-		std::transform(zPlane.begin(), zPlane.end(), zPlane.begin(), [&max_z, &pars](PRISM_FLOAT_PRECISION &t_z) {
-			return round((-t_z + *max_z) / pars.meta.sliceThickness + 0.5) - 1; // If the +0.5 was to make the first slice z=1 not 0, can drop the +0.5 and -1
-		});
-		max_z = std::max_element(zPlane.begin(), zPlane.end());
-		pars.numPlanes = *max_z + 1;
+	// compute the z-slice index for each atom
+	auto max_z = std::max_element(z.begin(), z.end());
+	Array1D<PRISM_FLOAT_PRECISION> zPlane(z);
+	std::transform(zPlane.begin(), zPlane.end(), zPlane.begin(), [&max_z, &pars](PRISM_FLOAT_PRECISION &t_z) {
+		return round((-t_z + *max_z) / pars.meta.sliceThickness + 0.5) - 1; // If the +0.5 was to make the first slice z=1 not 0, can drop the +0.5 and -1
+	});
+	max_z = std::max_element(zPlane.begin(), zPlane.end());
+	pars.numPlanes = *max_z + 1;
 	
 #ifdef PRISM_BUILDING_GUI
-		pars.progressbar->signalPotentialUpdate(0, pars.numPlanes);
+	pars.progressbar->signalPotentialUpdate(0, pars.numPlanes);
 #endif
 
 ~~~
@@ -517,73 +517,73 @@ As an aside, this `zeros_ND` function is essentially an implementation of MATLAB
 Now we make the `WorkDispatcher`, passing the lower and upper bounds of the work IDs into its constructor. The threads are then spawned and handed a lambda function defining the work loop. Each thread repeatedly calls `dispatcher.getWork`, which you'll recall from earlier returns true if a job was given. As long as work was provided, the thread will keep working, and once all the work is done the `WorkDispatcher` will begin returning false and the threads will finish. The main thread doesn't do any work -- it spawns the worker threads and then will wait at the line  `for (auto &t:workers)t.join();` until all the worker threads finish. The `join()` function is how you synchronize this multithreaded code. So the only parts that require synchronization are when each threads queries the `WorkDispatcher` and then when the main thread waits for the workers. The order in which the slices are worked on is nondeterministic. By the way, if you are wondering the cost of locking a mutex to hand out a work ID to each thread is completely negligible compared to how long it takes to do the work. The `WorkDispatcher` synchronization is effectively free.
 
 ~~~ c++
-		// create a key-value map to match the atomic Z numbers with their place in the potential lookup table
-		map<size_t, size_t> Z_lookup;
-		for (auto i = 0; i < unique_species.size(); ++i)Z_lookup[unique_species[i]] = i;
+	// create a key-value map to match the atomic Z numbers with their place in the potential lookup table
+	map<size_t, size_t> Z_lookup;
+	for (auto i = 0; i < unique_species.size(); ++i)Z_lookup[unique_species[i]] = i;
 
-		//loop over each plane, perturb the atomic positions, and place the corresponding potential at each location
-		// using parallel calculation of each individual slice
-		std::vector<std::thread> workers;
-		workers.reserve(pars.meta.NUM_THREADS);
+	//loop over each plane, perturb the atomic positions, and place the corresponding potential at each location
+	// using parallel calculation of each individual slice
+	std::vector<std::thread> workers;
+	workers.reserve(pars.meta.NUM_THREADS);
 
-		WorkDispatcher dispatcher(0, pars.numPlanes);
-		for (long t = 0; t < pars.meta.NUM_THREADS; ++t){
-			cout << "Launching thread #" << t << " to compute projected potential slices\n";
-			workers.push_back(thread([&pars, &x, &y, &z, &ID, &Z_lookup, &xvec, &sigma,
-											 &zPlane, &yvec,&potentialLookup, &dispatcher](){
-				// create a random number generator to simulate thermal effects
-				std::default_random_engine de(pars.meta.random_seed);
-				normal_distribution<PRISM_FLOAT_PRECISION> randn(0,1);
-				Array1D<long> xp;
-				Array1D<long> yp;
+	WorkDispatcher dispatcher(0, pars.numPlanes);
+	for (long t = 0; t < pars.meta.NUM_THREADS; ++t){
+		cout << "Launching thread #" << t << " to compute projected potential slices\n";
+		workers.push_back(thread([&pars, &x, &y, &z, &ID, &Z_lookup, &xvec, &sigma,
+										 &zPlane, &yvec,&potentialLookup, &dispatcher](){
+			// create a random number generator to simulate thermal effects
+			std::default_random_engine de(pars.meta.random_seed);
+			normal_distribution<PRISM_FLOAT_PRECISION> randn(0,1);
+			Array1D<long> xp;
+			Array1D<long> yp;
 
-				size_t currentBeam, stop;
-                currentBeam=stop=0;
-				while (dispatcher.getWork(currentBeam, stop)) { // synchronously get work assignment
-					Array2D<PRISM_FLOAT_PRECISION> projectedPotential = zeros_ND<2, PRISM_FLOAT_PRECISION>({{pars.imageSize[0], pars.imageSize[1]}});
-					while (currentBeam != stop) {
-						for (auto a2 = 0; a2 < x.size(); ++a2) {
-							if (zPlane[a2] == currentBeam) {
-								const long dim0 = (long) pars.imageSize[0];
-								const long dim1 = (long) pars.imageSize[1];
-								const size_t cur_Z = Z_lookup[ID[a2]];
-								PRISM_FLOAT_PRECISION X, Y;
-								if (pars.meta.include_thermal_effects) { // apply random perturbations
-									X = round((x[a2] + randn(de) * sigma[a2]) / pars.pixelSize[1]);
-									Y = round((y[a2] + randn(de) * sigma[a2]) / pars.pixelSize[0]);
-								} else {
-									X = round((x[a2]) / pars.pixelSize[1]); // this line uses no thermal factor
-									Y = round((y[a2]) / pars.pixelSize[0]); // this line uses no thermal factor
-								}
-								xp = xvec + (long) X;
-								for (auto &i:xp)i = (i % dim1 + dim1) % dim1; // make sure to get a positive value
+			size_t currentBeam, stop;
+            currentBeam=stop=0;
+			while (dispatcher.getWork(currentBeam, stop)) { // synchronously get work assignment
+				Array2D<PRISM_FLOAT_PRECISION> projectedPotential = zeros_ND<2, PRISM_FLOAT_PRECISION>({{pars.imageSize[0], pars.imageSize[1]}});
+				while (currentBeam != stop) {
+					for (auto a2 = 0; a2 < x.size(); ++a2) {
+						if (zPlane[a2] == currentBeam) {
+							const long dim0 = (long) pars.imageSize[0];
+							const long dim1 = (long) pars.imageSize[1];
+							const size_t cur_Z = Z_lookup[ID[a2]];
+							PRISM_FLOAT_PRECISION X, Y;
+							if (pars.meta.include_thermal_effects) { // apply random perturbations
+								X = round((x[a2] + randn(de) * sigma[a2]) / pars.pixelSize[1]);
+								Y = round((y[a2] + randn(de) * sigma[a2]) / pars.pixelSize[0]);
+							} else {
+								X = round((x[a2]) / pars.pixelSize[1]); // this line uses no thermal factor
+								Y = round((y[a2]) / pars.pixelSize[0]); // this line uses no thermal factor
+							}
+							xp = xvec + (long) X;
+							for (auto &i:xp)i = (i % dim1 + dim1) % dim1; // make sure to get a positive value
 
-								yp = yvec + (long) Y;
-								for (auto &i:yp) i = (i % dim0 + dim0) % dim0;// make sure to get a positive value
-								for (auto ii = 0; ii < xp.size(); ++ii) {
-									for (auto jj = 0; jj < yp.size(); ++jj) {
-										// fill in value with lookup table
-										projectedPotential.at(yp[jj], xp[ii]) += potentialLookup.at(cur_Z, jj, ii);
-									}
+							yp = yvec + (long) Y;
+							for (auto &i:yp) i = (i % dim0 + dim0) % dim0;// make sure to get a positive value
+							for (auto ii = 0; ii < xp.size(); ++ii) {
+								for (auto jj = 0; jj < yp.size(); ++jj) {
+									// fill in value with lookup table
+									projectedPotential.at(yp[jj], xp[ii]) += potentialLookup.at(cur_Z, jj, ii);
 								}
 							}
 						}
-						// copy the result to the full array
-						copy(projectedPotential.begin(), projectedPotential.end(),&pars.pot.at(currentBeam,0,0));
-#ifdef PRISM_BUILDING_GUI
-                        pars.progressbar->signalPotentialUpdate(currentBeam, pars.numPlanes);
-#endif //PRISM_BUILDING_GUI
-						++currentBeam;
 					}
-				}
-			}));
-		}
-		cout << "Waiting for threads...\n";
-		for (auto &t:workers)t.join();
+					// copy the result to the full array
+					copy(projectedPotential.begin(), projectedPotential.end(),&pars.pot.at(currentBeam,0,0));
 #ifdef PRISM_BUILDING_GUI
-		pars.progressbar->setProgress(100);
+                    pars.progressbar->signalPotentialUpdate(currentBeam, pars.numPlanes);
 #endif //PRISM_BUILDING_GUI
-	};
+					++currentBeam;
+				}
+			}
+		}));
+	}
+	cout << "Waiting for threads...\n";
+	for (auto &t:workers)t.join();
+#ifdef PRISM_BUILDING_GUI
+	pars.progressbar->setProgress(100);
+#endif //PRISM_BUILDING_GUI
+};
 ~~~
 
 ### Compute Compact S-Matrix
@@ -591,28 +591,28 @@ Now we make the `WorkDispatcher`, passing the lower and upper bounds of the work
 The calculation of the compact S-Matrix is very similar to multislcie. To break things up, the various steps are broken up into subfunctions.
 
 ~~~c++
-	void PRISM02_calcSMatrix(Parameters<PRISM_FLOAT_PRECISION> &pars) {
-		// propagate plane waves to construct compact S-matrix
+void PRISM02_calcSMatrix(Parameters<PRISM_FLOAT_PRECISION> &pars) {
+	// propagate plane waves to construct compact S-matrix
 
-		cout << "Entering PRISM02_calcSMatrix" << endl;
+	cout << "Entering PRISM02_calcSMatrix" << endl;
 
-		// setup some coordinates
-		setupCoordinates(pars);
+	// setup some coordinates
+	setupCoordinates(pars);
 
-		// setup the beams and their indices
-		setupBeams(pars);
+	// setup the beams and their indices
+	setupBeams(pars);
 
-		// setup coordinates for nonzero values of compact S-matrix
-		setupSMatrixCoordinates(pars);
+	// setup coordinates for nonzero values of compact S-matrix
+	setupSMatrixCoordinates(pars);
 
-		cout << "Computing compact S matrix" << endl;
+	cout << "Computing compact S matrix" << endl;
 
-		// populate compact S-matrix
-		fill_Scompact(pars);
+	// populate compact S-matrix
+	fill_Scompact(pars);
 
-		// only keep the relevant/nonzero Fourier components
-		downsampleFourierComponents(pars);
-	}
+	// only keep the relevant/nonzero Fourier components
+	downsampleFourierComponents(pars);
+}
 ~~~
 
 `setupCoordinates`, `setupBeams`, and `setupSMatrixCoordinates` are not particularly interesting for the purpose of this document -- they just are allocating some arrays and figuring out which plane waves need to be computed for the given simulation settings. The important function is `fill_Scompact`, which is the first place we may encounter GPU code and is instance of a function pointer that is set by `PRISM::configure` (in this case, it is set to either point to a CPU or CPU+GPU implementation to calculate the S-Matrix).
@@ -625,40 +625,40 @@ There is a `CudaParameters` for the same reasons as the `Parameters` class exist
 void fill_Scompact_GPU_streaming(Parameters <PRISM_FLOAT_PRECISION> &pars) {
 
 #ifdef PRISM_BUILDING_GUI
-		pars.progressbar->signalDescriptionMessage("Computing compact S-matrix");
-		pars.progressbar->signalScompactUpdate(-1, pars.numberBeams);
+	pars.progressbar->signalDescriptionMessage("Computing compact S-matrix");
+	pars.progressbar->signalScompactUpdate(-1, pars.numberBeams);
 #endif
-		// This version streams each slice of the transmission matrix, which is less efficient but can tolerate very large arrays
-		//initialize data
-		CudaParameters<PRISM_FLOAT_PRECISION> cuda_pars;
+	// This version streams each slice of the transmission matrix, which is less efficient but can tolerate very large arrays
+	//initialize data
+	CudaParameters<PRISM_FLOAT_PRECISION> cuda_pars;
 
-		// determine the batch size to use
-		pars.meta.batch_size_GPU = min(pars.meta.batch_size_target_GPU, max((size_t)1, pars.numberBeams / max((size_t)1,(pars.meta.NUM_STREAMS_PER_GPU*pars.meta.NUM_GPUS))));
+	// determine the batch size to use
+	pars.meta.batch_size_GPU = min(pars.meta.batch_size_target_GPU, max((size_t)1, pars.numberBeams / max((size_t)1,(pars.meta.NUM_STREAMS_PER_GPU*pars.meta.NUM_GPUS))));
 
-		// setup some arrays
-		setupArrays2(pars);
+	// setup some arrays
+	setupArrays2(pars);
 
-		// create CUDA streams and cuFFT plans
-		createStreamsAndPlans2(pars, cuda_pars);
+	// create CUDA streams and cuFFT plans
+	createStreamsAndPlans2(pars, cuda_pars);
 
-		// create page-locked (pinned) host memory buffers
-		allocatePinnedHostMemory_streaming2(pars, cuda_pars);
+	// create page-locked (pinned) host memory buffers
+	allocatePinnedHostMemory_streaming2(pars, cuda_pars);
 
-		// copy to pinned memory
-		copyToPinnedMemory_streaming2(pars, cuda_pars);
+	// copy to pinned memory
+	copyToPinnedMemory_streaming2(pars, cuda_pars);
 
-		// allocate memory on the GPUs
-		allocateDeviceMemory_streaming2(pars, cuda_pars);
+	// allocate memory on the GPUs
+	allocateDeviceMemory_streaming2(pars, cuda_pars);
 
-		// copy to GPUs
-		copyToDeviceMemory_streaming2(pars, cuda_pars);
+	// copy to GPUs
+	copyToDeviceMemory_streaming2(pars, cuda_pars);
 
-		// launch workers
-		launchWorkers_streaming(pars, cuda_pars);
+	// launch workers
+	launchWorkers_streaming(pars, cuda_pars);
 
-		// free memory on the host/device
-		cleanupMemory2(pars, cuda_pars);
-	}
+	// free memory on the host/device
+	cleanupMemory2(pars, cuda_pars);
+}
 ~~~
 
 The batch size correction is to avoid a scenario where the batch size is too big for the number of streams and GPUs being used. Remember, the batch size represents a number of plane waves that will be propagated simultaneously using batch FFTs. If the batch size is large enough that one of the streams isn't going to receive any work, then that will most likely hurt performance more than any benefit from batching, so this line is to check for that. Now for each of the helper functions
@@ -666,60 +666,60 @@ The batch size correction is to avoid a scenario where the batch size is too big
 `setupArrays2`: build the transmission function by exponentiating the potential with the scale factor `sigma` and initialize the compact S-matrix.
 
 ~~~c++
-	inline void setupArrays2(Parameters<PRISM_FLOAT_PRECISION>& pars){
+inline void setupArrays2(Parameters<PRISM_FLOAT_PRECISION>& pars){
 
-		// setup some needed arrays
-		const PRISM_FLOAT_PRECISION pi = acos(-1);
-		const std::complex<PRISM_FLOAT_PRECISION> i(0, 1);
-		pars.Scompact = zeros_ND<3, complex<PRISM_FLOAT_PRECISION> >(
-				{{pars.numberBeams, pars.imageSize[0] / 2, pars.imageSize[1] / 2}});
-		pars.transmission = zeros_ND<3, complex<PRISM_FLOAT_PRECISION> >(
-				{{pars.pot.get_dimk(), pars.pot.get_dimj(), pars.pot.get_dimi()}});
-		{
-			auto p = pars.pot.begin();
-			for (auto &j:pars.transmission)j = exp(i * pars.sigma * (*p++));
-		}
+	// setup some needed arrays
+	const PRISM_FLOAT_PRECISION pi = acos(-1);
+	const std::complex<PRISM_FLOAT_PRECISION> i(0, 1);
+	pars.Scompact = zeros_ND<3, complex<PRISM_FLOAT_PRECISION> >(
+			{{pars.numberBeams, pars.imageSize[0] / 2, pars.imageSize[1] / 2}});
+	pars.transmission = zeros_ND<3, complex<PRISM_FLOAT_PRECISION> >(
+			{{pars.pot.get_dimk(), pars.pot.get_dimj(), pars.pot.get_dimi()}});
+	{
+		auto p = pars.pot.begin();
+		for (auto &j:pars.transmission)j = exp(i * pars.sigma * (*p++));
 	}
+}
 ~~~
 
 `createStreamsAndPlans2`: create/initialize the CUDA streams and setup the cuFFT plans. There are two cuFFT plans: one that is for the FFT/IFFT as the plane wave(s) are propagated/transmitted through the sample, and then a "small" cuFFT plan for calculating the final FFT after the output wave has been subsetted. We set the relevant device with `cudaSetDevice` and then use `cudaStreamCreate` to initialize the CUDA stream. `cufftSetStream` is used to associate the cuFFT plan with the appropriate stream.
 
 ~~~c++
-	inline void createStreamsAndPlans2(Parameters<PRISM_FLOAT_PRECISION> &pars,
-	                                  CudaParameters<PRISM_FLOAT_PRECISION> &cuda_pars){
-		// create CUDA streams
-		const int total_num_streams = pars.meta.NUM_GPUS * pars.meta.NUM_STREAMS_PER_GPU;
-		cuda_pars.streams 		    = new cudaStream_t[total_num_streams];
-		cuda_pars.cufft_plans		= new cufftHandle[total_num_streams];
-		cuda_pars.cufft_plans_small = new cufftHandle[total_num_streams];
+inline void createStreamsAndPlans2(Parameters<PRISM_FLOAT_PRECISION> &pars,
+                                  CudaParameters<PRISM_FLOAT_PRECISION> &cuda_pars){
+	// create CUDA streams
+	const int total_num_streams = pars.meta.NUM_GPUS * pars.meta.NUM_STREAMS_PER_GPU;
+	cuda_pars.streams 		    = new cudaStream_t[total_num_streams];
+	cuda_pars.cufft_plans		= new cufftHandle[total_num_streams];
+	cuda_pars.cufft_plans_small = new cufftHandle[total_num_streams];
 
-		// batch parameters for cuFFT
-		const int rank      = 2;
-		int n[]             = {(int)pars.imageSize[0], (int)pars.imageSize[1]};
-		const int howmany   = pars.meta.batch_size_GPU;
-		int idist           = n[0]*n[1];
-		int odist           = n[0]*n[1];
-		int istride         = 1;
-		int ostride         = 1;
-		int *inembed        = n;
-		int *onembed        = n;
+	// batch parameters for cuFFT
+	const int rank      = 2;
+	int n[]             = {(int)pars.imageSize[0], (int)pars.imageSize[1]};
+	const int howmany   = pars.meta.batch_size_GPU;
+	int idist           = n[0]*n[1];
+	int odist           = n[0]*n[1];
+	int istride         = 1;
+	int ostride         = 1;
+	int *inembed        = n;
+	int *onembed        = n;
 
-		int n_small[]       = {(int)pars.qyInd.size(), (int)pars.qxInd.size()};
-		int idist_small     = n_small[0]*n_small[1];
-		int odist_small     = n_small[0]*n_small[1];
-		int *inembed_small  = n_small;
-		int *onembed_small  = n_small;
+	int n_small[]       = {(int)pars.qyInd.size(), (int)pars.qxInd.size()};
+	int idist_small     = n_small[0]*n_small[1];
+	int odist_small     = n_small[0]*n_small[1];
+	int *inembed_small  = n_small;
+	int *onembed_small  = n_small;
 
-		// create cuFFT plans and CUDA streams
-		for (auto j = 0; j < total_num_streams; ++j) {
-			cudaSetDevice(j % pars.meta.NUM_GPUS);
-			cudaErrchk(cudaStreamCreate(&cuda_pars.streams[j]));
-			cufftErrchk(cufftPlanMany(&cuda_pars.cufft_plans[j], rank, n, inembed, istride, idist, onembed, ostride, odist, PRISM_CUFFT_PLAN_TYPE, howmany));
-			cufftErrchk(cufftPlanMany(&cuda_pars.cufft_plans_small[j], rank, n_small, inembed_small, istride, idist_small, onembed_small, ostride, odist_small, PRISM_CUFFT_PLAN_TYPE, howmany));
-			cufftErrchk(cufftSetStream(cuda_pars.cufft_plans[j], cuda_pars.streams[j]));
-			cufftErrchk(cufftSetStream(cuda_pars.cufft_plans_small[j], cuda_pars.streams[j]));
-		}
+	// create cuFFT plans and CUDA streams
+	for (auto j = 0; j < total_num_streams; ++j) {
+		cudaSetDevice(j % pars.meta.NUM_GPUS);
+		cudaErrchk(cudaStreamCreate(&cuda_pars.streams[j]));
+		cufftErrchk(cufftPlanMany(&cuda_pars.cufft_plans[j], rank, n, inembed, istride, idist, onembed, ostride, odist, PRISM_CUFFT_PLAN_TYPE, howmany));
+		cufftErrchk(cufftPlanMany(&cuda_pars.cufft_plans_small[j], rank, n_small, inembed_small, istride, idist_small, onembed_small, ostride, odist_small, PRISM_CUFFT_PLAN_TYPE, howmany));
+		cufftErrchk(cufftSetStream(cuda_pars.cufft_plans[j], cuda_pars.streams[j]));
+		cufftErrchk(cufftSetStream(cuda_pars.cufft_plans_small[j], cuda_pars.streams[j]));
 	}
+}
 ~~~
 
 `allocatePinnedHostMemory_streaming2`: To copy data from the host to the device asynchronously, the source data must be in page-locked memory. Here we allocate such arrays using `cudaMallocHost`
@@ -863,48 +863,48 @@ The batch size correction is to avoid a scenario where the batch size is too big
 
 ~~~c++
 void launchWorkers_streaming(Parameters<PRISM_FLOAT_PRECISION> &pars,
-	                                    CudaParameters<PRISM_FLOAT_PRECISION> &cuda_pars){
+                                    CudaParameters<PRISM_FLOAT_PRECISION> &cuda_pars){
 
-		 // launch workers
-		const int total_num_streams = pars.meta.NUM_GPUS * pars.meta.NUM_STREAMS_PER_GPU;
+	 // launch workers
+	const int total_num_streams = pars.meta.NUM_GPUS * pars.meta.NUM_STREAMS_PER_GPU;
 
-		// launch GPU work
-		vector<thread> workers_GPU;
-		workers_GPU.reserve(total_num_streams); // prevents multiple reallocations
-		int stream_count = 0;
-		const size_t PRISM_PRINT_FREQUENCY_BEAMS = max((size_t)1,pars.numberBeams / 10); // for printing status
-		WorkDispatcher dispatcher(0, pars.numberBeams); // create work dispatcher
-		for (auto t = 0; t < total_num_streams; ++t) {
-			int GPU_num = stream_count % pars.meta.NUM_GPUS; // determine which GPU handles this job
-			cudaSetDevice(GPU_num);
-			cudaStream_t &current_stream = cuda_pars.streams[stream_count];
-			// get pointers to the pre-copied arrays, making sure to get those on the current GPU
-			PRISM_CUDA_COMPLEX_FLOAT *current_prop_d = cuda_pars.prop_d[GPU_num];
-			size_t *current_qxInd_d                  = cuda_pars.qxInd_d[GPU_num];
-			size_t *current_qyInd_d                  = cuda_pars.qyInd_d[GPU_num];
-			size_t *current_beamsIndex               = cuda_pars.beamsIndex_d[GPU_num];
+	// launch GPU work
+	vector<thread> workers_GPU;
+	workers_GPU.reserve(total_num_streams); // prevents multiple reallocations
+	int stream_count = 0;
+	const size_t PRISM_PRINT_FREQUENCY_BEAMS = max((size_t)1,pars.numberBeams / 10); // for printing status
+	WorkDispatcher dispatcher(0, pars.numberBeams); // create work dispatcher
+	for (auto t = 0; t < total_num_streams; ++t) {
+		int GPU_num = stream_count % pars.meta.NUM_GPUS; // determine which GPU handles this job
+		cudaSetDevice(GPU_num);
+		cudaStream_t &current_stream = cuda_pars.streams[stream_count];
+		// get pointers to the pre-copied arrays, making sure to get those on the current GPU
+		PRISM_CUDA_COMPLEX_FLOAT *current_prop_d = cuda_pars.prop_d[GPU_num];
+		size_t *current_qxInd_d                  = cuda_pars.qxInd_d[GPU_num];
+		size_t *current_qyInd_d                  = cuda_pars.qyInd_d[GPU_num];
+		size_t *current_beamsIndex               = cuda_pars.beamsIndex_d[GPU_num];
 
-			// get pointers to per-stream arrays
-			PRISM_CUDA_COMPLEX_FLOAT *current_trans_ds         = cuda_pars.trans_d[stream_count];
-			PRISM_CUDA_COMPLEX_FLOAT *current_psi_ds           = cuda_pars.psi_ds[stream_count];
-			PRISM_CUDA_COMPLEX_FLOAT *current_psi_small_ds     = cuda_pars.psi_small_ds[stream_count];
-			cufftHandle &current_cufft_plan                    = cuda_pars.cufft_plans[stream_count];
-			cufftHandle &current_cufft_plan_small              = cuda_pars.cufft_plans_small[stream_count];
-			complex<PRISM_FLOAT_PRECISION> *current_S_slice_ph = cuda_pars.Scompact_slice_ph[stream_count];
+		// get pointers to per-stream arrays
+		PRISM_CUDA_COMPLEX_FLOAT *current_trans_ds         = cuda_pars.trans_d[stream_count];
+		PRISM_CUDA_COMPLEX_FLOAT *current_psi_ds           = cuda_pars.psi_ds[stream_count];
+		PRISM_CUDA_COMPLEX_FLOAT *current_psi_small_ds     = cuda_pars.psi_small_ds[stream_count];
+		cufftHandle &current_cufft_plan                    = cuda_pars.cufft_plans[stream_count];
+		cufftHandle &current_cufft_plan_small              = cuda_pars.cufft_plans_small[stream_count];
+		complex<PRISM_FLOAT_PRECISION> *current_S_slice_ph = cuda_pars.Scompact_slice_ph[stream_count];
 
-			workers_GPU.push_back(thread([&pars, current_trans_ds, current_prop_d, current_qxInd_d, current_qyInd_d, &dispatcher,
-					                             current_psi_ds, current_psi_small_ds, &current_cufft_plan, &current_cufft_plan_small,
-					                             current_S_slice_ph, current_beamsIndex, GPU_num, stream_count, &current_stream, &PRISM_PRINT_FREQUENCY_BEAMS, &cuda_pars]() {
-				cudaErrchk(cudaSetDevice(GPU_num));
+		workers_GPU.push_back(thread([&pars, current_trans_ds, current_prop_d, current_qxInd_d, current_qyInd_d, &dispatcher,
+				                             current_psi_ds, current_psi_small_ds, &current_cufft_plan, &current_cufft_plan_small,
+				                             current_S_slice_ph, current_beamsIndex, GPU_num, stream_count, &current_stream, &PRISM_PRINT_FREQUENCY_BEAMS, &cuda_pars]() {
+			cudaErrchk(cudaSetDevice(GPU_num));
 
-				// main work loop
-				size_t currentBeam, stopBeam;
-				currentBeam=stopBeam=0;
-				while (dispatcher.getWork(currentBeam, stopBeam, pars.meta.batch_size_GPU)) { // get a batch of work
-					while (currentBeam < stopBeam) {
-						if (currentBeam % PRISM_PRINT_FREQUENCY_BEAMS < pars.meta.batch_size_GPU | currentBeam == 100){
-							cout << "Computing Plane Wave #" << currentBeam << "/" << pars.numberBeams << endl;
-						}
+			// main work loop
+			size_t currentBeam, stopBeam;
+			currentBeam=stopBeam=0;
+			while (dispatcher.getWork(currentBeam, stopBeam, pars.meta.batch_size_GPU)) { // get a batch of work
+				while (currentBeam < stopBeam) {
+					if (currentBeam % PRISM_PRINT_FREQUENCY_BEAMS < pars.meta.batch_size_GPU | currentBeam == 100){
+						cout << "Computing Plane Wave #" << currentBeam << "/" << pars.numberBeams << endl;
+					}
 //						propagatePlaneWave_GPU_streaming(pars,
 //						                                 current_trans_ds,
 //						                                 trans_ph,
@@ -919,120 +919,120 @@ void launchWorkers_streaming(Parameters<PRISM_FLOAT_PRECISION> &pars,
 //						                                 current_cufft_plan,
 //						                                 current_cufft_plan_small,
 //						                                 current_stream);
-						propagatePlaneWave_GPU_streaming_batch(pars,
-						                                       current_trans_ds,
-						                                       cuda_pars.trans_ph,
-						                                       current_psi_ds,
-						                                       current_psi_small_ds,
-						                                       current_S_slice_ph,
-						                                       current_qyInd_d,
-						                                       current_qxInd_d,
-						                                       current_prop_d,
-						                                       current_beamsIndex,
-						                                       currentBeam,
-						                                       stopBeam,
-						                                       current_cufft_plan,
-						                                       current_cufft_plan_small,
-						                                       current_stream);
+					propagatePlaneWave_GPU_streaming_batch(pars,
+					                                       current_trans_ds,
+					                                       cuda_pars.trans_ph,
+					                                       current_psi_ds,
+					                                       current_psi_small_ds,
+					                                       current_S_slice_ph,
+					                                       current_qyInd_d,
+					                                       current_qxInd_d,
+					                                       current_prop_d,
+					                                       current_beamsIndex,
+					                                       currentBeam,
+					                                       stopBeam,
+					                                       current_cufft_plan,
+					                                       current_cufft_plan_small,
+					                                       current_stream);
 //						++currentBeam;
-						currentBeam=stopBeam;
+					currentBeam=stopBeam;
 #ifdef PRISM_BUILDING_GUI
-						pars.progressbar->signalScompactUpdate(currentBeam, pars.numberBeams);
+					pars.progressbar->signalScompactUpdate(currentBeam, pars.numberBeams);
 #endif
-					}
 				}
-				cout << "GPU worker on stream #" << stream_count << " of GPU #" << GPU_num << " finished\n";
-			}));
-			++stream_count;
-		}
-
-		if (pars.meta.also_do_CPU_work){
-
-			// launch CPU work
-			vector<thread> workers_CPU;
-			workers_CPU.reserve(pars.meta.NUM_THREADS); // prevents multiple reallocations
-			mutex fftw_plan_lock;
-			pars.meta.batch_size_CPU = min(pars.meta.batch_size_target_CPU, max((size_t)1, pars.numberBeams / pars.meta.NUM_THREADS));
-
-			// startup FFTW threads
-			PRISM_FFTW_INIT_THREADS();
-			PRISM_FFTW_PLAN_WITH_NTHREADS(pars.meta.NUM_THREADS);
-			for (auto t = 0; t < pars.meta.NUM_THREADS; ++t) {
-				cout << "Launching thread #" << t << " to compute beams\n";
-				workers_CPU.push_back(thread([&pars, &fftw_plan_lock, &dispatcher, &PRISM_PRINT_FREQUENCY_BEAMS]() {
-
-					size_t currentBeam, stopBeam, early_CPU_stop;
-					currentBeam=stopBeam=0;
-					if (pars.meta.NUM_GPUS > 0){
-						// if there are no GPUs, make sure to do all work on CPU
-						early_CPU_stop = (size_t)std::max((PRISM_FLOAT_PRECISION)0.0,pars.numberBeams - pars.meta.gpu_cpu_ratio*pars.meta.batch_size_CPU);
-					} else {
-						early_CPU_stop = pars.numberBeams;
-					}
-
-					if (dispatcher.getWork(currentBeam, stopBeam, pars.meta.batch_size_CPU, early_CPU_stop)) {
-						// allocate array for psi just once per thread
-						Array1D<complex<PRISM_FLOAT_PRECISION> > psi_stack = zeros_ND<1, complex<PRISM_FLOAT_PRECISION> >(
-								{{pars.imageSize[0]*pars.imageSize[1]*pars.meta.batch_size_CPU}});
-
-						// setup batch FFTW parameters
-						const int rank    = 2;
-						int n[]           = {(int)pars.imageSize[0], (int)pars.imageSize[1]};
-						const int howmany = pars.meta.batch_size_CPU;
-						int idist         = n[0]*n[1];
-						int odist         = n[0]*n[1];
-						int istride       = 1;
-						int ostride       = 1;
-						int *inembed      = n;
-						int *onembed      = n;
-
-						// create FFTW plans
-						unique_lock<mutex> gatekeeper(fftw_plan_lock);
-						PRISM_FFTW_PLAN plan_forward = PRISM_FFTW_PLAN_DFT_BATCH(rank, n, howmany,
-						                                                         reinterpret_cast<PRISM_FFTW_COMPLEX *>(&psi_stack[0]), inembed,
-						                                                         istride, idist,
-						                                                         reinterpret_cast<PRISM_FFTW_COMPLEX *>(&psi_stack[0]), onembed,
-						                                                         ostride, odist,
-						                                                         FFTW_FORWARD, FFTW_MEASURE);
-						PRISM_FFTW_PLAN plan_inverse = PRISM_FFTW_PLAN_DFT_BATCH(rank, n, howmany,
-						                                                         reinterpret_cast<PRISM_FFTW_COMPLEX *>(&psi_stack[0]), inembed,
-						                                                         istride, idist,
-						                                                         reinterpret_cast<PRISM_FFTW_COMPLEX *>(&psi_stack[0]), onembed,
-						                                                         ostride, odist,
-						                                                         FFTW_BACKWARD, FFTW_MEASURE);
-						gatekeeper.unlock(); // unlock it so we only block as long as necessary to deal with plans
-
-						// main work loop
-						do { // synchronously get work assignment
-							while (currentBeam < stopBeam) {
-								if (currentBeam % PRISM_PRINT_FREQUENCY_BEAMS < pars.meta.batch_size_CPU | currentBeam == 100){
-									cout << "Computing Plane Wave #" << currentBeam << "/" << pars.numberBeams << endl;
-								}
-								// re-zero psi each iteration
-								memset((void *) &psi_stack[0], 0, psi_stack.size() * sizeof(complex<PRISM_FLOAT_PRECISION>));
-//								propagatePlaneWave_CPU(pars, currentBeam, psi, plan_forward, plan_inverse, fftw_plan_lock);
-								propagatePlaneWave_CPU_batch(pars, currentBeam, stopBeam, psi_stack, plan_forward, plan_inverse, fftw_plan_lock);
-#ifdef PRISM_BUILDING_GUI
-								pars.progressbar->signalScompactUpdate(currentBeam, pars.numberBeams);
-#endif
-								currentBeam = stopBeam;
-//								++currentBeam;
-							}
-							if (currentBeam >= early_CPU_stop) break;
-						} while (dispatcher.getWork(currentBeam, stopBeam, pars.meta.batch_size_CPU, early_CPU_stop));
-						// clean up
-						gatekeeper.lock();
-						PRISM_FFTW_DESTROY_PLAN(plan_forward);
-						PRISM_FFTW_DESTROY_PLAN(plan_inverse);
-						gatekeeper.unlock();
-					}
-				}));
 			}
-			for (auto &t:workers_CPU)t.join();
-			PRISM_FFTW_CLEANUP_THREADS();
-		}
-		for (auto &t:workers_GPU)t.join();
+			cout << "GPU worker on stream #" << stream_count << " of GPU #" << GPU_num << " finished\n";
+		}));
+		++stream_count;
 	}
+
+	if (pars.meta.also_do_CPU_work){
+
+		// launch CPU work
+		vector<thread> workers_CPU;
+		workers_CPU.reserve(pars.meta.NUM_THREADS); // prevents multiple reallocations
+		mutex fftw_plan_lock;
+		pars.meta.batch_size_CPU = min(pars.meta.batch_size_target_CPU, max((size_t)1, pars.numberBeams / pars.meta.NUM_THREADS));
+
+		// startup FFTW threads
+		PRISM_FFTW_INIT_THREADS();
+		PRISM_FFTW_PLAN_WITH_NTHREADS(pars.meta.NUM_THREADS);
+		for (auto t = 0; t < pars.meta.NUM_THREADS; ++t) {
+			cout << "Launching thread #" << t << " to compute beams\n";
+			workers_CPU.push_back(thread([&pars, &fftw_plan_lock, &dispatcher, &PRISM_PRINT_FREQUENCY_BEAMS]() {
+
+				size_t currentBeam, stopBeam, early_CPU_stop;
+				currentBeam=stopBeam=0;
+				if (pars.meta.NUM_GPUS > 0){
+					// if there are no GPUs, make sure to do all work on CPU
+					early_CPU_stop = (size_t)std::max((PRISM_FLOAT_PRECISION)0.0,pars.numberBeams - pars.meta.gpu_cpu_ratio*pars.meta.batch_size_CPU);
+				} else {
+					early_CPU_stop = pars.numberBeams;
+				}
+
+				if (dispatcher.getWork(currentBeam, stopBeam, pars.meta.batch_size_CPU, early_CPU_stop)) {
+					// allocate array for psi just once per thread
+					Array1D<complex<PRISM_FLOAT_PRECISION> > psi_stack = zeros_ND<1, complex<PRISM_FLOAT_PRECISION> >(
+							{{pars.imageSize[0]*pars.imageSize[1]*pars.meta.batch_size_CPU}});
+
+					// setup batch FFTW parameters
+					const int rank    = 2;
+					int n[]           = {(int)pars.imageSize[0], (int)pars.imageSize[1]};
+					const int howmany = pars.meta.batch_size_CPU;
+					int idist         = n[0]*n[1];
+					int odist         = n[0]*n[1];
+					int istride       = 1;
+					int ostride       = 1;
+					int *inembed      = n;
+					int *onembed      = n;
+
+					// create FFTW plans
+					unique_lock<mutex> gatekeeper(fftw_plan_lock);
+					PRISM_FFTW_PLAN plan_forward = PRISM_FFTW_PLAN_DFT_BATCH(rank, n, howmany,
+					                                                         reinterpret_cast<PRISM_FFTW_COMPLEX *>(&psi_stack[0]), inembed,
+					                                                         istride, idist,
+					                                                         reinterpret_cast<PRISM_FFTW_COMPLEX *>(&psi_stack[0]), onembed,
+					                                                         ostride, odist,
+					                                                         FFTW_FORWARD, FFTW_MEASURE);
+					PRISM_FFTW_PLAN plan_inverse = PRISM_FFTW_PLAN_DFT_BATCH(rank, n, howmany,
+					                                                         reinterpret_cast<PRISM_FFTW_COMPLEX *>(&psi_stack[0]), inembed,
+					                                                         istride, idist,
+					                                                         reinterpret_cast<PRISM_FFTW_COMPLEX *>(&psi_stack[0]), onembed,
+					                                                         ostride, odist,
+					                                                         FFTW_BACKWARD, FFTW_MEASURE);
+					gatekeeper.unlock(); // unlock it so we only block as long as necessary to deal with plans
+
+					// main work loop
+					do { // synchronously get work assignment
+						while (currentBeam < stopBeam) {
+							if (currentBeam % PRISM_PRINT_FREQUENCY_BEAMS < pars.meta.batch_size_CPU | currentBeam == 100){
+								cout << "Computing Plane Wave #" << currentBeam << "/" << pars.numberBeams << endl;
+							}
+							// re-zero psi each iteration
+							memset((void *) &psi_stack[0], 0, psi_stack.size() * sizeof(complex<PRISM_FLOAT_PRECISION>));
+//								propagatePlaneWave_CPU(pars, currentBeam, psi, plan_forward, plan_inverse, fftw_plan_lock);
+							propagatePlaneWave_CPU_batch(pars, currentBeam, stopBeam, psi_stack, plan_forward, plan_inverse, fftw_plan_lock);
+#ifdef PRISM_BUILDING_GUI
+							pars.progressbar->signalScompactUpdate(currentBeam, pars.numberBeams);
+#endif
+							currentBeam = stopBeam;
+//								++currentBeam;
+						}
+						if (currentBeam >= early_CPU_stop) break;
+					} while (dispatcher.getWork(currentBeam, stopBeam, pars.meta.batch_size_CPU, early_CPU_stop));
+					// clean up
+					gatekeeper.lock();
+					PRISM_FFTW_DESTROY_PLAN(plan_forward);
+					PRISM_FFTW_DESTROY_PLAN(plan_inverse);
+					gatekeeper.unlock();
+				}
+			}));
+		}
+		for (auto &t:workers_CPU)t.join();
+		PRISM_FFTW_CLEANUP_THREADS();
+	}
+	for (auto &t:workers_GPU)t.join();
+}
 ~~~
 
 The main function within the worker threads is `propagatePlaneWave_GPU_streaming_batch`, which contains our first kernel invocation, which are the function calls with the "<<< >>>" syntax. We'll look at the details of the CUDA kernel in a second, but conceptually this function is doing the same thing as a multislice simulation: alternatingly FFT/IFFT the current wave function and multiply it element-wise with either the transmission or propagation function. There is also a division by the array size to account for the overall scaling factor applied when taking a forward/backward FFT (cuFFT is unnormalized).
@@ -1040,66 +1040,66 @@ The main function within the worker threads is `propagatePlaneWave_GPU_streaming
 `propagatePlaneWave_GPU_streaming_batch`:
 
 ~~~ c++
-	void propagatePlaneWave_GPU_streaming_batch(Parameters<PRISM_FLOAT_PRECISION> &pars,
-	                                            PRISM_CUDA_COMPLEX_FLOAT* trans_d,
-	                                            const std::complex<PRISM_FLOAT_PRECISION> *trans_ph,
-	                                            PRISM_CUDA_COMPLEX_FLOAT* psi_d,
-	                                            PRISM_CUDA_COMPLEX_FLOAT* psi_small_d,
-	                                            complex<PRISM_FLOAT_PRECISION>* Scompact_slice_ph,
-	                                            const size_t* qyInd_d,
-	                                            const size_t* qxInd_d,
-	                                            const PRISM_CUDA_COMPLEX_FLOAT* prop_d,
-	                                            const size_t* beamsIndex,
-	                                            const size_t beamNumber,
-	                                            const size_t stopBeam,
-	                                            const cufftHandle& plan,
-	                                            const cufftHandle& plan_small,
-	                                            cudaStream_t& stream){
-		// In this version, each slice of the transmission matrix is streamed to the device
+void propagatePlaneWave_GPU_streaming_batch(Parameters<PRISM_FLOAT_PRECISION> &pars,
+                                            PRISM_CUDA_COMPLEX_FLOAT* trans_d,
+                                            const std::complex<PRISM_FLOAT_PRECISION> *trans_ph,
+                                            PRISM_CUDA_COMPLEX_FLOAT* psi_d,
+                                            PRISM_CUDA_COMPLEX_FLOAT* psi_small_d,
+                                            complex<PRISM_FLOAT_PRECISION>* Scompact_slice_ph,
+                                            const size_t* qyInd_d,
+                                            const size_t* qxInd_d,
+                                            const PRISM_CUDA_COMPLEX_FLOAT* prop_d,
+                                            const size_t* beamsIndex,
+                                            const size_t beamNumber,
+                                            const size_t stopBeam,
+                                            const cufftHandle& plan,
+                                            const cufftHandle& plan_small,
+                                            cudaStream_t& stream){
+	// In this version, each slice of the transmission matrix is streamed to the device
 
-		const size_t psi_size        = pars.imageSize[0] * pars.imageSize[1];
-		const size_t psi_small_size = pars.qxInd.size() * pars.qyInd.size();
-		for (auto batch_idx = 0; batch_idx < (stopBeam-beamNumber); ++batch_idx) {
-			// initialize psi -- for PRISM this is just a delta function in Fourier space located depending on which plane wave it is
-			initializePsi_oneNonzero<<< (psi_size - 1) / BLOCK_SIZE1D + 1, BLOCK_SIZE1D, 0, stream>>>(psi_d + batch_idx*psi_size, psi_size, pars.beamsIndex[beamNumber + batch_idx]);
-		}
-
-		for (auto planeNum = 0; planeNum < pars.numPlanes ; ++planeNum) {
-			cudaErrchk(cudaMemcpyAsync(trans_d, &trans_ph[planeNum*psi_size], psi_size * sizeof(PRISM_CUDA_COMPLEX_FLOAT), cudaMemcpyHostToDevice, stream));
-			cufftErrchk(PRISM_CUFFT_EXECUTE(plan, &psi_d[0], &psi_d[0], CUFFT_INVERSE));
-			for (auto batch_idx = 0; batch_idx < (stopBeam-beamNumber); ++batch_idx) {
-				multiply_cx <<< (psi_size - 1) / BLOCK_SIZE1D + 1, BLOCK_SIZE1D, 0, stream >>>
-						(psi_d + batch_idx*psi_size, trans_d, psi_size); // transmit
-				divide_inplace <<< (psi_size - 1) / BLOCK_SIZE1D + 1, BLOCK_SIZE1D, 0, stream >>>
-						(psi_d + batch_idx*psi_size, PRISM_MAKE_CU_COMPLEX(psi_size, 0), psi_size); // normalize the FFT
-			}
-			cufftErrchk(PRISM_CUFFT_EXECUTE(plan, &psi_d[0], &psi_d[0], CUFFT_FORWARD));
-			for (auto batch_idx = 0; batch_idx < (stopBeam-beamNumber); ++batch_idx) {
-				multiply_cx <<< (psi_size - 1) / BLOCK_SIZE1D + 1, BLOCK_SIZE1D, 0, stream >>>
-						(psi_d + batch_idx*psi_size, prop_d, psi_size); // propagate
-			}
-		}
-
-		for (auto batch_idx = 0; batch_idx < (stopBeam-beamNumber); ++batch_idx) {
-			// take relevant subset of the full array
-			array_subset <<< (pars.qyInd.size() * pars.qxInd.size() - 1) / BLOCK_SIZE1D + 1, BLOCK_SIZE1D, 0,
-					stream >>> (psi_d + batch_idx*psi_size, psi_small_d + batch_idx*psi_small_size, qyInd_d, qxInd_d, pars.imageSize[1], pars.qyInd.size(), pars.qxInd.size());
-		}
-
-		// final FFT
-		PRISM_CUFFT_EXECUTE(plan_small,&psi_small_d[0], &psi_small_d[0], CUFFT_INVERSE);
-		for (auto batch_idx = 0; batch_idx < (stopBeam-beamNumber); ++batch_idx) {
-		divide_inplace<<<(psi_small_size-1) / BLOCK_SIZE1D + 1,BLOCK_SIZE1D, 0, stream>>>
-				(psi_small_d + batch_idx*psi_small_size, PRISM_MAKE_CU_COMPLEX(psi_small_size, 0),psi_small_size); // normalize the FFT
-			}
-
-		// copy the result
-		for (auto batch_idx = 0; batch_idx < (stopBeam-beamNumber); ++batch_idx) {
-		cudaErrchk(cudaMemcpyAsync(Scompact_slice_ph,&psi_small_d[batch_idx*psi_small_size],psi_small_size * sizeof(PRISM_CUDA_COMPLEX_FLOAT),cudaMemcpyDeviceToHost,stream));
-		cudaStreamSynchronize(stream);
-		memcpy(&pars.Scompact[beamNumber * pars.Scompact.get_dimj() * pars.Scompact.get_dimi()], &Scompact_slice_ph[0], psi_small_size * sizeof(PRISM_CUDA_COMPLEX_FLOAT));
-			}
+	const size_t psi_size        = pars.imageSize[0] * pars.imageSize[1];
+	const size_t psi_small_size = pars.qxInd.size() * pars.qyInd.size();
+	for (auto batch_idx = 0; batch_idx < (stopBeam-beamNumber); ++batch_idx) {
+		// initialize psi -- for PRISM this is just a delta function in Fourier space located depending on which plane wave it is
+		initializePsi_oneNonzero<<< (psi_size - 1) / BLOCK_SIZE1D + 1, BLOCK_SIZE1D, 0, stream>>>(psi_d + batch_idx*psi_size, psi_size, pars.beamsIndex[beamNumber + batch_idx]);
 	}
+
+	for (auto planeNum = 0; planeNum < pars.numPlanes ; ++planeNum) {
+		cudaErrchk(cudaMemcpyAsync(trans_d, &trans_ph[planeNum*psi_size], psi_size * sizeof(PRISM_CUDA_COMPLEX_FLOAT), cudaMemcpyHostToDevice, stream));
+		cufftErrchk(PRISM_CUFFT_EXECUTE(plan, &psi_d[0], &psi_d[0], CUFFT_INVERSE));
+		for (auto batch_idx = 0; batch_idx < (stopBeam-beamNumber); ++batch_idx) {
+			multiply_cx <<< (psi_size - 1) / BLOCK_SIZE1D + 1, BLOCK_SIZE1D, 0, stream >>>
+					(psi_d + batch_idx*psi_size, trans_d, psi_size); // transmit
+			divide_inplace <<< (psi_size - 1) / BLOCK_SIZE1D + 1, BLOCK_SIZE1D, 0, stream >>>
+					(psi_d + batch_idx*psi_size, PRISM_MAKE_CU_COMPLEX(psi_size, 0), psi_size); // normalize the FFT
+		}
+		cufftErrchk(PRISM_CUFFT_EXECUTE(plan, &psi_d[0], &psi_d[0], CUFFT_FORWARD));
+		for (auto batch_idx = 0; batch_idx < (stopBeam-beamNumber); ++batch_idx) {
+			multiply_cx <<< (psi_size - 1) / BLOCK_SIZE1D + 1, BLOCK_SIZE1D, 0, stream >>>
+					(psi_d + batch_idx*psi_size, prop_d, psi_size); // propagate
+		}
+	}
+
+	for (auto batch_idx = 0; batch_idx < (stopBeam-beamNumber); ++batch_idx) {
+		// take relevant subset of the full array
+		array_subset <<< (pars.qyInd.size() * pars.qxInd.size() - 1) / BLOCK_SIZE1D + 1, BLOCK_SIZE1D, 0,
+				stream >>> (psi_d + batch_idx*psi_size, psi_small_d + batch_idx*psi_small_size, qyInd_d, qxInd_d, pars.imageSize[1], pars.qyInd.size(), pars.qxInd.size());
+	}
+
+	// final FFT
+	PRISM_CUFFT_EXECUTE(plan_small,&psi_small_d[0], &psi_small_d[0], CUFFT_INVERSE);
+	for (auto batch_idx = 0; batch_idx < (stopBeam-beamNumber); ++batch_idx) {
+	divide_inplace<<<(psi_small_size-1) / BLOCK_SIZE1D + 1,BLOCK_SIZE1D, 0, stream>>>
+			(psi_small_d + batch_idx*psi_small_size, PRISM_MAKE_CU_COMPLEX(psi_small_size, 0),psi_small_size); // normalize the FFT
+		}
+
+	// copy the result
+	for (auto batch_idx = 0; batch_idx < (stopBeam-beamNumber); ++batch_idx) {
+	cudaErrchk(cudaMemcpyAsync(Scompact_slice_ph,&psi_small_d[batch_idx*psi_small_size],psi_small_size * sizeof(PRISM_CUDA_COMPLEX_FLOAT),cudaMemcpyDeviceToHost,stream));
+	cudaStreamSynchronize(stream);
+	memcpy(&pars.Scompact[beamNumber * pars.Scompact.get_dimj() * pars.Scompact.get_dimi()], &Scompact_slice_ph[0], psi_small_size * sizeof(PRISM_CUDA_COMPLEX_FLOAT));
+		}
+}
 ~~~
 
 The `cudaMemcpyAsync` call at the beginning of the loop over `pars.numPlanes` is where the data streaming functionality is implemented. It's important to note that all of the kernel calls in this function use the same stream. If they did not, there would be no guarantee that the call to `cudaMemcpyAsync` is completed before subsequent kernels are called, which would be a race condition.
@@ -1146,62 +1146,62 @@ Once the wave function has been propagated through the entire sample, there is o
 `cleanupMemory2`: free all of the memory on the device and the host once all jobs are completed.
 
 ~~~c++
-	inline void cleanupMemory2(Parameters<PRISM_FLOAT_PRECISION> &pars,
-	                          CudaParameters<PRISM_FLOAT_PRECISION> &cuda_pars){
+inline void cleanupMemory2(Parameters<PRISM_FLOAT_PRECISION> &pars,
+                          CudaParameters<PRISM_FLOAT_PRECISION> &cuda_pars){
 
-		// free host and device memory
-		const int total_num_streams = pars.meta.NUM_GPUS * pars.meta.NUM_STREAMS_PER_GPU;
-		for (auto g = 0; g < pars.meta.NUM_GPUS; ++g) {
-			cudaErrchk(cudaSetDevice(g));
-			cudaErrchk(cudaFree(cuda_pars.trans_d[g]));
-			cudaErrchk(cudaFree(cuda_pars.prop_d[g]));
-			cudaErrchk(cudaFree(cuda_pars.qxInd_d[g]));
-			cudaErrchk(cudaFree(cuda_pars.qyInd_d[g]));
-			cudaErrchk(cudaFree(cuda_pars.beamsIndex_d[g]));
-		}
-
-		for (auto s = 0; s < total_num_streams; ++s) {
-			cudaErrchk(cudaSetDevice(s % pars.meta.NUM_GPUS));
-			cudaErrchk(cudaFree(cuda_pars.psi_ds[s]));
-			cudaErrchk(cudaFree(cuda_pars.psi_small_ds[s]));
-			cufftErrchk(cufftDestroy(cuda_pars.cufft_plans[s]));
-			cufftErrchk(cufftDestroy(cuda_pars.cufft_plans_small[s]));
-		}
-
-		// free pinned memory
-		for (auto s = 0; s < total_num_streams; ++s) {
-			cudaErrchk(cudaFreeHost(cuda_pars.Scompact_slice_ph[s]));
-		}
-		cudaErrchk(cudaFreeHost(cuda_pars.trans_ph));
-		cudaErrchk(cudaFreeHost(cuda_pars.prop_ph));
-		cudaErrchk(cudaFreeHost(cuda_pars.qxInd_ph));
-		cudaErrchk(cudaFreeHost(cuda_pars.qyInd_ph));
-		cudaErrchk(cudaFreeHost(cuda_pars.beamsIndex_ph));
-
-
-		// destroy CUDA streams
-		for (auto j = 0; j < total_num_streams; ++j){
-			cudaSetDevice(j % pars.meta.NUM_GPUS);
-			cudaErrchk(cudaStreamDestroy(cuda_pars.streams[j]));
-		}
-
-		for (auto g = 0; g < pars.meta.NUM_GPUS; ++g){
-			cudaErrchk(cudaSetDevice(g));
-			cudaErrchk(cudaDeviceReset());
-		}
-
-		delete[] cuda_pars.streams;
-		delete[] cuda_pars.cufft_plans;
-		delete[] cuda_pars.cufft_plans_small;
-		delete[] cuda_pars.trans_d;
-		delete[] cuda_pars.prop_d;
-		delete[] cuda_pars.qxInd_d;
-		delete[] cuda_pars.qyInd_d;
-		delete[] cuda_pars.beamsIndex_d;
-		delete[] cuda_pars.psi_ds;
-		delete[] cuda_pars.psi_small_ds;
-		delete[] cuda_pars.Scompact_slice_ph;
+	// free host and device memory
+	const int total_num_streams = pars.meta.NUM_GPUS * pars.meta.NUM_STREAMS_PER_GPU;
+	for (auto g = 0; g < pars.meta.NUM_GPUS; ++g) {
+		cudaErrchk(cudaSetDevice(g));
+		cudaErrchk(cudaFree(cuda_pars.trans_d[g]));
+		cudaErrchk(cudaFree(cuda_pars.prop_d[g]));
+		cudaErrchk(cudaFree(cuda_pars.qxInd_d[g]));
+		cudaErrchk(cudaFree(cuda_pars.qyInd_d[g]));
+		cudaErrchk(cudaFree(cuda_pars.beamsIndex_d[g]));
 	}
+
+	for (auto s = 0; s < total_num_streams; ++s) {
+		cudaErrchk(cudaSetDevice(s % pars.meta.NUM_GPUS));
+		cudaErrchk(cudaFree(cuda_pars.psi_ds[s]));
+		cudaErrchk(cudaFree(cuda_pars.psi_small_ds[s]));
+		cufftErrchk(cufftDestroy(cuda_pars.cufft_plans[s]));
+		cufftErrchk(cufftDestroy(cuda_pars.cufft_plans_small[s]));
+	}
+
+	// free pinned memory
+	for (auto s = 0; s < total_num_streams; ++s) {
+		cudaErrchk(cudaFreeHost(cuda_pars.Scompact_slice_ph[s]));
+	}
+	cudaErrchk(cudaFreeHost(cuda_pars.trans_ph));
+	cudaErrchk(cudaFreeHost(cuda_pars.prop_ph));
+	cudaErrchk(cudaFreeHost(cuda_pars.qxInd_ph));
+	cudaErrchk(cudaFreeHost(cuda_pars.qyInd_ph));
+	cudaErrchk(cudaFreeHost(cuda_pars.beamsIndex_ph));
+
+
+	// destroy CUDA streams
+	for (auto j = 0; j < total_num_streams; ++j){
+		cudaSetDevice(j % pars.meta.NUM_GPUS);
+		cudaErrchk(cudaStreamDestroy(cuda_pars.streams[j]));
+	}
+
+	for (auto g = 0; g < pars.meta.NUM_GPUS; ++g){
+		cudaErrchk(cudaSetDevice(g));
+		cudaErrchk(cudaDeviceReset());
+	}
+
+	delete[] cuda_pars.streams;
+	delete[] cuda_pars.cufft_plans;
+	delete[] cuda_pars.cufft_plans_small;
+	delete[] cuda_pars.trans_d;
+	delete[] cuda_pars.prop_d;
+	delete[] cuda_pars.qxInd_d;
+	delete[] cuda_pars.qyInd_d;
+	delete[] cuda_pars.beamsIndex_d;
+	delete[] cuda_pars.psi_ds;
+	delete[] cuda_pars.psi_small_ds;
+	delete[] cuda_pars.Scompact_slice_ph;
+}
 ~~~
 
 ### Compute PRISM Output
@@ -1209,68 +1209,68 @@ Once the wave function has been propagated through the entire sample, there is o
 The last step of PRISM is to compute the output wave for each probe position. The top-level portion of the PRISM03_calcOutput step looks very similar to the second step and I won't go through the details as before. The point is there are many sub functions that setup coordinates and arrays, and then the "real work" occurs in `buildPRISMOutput`, which is another configured function pointer that represents one of the various ways to populate the PRISM output.
 
 ~~~ c++
-	void PRISM03_calcOutput(Parameters<PRISM_FLOAT_PRECISION> &pars) {
-		// compute final image
+void PRISM03_calcOutput(Parameters<PRISM_FLOAT_PRECISION> &pars) {
+	// compute final image
 
-		cout << "Entering PRISM03_calcOutput" << endl;
+	cout << "Entering PRISM03_calcOutput" << endl;
 
-		// setup necessary coordinates
-		setupCoordinates_2(pars);
+	// setup necessary coordinates
+	setupCoordinates_2(pars);
 
-		// setup angles of detector and image sizes
-		setupDetector(pars);
+	// setup angles of detector and image sizes
+	setupDetector(pars);
 
-		// setup coordinates and indices for the beams
-		setupBeams_2(pars);
+	// setup coordinates and indices for the beams
+	setupBeams_2(pars);
 
-		// setup Fourier coordinates for the S-matrix
-		setupFourierCoordinates(pars);
+	// setup Fourier coordinates for the S-matrix
+	setupFourierCoordinates(pars);
 
-		// initialize the output to the correct size for the output mode
-		createStack_integrate(pars);
+	// initialize the output to the correct size for the output mode
+	createStack_integrate(pars);
 
-		// perform some necessary setup transformations of the data
-		transformIndices(pars);
+	// perform some necessary setup transformations of the data
+	transformIndices(pars);
 
-		// initialize/compute the probes
-		initializeProbes(pars);
+	// initialize/compute the probes
+	initializeProbes(pars);
 
-		// compute the final PRISM output
-		buildPRISMOutput(pars);
-	}
+	// compute the final PRISM output
+	buildPRISMOutput(pars);
+}
 ~~~
 
 where `buildPRISMOutput` might point to `buildPRISMOutput_GPU_streaming`. Just as in the calculation of the compact S-matrix, there are a series of steps for allocating/copying to pinned/device memory. This is followed by launch of the workers, and lastly cleanup. These kinds of programming patterns are repeated all throughout *PRISM* -- there's really not that much craziness going on.
 
 ~~~c++	
-	void buildPRISMOutput_GPU_streaming(Parameters<PRISM_FLOAT_PRECISION> &pars){
+void buildPRISMOutput_GPU_streaming(Parameters<PRISM_FLOAT_PRECISION> &pars){
 #ifdef PRISM_BUILDING_GUI
-		pars.progressbar->signalDescriptionMessage("Computing final output (PRISM)");
+	pars.progressbar->signalDescriptionMessage("Computing final output (PRISM)");
 #endif
-		CudaParameters<PRISM_FLOAT_PRECISION> cuda_pars;
-		// construct the PRISM output array using GPUs
+	CudaParameters<PRISM_FLOAT_PRECISION> cuda_pars;
+	// construct the PRISM output array using GPUs
 
-		// create CUDA streams and cuFFT plans
-		createStreamsAndPlans3(pars, cuda_pars);
+	// create CUDA streams and cuFFT plans
+	createStreamsAndPlans3(pars, cuda_pars);
 
-		// allocate pinned memory
-		allocatePinnedHostMemory_streaming3(pars, cuda_pars);
+	// allocate pinned memory
+	allocatePinnedHostMemory_streaming3(pars, cuda_pars);
 
-		// copy data to pinned buffers
-		copyToPinnedMemory_streaming3(pars, cuda_pars);
+	// copy data to pinned buffers
+	copyToPinnedMemory_streaming3(pars, cuda_pars);
 
-		// allocate memory on the GPUs
-		allocateDeviceMemory_streaming3(pars, cuda_pars);
+	// allocate memory on the GPUs
+	allocateDeviceMemory_streaming3(pars, cuda_pars);
 
-		// copy memory to GPUs
-		copyToGPUMemory_streaming3(pars, cuda_pars);
+	// copy memory to GPUs
+	copyToGPUMemory_streaming3(pars, cuda_pars);
 
-		// launch GPU and CPU workers
-		launchWorkers_streaming3(pars, cuda_pars);
+	// launch GPU and CPU workers
+	launchWorkers_streaming3(pars, cuda_pars);
 
-		// free memory on the host/device
-		cleanupMemory3(pars, cuda_pars);
-	}
+	// free memory on the host/device
+	cleanupMemory3(pars, cuda_pars);
+}
 ~~~
 
 Most of the launch workers function is similar to before, but I will point out that now the work ID passed back by the `WorkDispatcher` actually corresponds to an X,Y probe position, so there is additional logic to convert that.
@@ -1280,26 +1280,26 @@ Most of the launch workers function is similar to before, but I will point out t
 // ...
 // ...
 // ...
-				size_t Nstart, Nstop, ay, ax;
-				Nstart=Nstop=0;
-				while (dispatcher.getWork(Nstart, Nstop)) { // synchronously get work assignment
-					while (Nstart < Nstop) {
-						if (Nstart % PRISM_PRINT_FREQUENCY_PROBES == 0 | Nstart == 100){
-							cout << "Computing Probe Position #" << Nstart << "/" << pars.xp.size() * pars.yp.size() << endl;
-						}
-						ay = Nstart / pars.xp.size();
-						ax = Nstart % pars.xp.size();
-						buildSignal_GPU_streaming(pars, ay, ax, current_permuted_Scompact_ds, cuda_pars.permuted_Scompact_ph,
-						                          current_PsiProbeInit_d, current_qxaReduce_d, current_qyaReduce_d,
-						                          current_yBeams_d, current_xBeams_d, current_alphaInd_d, current_psi_ds,
-						                          current_phaseCoeffs_ds, current_psi_intensity_ds, current_y_ds,
-						                          current_x_ds, current_output_ph, current_integratedOutput_ds, current_cufft_plan, current_stream,  cuda_pars );
+size_t Nstart, Nstop, ay, ax;
+Nstart=Nstop=0;
+while (dispatcher.getWork(Nstart, Nstop)) { // synchronously get work assignment
+	while (Nstart < Nstop) {
+		if (Nstart % PRISM_PRINT_FREQUENCY_PROBES == 0 | Nstart == 100){
+			cout << "Computing Probe Position #" << Nstart << "/" << pars.xp.size() * pars.yp.size() << endl;
+		}
+		ay = Nstart / pars.xp.size();
+		ax = Nstart % pars.xp.size();
+		buildSignal_GPU_streaming(pars, ay, ax, current_permuted_Scompact_ds, cuda_pars.permuted_Scompact_ph,
+		                          current_PsiProbeInit_d, current_qxaReduce_d, current_qyaReduce_d,
+		                          current_yBeams_d, current_xBeams_d, current_alphaInd_d, current_psi_ds,
+		                          current_phaseCoeffs_ds, current_psi_intensity_ds, current_y_ds,
+		                          current_x_ds, current_output_ph, current_integratedOutput_ds, current_cufft_plan, current_stream,  cuda_pars );
 #ifdef PRISM_BUILDING_GUI
-						pars.progressbar->signalOutputUpdate(Nstart, pars.xp.size() * pars.yp.size());
+		pars.progressbar->signalOutputUpdate(Nstart, pars.xp.size() * pars.yp.size());
 #endif
-						++Nstart;
-					}
-				}
+		++Nstart;
+	}
+}
 ~~~
 
 ## Combining CUDA and Qt with CMake

@@ -174,3 +174,26 @@ I check that there are at least two remaining arguments, otherwise there isn't a
 
 ### Configuration
 
+Several places in *PRISM* there are divergences in how the simulation proceeds, such as whether to perform the calculation with multislice or PRISM. Rather than constantly having if-then-else statements for this type of logic, I'll instead create a single function pointer that is set to point to the desired behavior by the `configure` function. For example, both PRISM and multislice have entrypoint functions, cleverly named `PRISM_entry` and `Multislice_entry`. There is as corresponding function pointer defined in "configure.h" that is the `execute_plan` function used earlier in the driver:
+
+~~~ c+++
+//configure.h
+using entry_func = Parameters<PRISM_FLOAT_PRECISION>  (*)(Metadata<PRISM_FLOAT_PRECISION>&);
+entry_func execute_plan;
+~~~
+
+and this is set in "configure.cpp"
+
+~~~ c++
+//configure.cpp
+		if (meta.algorithm == Algorithm::PRISM) {
+			fill_Scompact = fill_Scompact_CPUOnly;
+			//...
+			// bunch of other stuff..
+			// ...
+		} else if (meta.algorithm == Algorithm::Multislice){	
+			execute_plan = Multislice_entry;
+		}
+~~~
+
+If you think this is overkill, and I could just have an if-else for this case, consider that there are choice of PRISM/Multislice, the possibility of CPU-only or GPU-enabled, the possibility of streaming/singlexfer if we are using the GPU codes, etc. It would create a lot of divergences very quickly, and this is a better solution.

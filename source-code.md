@@ -1102,7 +1102,48 @@ The main function within the worker threads is `propagatePlaneWave_GPU_streaming
 	}
 ~~~
 
-`cleanupMemory2`: free all of the memory on the device and the host
+The `cudaMemcpyAsync` call at the beginning of the loop over `pars.numPlanes` is where the data streaming functionality is implemented. It's important to note that all of the kernel calls in this function use the same stream. If they did not, there would be no guarantee that the call to `cudaMemcpyAsync` is completed before subsequent kernels are called, which would be a race condition.
+
+Initializing the probe for PRISM just requires setting a single Fourier component to 1, and the rest to 0. If you aren't familiar with CUDA, there are lots of resources online explaining the various relevant syntaxes. The basic idea is that in places where you would normally use a loop, you instead have a large number of threads that each perform the equivalent work of a single loop iteration. Each thread is aware of its indices in the threadblock and grid, so you first compute the thread's overall offset and then peform operations using logic based upon that.
+
+~~~ c++
+__global__ void initializePsi_oneNonzero(cuFloatComplex *psi_d, const size_t N, const size_t beamLoc){
+	int idx = threadIdx.x + blockDim.x*blockIdx.x;
+	if (idx < N) {
+		psi_d[idx] = (idx == beamLoc) ? make_cuFloatComplex(1,0):make_cuFloatComplex(0,0);
+	}
+}
+~~~
+
+The element-wise arithmetic kernels are super trivial. Even if the underlying array is 2D for this kind of kernel I just treat it as 1D as if it were flattened.
+
+~~~ c++
+__global__ void divide_inplace(cuFloatComplex* arr,
+                               const cuFloatComplex val,
+                               const size_t N){
+	int idx = threadIdx.x + blockDim.x*blockIdx.x;
+	if (idx < N) {
+		arr[idx] = cuCdivf(arr[idx], val);
+	}
+}
+
+// multiply two complex arrays
+__global__ void multiply_cx(cuFloatComplex* arr,
+                            const cuFloatComplex* other,
+                            const size_t N){
+	int idx = threadIdx.x + blockDim.x*blockIdx.x;
+	if (idx < N) {
+		arr[idx] = cuCmulf(arr[idx], other[idx]);
+	}
+}
+
+~~~
+
+The macro `PRISM_CUFFT_EXECUTE` is an alias for either `cufftExecC2C` or `cufftExecZ2Z` depending on whether *PRISM* has been compiled for single or double precision.
+
+Once the wave function has been propagated through the entire sample, there is one last kernel to crop the probe based upon the PRISM interpolation factor, then a final IFFT on the subsetted array is taken, which forms the calculated slice of the compact S-matrix. This is then asynchronously streamed back to the page-locked output slice buffer. The stream is then synchronized to guarantee this memory transfer completes, and then there is a final host-to-host memory transfer to copy the result to the compact S-matrix inside of `Parameters`. This effectively completes the task.
+
+`cleanupMemory2`: free all of the memory on the device and the host once all jobs are completed.
 
 ~~~c++
 	inline void cleanupMemory2(Parameters<PRISM_FLOAT_PRECISION> &pars,

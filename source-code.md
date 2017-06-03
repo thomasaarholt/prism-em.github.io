@@ -1205,3 +1205,101 @@ Once the wave function has been propagated through the entire sample, there is o
 ~~~
 
 ### Compute PRISM Output
+
+The last step of PRISM is to compute the output wave for each probe position. The top-level portion of the PRISM03_calcOutput step looks very similar to the second step and I won't go through the details as before. The point is there are many sub functions that setup coordinates and arrays, and then the "real work" occurs in `buildPRISMOutput`, which is another configured function pointer that represents one of the various ways to populate the PRISM output.
+
+~~~ c++
+	void PRISM03_calcOutput(Parameters<PRISM_FLOAT_PRECISION> &pars) {
+		// compute final image
+
+		cout << "Entering PRISM03_calcOutput" << endl;
+
+		// setup necessary coordinates
+		setupCoordinates_2(pars);
+
+		// setup angles of detector and image sizes
+		setupDetector(pars);
+
+		// setup coordinates and indices for the beams
+		setupBeams_2(pars);
+
+		// setup Fourier coordinates for the S-matrix
+		setupFourierCoordinates(pars);
+
+		// initialize the output to the correct size for the output mode
+		createStack_integrate(pars);
+
+		// perform some necessary setup transformations of the data
+		transformIndices(pars);
+
+		// initialize/compute the probes
+		initializeProbes(pars);
+
+		// compute the final PRISM output
+		buildPRISMOutput(pars);
+	}
+~~~
+
+where `buildPRISMOutput` might point to `buildPRISMOutput_GPU_streaming`. Just as in the calculation of the compact S-matrix, there are a series of steps for allocating/copying to pinned/device memory. This is followed by launch of the workers, and lastly cleanup. These kinds of programming patterns are repeated all throughout *PRISM* -- there's really not that much craziness going on.
+
+~~~c++	
+	void buildPRISMOutput_GPU_streaming(Parameters<PRISM_FLOAT_PRECISION> &pars){
+#ifdef PRISM_BUILDING_GUI
+		pars.progressbar->signalDescriptionMessage("Computing final output (PRISM)");
+#endif
+		CudaParameters<PRISM_FLOAT_PRECISION> cuda_pars;
+		// construct the PRISM output array using GPUs
+
+		// create CUDA streams and cuFFT plans
+		createStreamsAndPlans3(pars, cuda_pars);
+
+		// allocate pinned memory
+		allocatePinnedHostMemory_streaming3(pars, cuda_pars);
+
+		// copy data to pinned buffers
+		copyToPinnedMemory_streaming3(pars, cuda_pars);
+
+		// allocate memory on the GPUs
+		allocateDeviceMemory_streaming3(pars, cuda_pars);
+
+		// copy memory to GPUs
+		copyToGPUMemory_streaming3(pars, cuda_pars);
+
+		// launch GPU and CPU workers
+		launchWorkers_streaming3(pars, cuda_pars);
+
+		// free memory on the host/device
+		cleanupMemory3(pars, cuda_pars);
+	}
+~~~
+
+Most of the launch workers function is similar to before, but I will point out that now the work ID passed back by the `WorkDispatcher` actually corresponds to an X,Y probe position, so there is additional logic to convert that.
+
+~~~ c++
+// from within launchWorkers_streaming3
+// ...
+// ...
+// ...
+				size_t Nstart, Nstop, ay, ax;
+				Nstart=Nstop=0;
+				while (dispatcher.getWork(Nstart, Nstop)) { // synchronously get work assignment
+					while (Nstart < Nstop) {
+						if (Nstart % PRISM_PRINT_FREQUENCY_PROBES == 0 | Nstart == 100){
+							cout << "Computing Probe Position #" << Nstart << "/" << pars.xp.size() * pars.yp.size() << endl;
+						}
+						ay = Nstart / pars.xp.size();
+						ax = Nstart % pars.xp.size();
+						buildSignal_GPU_streaming(pars, ay, ax, current_permuted_Scompact_ds, cuda_pars.permuted_Scompact_ph,
+						                          current_PsiProbeInit_d, current_qxaReduce_d, current_qyaReduce_d,
+						                          current_yBeams_d, current_xBeams_d, current_alphaInd_d, current_psi_ds,
+						                          current_phaseCoeffs_ds, current_psi_intensity_ds, current_y_ds,
+						                          current_x_ds, current_output_ph, current_integratedOutput_ds, current_cufft_plan, current_stream,  cuda_pars );
+#ifdef PRISM_BUILDING_GUI
+						pars.progressbar->signalOutputUpdate(Nstart, pars.xp.size() * pars.yp.size());
+#endif
+						++Nstart;
+					}
+				}
+~~~
+
+## Combining CUDA and Qt with CMake

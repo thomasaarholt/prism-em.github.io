@@ -865,46 +865,46 @@ inline void copyToDeviceMemory_streaming2(Parameters<PRISM_FLOAT_PRECISION> &par
 void launchWorkers_streaming(Parameters<PRISM_FLOAT_PRECISION> &pars,
                                     CudaParameters<PRISM_FLOAT_PRECISION> &cuda_pars){
 
-	 // launch workers
-	const int total_num_streams = pars.meta.NUM_GPUS * pars.meta.NUM_STREAMS_PER_GPU;
+ // launch workers
+const int total_num_streams = pars.meta.NUM_GPUS * pars.meta.NUM_STREAMS_PER_GPU;
 
-	// launch GPU work
-	vector<thread> workers_GPU;
-	workers_GPU.reserve(total_num_streams); // prevents multiple reallocations
-	int stream_count = 0;
-	const size_t PRISM_PRINT_FREQUENCY_BEAMS = max((size_t)1,pars.numberBeams / 10); // for printing status
-	WorkDispatcher dispatcher(0, pars.numberBeams); // create work dispatcher
-	for (auto t = 0; t < total_num_streams; ++t) {
-		int GPU_num = stream_count % pars.meta.NUM_GPUS; // determine which GPU handles this job
-		cudaSetDevice(GPU_num);
-		cudaStream_t &current_stream = cuda_pars.streams[stream_count];
-		// get pointers to the pre-copied arrays, making sure to get those on the current GPU
-		PRISM_CUDA_COMPLEX_FLOAT *current_prop_d = cuda_pars.prop_d[GPU_num];
-		size_t *current_qxInd_d                  = cuda_pars.qxInd_d[GPU_num];
-		size_t *current_qyInd_d                  = cuda_pars.qyInd_d[GPU_num];
-		size_t *current_beamsIndex               = cuda_pars.beamsIndex_d[GPU_num];
+// launch GPU work
+vector<thread> workers_GPU;
+workers_GPU.reserve(total_num_streams); // prevents multiple reallocations
+int stream_count = 0;
+const size_t PRISM_PRINT_FREQUENCY_BEAMS = max((size_t)1,pars.numberBeams / 10); // for printing status
+WorkDispatcher dispatcher(0, pars.numberBeams); // create work dispatcher
+for (auto t = 0; t < total_num_streams; ++t) {
+	int GPU_num = stream_count % pars.meta.NUM_GPUS; // determine which GPU handles this job
+	cudaSetDevice(GPU_num);
+	cudaStream_t &current_stream = cuda_pars.streams[stream_count];
+	// get pointers to the pre-copied arrays, making sure to get those on the current GPU
+	PRISM_CUDA_COMPLEX_FLOAT *current_prop_d = cuda_pars.prop_d[GPU_num];
+	size_t *current_qxInd_d                  = cuda_pars.qxInd_d[GPU_num];
+	size_t *current_qyInd_d                  = cuda_pars.qyInd_d[GPU_num];
+	size_t *current_beamsIndex               = cuda_pars.beamsIndex_d[GPU_num];
 
-		// get pointers to per-stream arrays
-		PRISM_CUDA_COMPLEX_FLOAT *current_trans_ds         = cuda_pars.trans_d[stream_count];
-		PRISM_CUDA_COMPLEX_FLOAT *current_psi_ds           = cuda_pars.psi_ds[stream_count];
-		PRISM_CUDA_COMPLEX_FLOAT *current_psi_small_ds     = cuda_pars.psi_small_ds[stream_count];
-		cufftHandle &current_cufft_plan                    = cuda_pars.cufft_plans[stream_count];
-		cufftHandle &current_cufft_plan_small              = cuda_pars.cufft_plans_small[stream_count];
-		complex<PRISM_FLOAT_PRECISION> *current_S_slice_ph = cuda_pars.Scompact_slice_ph[stream_count];
+	// get pointers to per-stream arrays
+	PRISM_CUDA_COMPLEX_FLOAT *current_trans_ds         = cuda_pars.trans_d[stream_count];
+	PRISM_CUDA_COMPLEX_FLOAT *current_psi_ds           = cuda_pars.psi_ds[stream_count];
+	PRISM_CUDA_COMPLEX_FLOAT *current_psi_small_ds     = cuda_pars.psi_small_ds[stream_count];
+	cufftHandle &current_cufft_plan                    = cuda_pars.cufft_plans[stream_count];
+	cufftHandle &current_cufft_plan_small              = cuda_pars.cufft_plans_small[stream_count];
+	complex<PRISM_FLOAT_PRECISION> *current_S_slice_ph = cuda_pars.Scompact_slice_ph[stream_count];
 
-		workers_GPU.push_back(thread([&pars, current_trans_ds, current_prop_d, current_qxInd_d, current_qyInd_d, &dispatcher,
-				                             current_psi_ds, current_psi_small_ds, &current_cufft_plan, &current_cufft_plan_small,
-				                             current_S_slice_ph, current_beamsIndex, GPU_num, stream_count, &current_stream, &PRISM_PRINT_FREQUENCY_BEAMS, &cuda_pars]() {
-			cudaErrchk(cudaSetDevice(GPU_num));
+	workers_GPU.push_back(thread([&pars, current_trans_ds, current_prop_d, current_qxInd_d, current_qyInd_d, &dispatcher,
+			                             current_psi_ds, current_psi_small_ds, &current_cufft_plan, &current_cufft_plan_small,
+			                             current_S_slice_ph, current_beamsIndex, GPU_num, stream_count, &current_stream, &PRISM_PRINT_FREQUENCY_BEAMS, &cuda_pars]() {
+		cudaErrchk(cudaSetDevice(GPU_num));
 
-			// main work loop
-			size_t currentBeam, stopBeam;
-			currentBeam=stopBeam=0;
-			while (dispatcher.getWork(currentBeam, stopBeam, pars.meta.batch_size_GPU)) { // get a batch of work
-				while (currentBeam < stopBeam) {
-					if (currentBeam % PRISM_PRINT_FREQUENCY_BEAMS < pars.meta.batch_size_GPU | currentBeam == 100){
-						cout << "Computing Plane Wave #" << currentBeam << "/" << pars.numberBeams << endl;
-					}
+		// main work loop
+		size_t currentBeam, stopBeam;
+		currentBeam=stopBeam=0;
+		while (dispatcher.getWork(currentBeam, stopBeam, pars.meta.batch_size_GPU)) { // get a batch of work
+			while (currentBeam < stopBeam) {
+				if (currentBeam % PRISM_PRINT_FREQUENCY_BEAMS < pars.meta.batch_size_GPU | currentBeam == 100){
+					cout << "Computing Plane Wave #" << currentBeam << "/" << pars.numberBeams << endl;
+				}
 //						propagatePlaneWave_GPU_streaming(pars,
 //						                                 current_trans_ds,
 //						                                 trans_ph,
@@ -919,119 +919,119 @@ void launchWorkers_streaming(Parameters<PRISM_FLOAT_PRECISION> &pars,
 //						                                 current_cufft_plan,
 //						                                 current_cufft_plan_small,
 //						                                 current_stream);
-					propagatePlaneWave_GPU_streaming_batch(pars,
-					                                       current_trans_ds,
-					                                       cuda_pars.trans_ph,
-					                                       current_psi_ds,
-					                                       current_psi_small_ds,
-					                                       current_S_slice_ph,
-					                                       current_qyInd_d,
-					                                       current_qxInd_d,
-					                                       current_prop_d,
-					                                       current_beamsIndex,
-					                                       currentBeam,
-					                                       stopBeam,
-					                                       current_cufft_plan,
-					                                       current_cufft_plan_small,
-					                                       current_stream);
+				propagatePlaneWave_GPU_streaming_batch(pars,
+				                                       current_trans_ds,
+				                                       cuda_pars.trans_ph,
+				                                       current_psi_ds,
+				                                       current_psi_small_ds,
+				                                       current_S_slice_ph,
+				                                       current_qyInd_d,
+				                                       current_qxInd_d,
+				                                       current_prop_d,
+				                                       current_beamsIndex,
+				                                       currentBeam,
+				                                       stopBeam,
+				                                       current_cufft_plan,
+				                                       current_cufft_plan_small,
+				                                       current_stream);
 //						++currentBeam;
-					currentBeam=stopBeam;
+				currentBeam=stopBeam;
 #ifdef PRISM_BUILDING_GUI
-					pars.progressbar->signalScompactUpdate(currentBeam, pars.numberBeams);
+				pars.progressbar->signalScompactUpdate(currentBeam, pars.numberBeams);
 #endif
-				}
 			}
-			cout << "GPU worker on stream #" << stream_count << " of GPU #" << GPU_num << " finished\n";
-		}));
-		++stream_count;
-	}
-
-	if (pars.meta.also_do_CPU_work){
-
-		// launch CPU work
-		vector<thread> workers_CPU;
-		workers_CPU.reserve(pars.meta.NUM_THREADS); // prevents multiple reallocations
-		mutex fftw_plan_lock;
-		pars.meta.batch_size_CPU = min(pars.meta.batch_size_target_CPU, max((size_t)1, pars.numberBeams / pars.meta.NUM_THREADS));
-
-		// startup FFTW threads
-		PRISM_FFTW_INIT_THREADS();
-		PRISM_FFTW_PLAN_WITH_NTHREADS(pars.meta.NUM_THREADS);
-		for (auto t = 0; t < pars.meta.NUM_THREADS; ++t) {
-			cout << "Launching thread #" << t << " to compute beams\n";
-			workers_CPU.push_back(thread([&pars, &fftw_plan_lock, &dispatcher, &PRISM_PRINT_FREQUENCY_BEAMS]() {
-
-				size_t currentBeam, stopBeam, early_CPU_stop;
-				currentBeam=stopBeam=0;
-				if (pars.meta.NUM_GPUS > 0){
-					// if there are no GPUs, make sure to do all work on CPU
-					early_CPU_stop = (size_t)std::max((PRISM_FLOAT_PRECISION)0.0,pars.numberBeams - pars.meta.gpu_cpu_ratio*pars.meta.batch_size_CPU);
-				} else {
-					early_CPU_stop = pars.numberBeams;
-				}
-
-				if (dispatcher.getWork(currentBeam, stopBeam, pars.meta.batch_size_CPU, early_CPU_stop)) {
-					// allocate array for psi just once per thread
-					Array1D<complex<PRISM_FLOAT_PRECISION> > psi_stack = zeros_ND<1, complex<PRISM_FLOAT_PRECISION> >(
-							{{pars.imageSize[0]*pars.imageSize[1]*pars.meta.batch_size_CPU}});
-
-					// setup batch FFTW parameters
-					const int rank    = 2;
-					int n[]           = {(int)pars.imageSize[0], (int)pars.imageSize[1]};
-					const int howmany = pars.meta.batch_size_CPU;
-					int idist         = n[0]*n[1];
-					int odist         = n[0]*n[1];
-					int istride       = 1;
-					int ostride       = 1;
-					int *inembed      = n;
-					int *onembed      = n;
-
-					// create FFTW plans
-					unique_lock<mutex> gatekeeper(fftw_plan_lock);
-					PRISM_FFTW_PLAN plan_forward = PRISM_FFTW_PLAN_DFT_BATCH(rank, n, howmany,
-					                                                         reinterpret_cast<PRISM_FFTW_COMPLEX *>(&psi_stack[0]), inembed,
-					                                                         istride, idist,
-					                                                         reinterpret_cast<PRISM_FFTW_COMPLEX *>(&psi_stack[0]), onembed,
-					                                                         ostride, odist,
-					                                                         FFTW_FORWARD, FFTW_MEASURE);
-					PRISM_FFTW_PLAN plan_inverse = PRISM_FFTW_PLAN_DFT_BATCH(rank, n, howmany,
-					                                                         reinterpret_cast<PRISM_FFTW_COMPLEX *>(&psi_stack[0]), inembed,
-					                                                         istride, idist,
-					                                                         reinterpret_cast<PRISM_FFTW_COMPLEX *>(&psi_stack[0]), onembed,
-					                                                         ostride, odist,
-					                                                         FFTW_BACKWARD, FFTW_MEASURE);
-					gatekeeper.unlock(); // unlock it so we only block as long as necessary to deal with plans
-
-					// main work loop
-					do { // synchronously get work assignment
-						while (currentBeam < stopBeam) {
-							if (currentBeam % PRISM_PRINT_FREQUENCY_BEAMS < pars.meta.batch_size_CPU | currentBeam == 100){
-								cout << "Computing Plane Wave #" << currentBeam << "/" << pars.numberBeams << endl;
-							}
-							// re-zero psi each iteration
-							memset((void *) &psi_stack[0], 0, psi_stack.size() * sizeof(complex<PRISM_FLOAT_PRECISION>));
-//								propagatePlaneWave_CPU(pars, currentBeam, psi, plan_forward, plan_inverse, fftw_plan_lock);
-							propagatePlaneWave_CPU_batch(pars, currentBeam, stopBeam, psi_stack, plan_forward, plan_inverse, fftw_plan_lock);
-#ifdef PRISM_BUILDING_GUI
-							pars.progressbar->signalScompactUpdate(currentBeam, pars.numberBeams);
-#endif
-							currentBeam = stopBeam;
-//								++currentBeam;
-						}
-						if (currentBeam >= early_CPU_stop) break;
-					} while (dispatcher.getWork(currentBeam, stopBeam, pars.meta.batch_size_CPU, early_CPU_stop));
-					// clean up
-					gatekeeper.lock();
-					PRISM_FFTW_DESTROY_PLAN(plan_forward);
-					PRISM_FFTW_DESTROY_PLAN(plan_inverse);
-					gatekeeper.unlock();
-				}
-			}));
 		}
-		for (auto &t:workers_CPU)t.join();
-		PRISM_FFTW_CLEANUP_THREADS();
+		cout << "GPU worker on stream #" << stream_count << " of GPU #" << GPU_num << " finished\n";
+	}));
+	++stream_count;
+}
+
+if (pars.meta.also_do_CPU_work){
+
+	// launch CPU work
+	vector<thread> workers_CPU;
+	workers_CPU.reserve(pars.meta.NUM_THREADS); // prevents multiple reallocations
+	mutex fftw_plan_lock;
+	pars.meta.batch_size_CPU = min(pars.meta.batch_size_target_CPU, max((size_t)1, pars.numberBeams / pars.meta.NUM_THREADS));
+
+	// startup FFTW threads
+	PRISM_FFTW_INIT_THREADS();
+	PRISM_FFTW_PLAN_WITH_NTHREADS(pars.meta.NUM_THREADS);
+	for (auto t = 0; t < pars.meta.NUM_THREADS; ++t) {
+		cout << "Launching thread #" << t << " to compute beams\n";
+		workers_CPU.push_back(thread([&pars, &fftw_plan_lock, &dispatcher, &PRISM_PRINT_FREQUENCY_BEAMS]() {
+
+			size_t currentBeam, stopBeam, early_CPU_stop;
+			currentBeam=stopBeam=0;
+			if (pars.meta.NUM_GPUS > 0){
+				// if there are no GPUs, make sure to do all work on CPU
+				early_CPU_stop = (size_t)std::max((PRISM_FLOAT_PRECISION)0.0,pars.numberBeams - pars.meta.gpu_cpu_ratio*pars.meta.batch_size_CPU);
+			} else {
+				early_CPU_stop = pars.numberBeams;
+			}
+
+			if (dispatcher.getWork(currentBeam, stopBeam, pars.meta.batch_size_CPU, early_CPU_stop)) {
+				// allocate array for psi just once per thread
+				Array1D<complex<PRISM_FLOAT_PRECISION> > psi_stack = zeros_ND<1, complex<PRISM_FLOAT_PRECISION> >(
+						{{pars.imageSize[0]*pars.imageSize[1]*pars.meta.batch_size_CPU}});
+
+				// setup batch FFTW parameters
+				const int rank    = 2;
+				int n[]           = {(int)pars.imageSize[0], (int)pars.imageSize[1]};
+				const int howmany = pars.meta.batch_size_CPU;
+				int idist         = n[0]*n[1];
+				int odist         = n[0]*n[1];
+				int istride       = 1;
+				int ostride       = 1;
+				int *inembed      = n;
+				int *onembed      = n;
+
+				// create FFTW plans
+				unique_lock<mutex> gatekeeper(fftw_plan_lock);
+				PRISM_FFTW_PLAN plan_forward = PRISM_FFTW_PLAN_DFT_BATCH(rank, n, howmany,
+				                                                         reinterpret_cast<PRISM_FFTW_COMPLEX *>(&psi_stack[0]), inembed,
+				                                                         istride, idist,
+				                                                         reinterpret_cast<PRISM_FFTW_COMPLEX *>(&psi_stack[0]), onembed,
+				                                                         ostride, odist,
+				                                                         FFTW_FORWARD, FFTW_MEASURE);
+				PRISM_FFTW_PLAN plan_inverse = PRISM_FFTW_PLAN_DFT_BATCH(rank, n, howmany,
+				                                                         reinterpret_cast<PRISM_FFTW_COMPLEX *>(&psi_stack[0]), inembed,
+				                                                         istride, idist,
+				                                                         reinterpret_cast<PRISM_FFTW_COMPLEX *>(&psi_stack[0]), onembed,
+				                                                         ostride, odist,
+				                                                         FFTW_BACKWARD, FFTW_MEASURE);
+				gatekeeper.unlock(); // unlock it so we only block as long as necessary to deal with plans
+
+				// main work loop
+				do { // synchronously get work assignment
+					while (currentBeam < stopBeam) {
+						if (currentBeam % PRISM_PRINT_FREQUENCY_BEAMS < pars.meta.batch_size_CPU | currentBeam == 100){
+							cout << "Computing Plane Wave #" << currentBeam << "/" << pars.numberBeams << endl;
+						}
+						// re-zero psi each iteration
+						memset((void *) &psi_stack[0], 0, psi_stack.size() * sizeof(complex<PRISM_FLOAT_PRECISION>));
+//								propagatePlaneWave_CPU(pars, currentBeam, psi, plan_forward, plan_inverse, fftw_plan_lock);
+						propagatePlaneWave_CPU_batch(pars, currentBeam, stopBeam, psi_stack, plan_forward, plan_inverse, fftw_plan_lock);
+#ifdef PRISM_BUILDING_GUI
+						pars.progressbar->signalScompactUpdate(currentBeam, pars.numberBeams);
+#endif
+						currentBeam = stopBeam;
+//								++currentBeam;
+					}
+					if (currentBeam >= early_CPU_stop) break;
+				} while (dispatcher.getWork(currentBeam, stopBeam, pars.meta.batch_size_CPU, early_CPU_stop));
+				// clean up
+				gatekeeper.lock();
+				PRISM_FFTW_DESTROY_PLAN(plan_forward);
+				PRISM_FFTW_DESTROY_PLAN(plan_inverse);
+				gatekeeper.unlock();
+			}
+		}));
 	}
-	for (auto &t:workers_GPU)t.join();
+	for (auto &t:workers_CPU)t.join();
+	PRISM_FFTW_CLEANUP_THREADS();
+}
+for (auto &t:workers_GPU)t.join();
 }
 ~~~
 

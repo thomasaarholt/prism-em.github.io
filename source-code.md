@@ -196,4 +196,390 @@ and this is set in "configure.cpp"
 		}
 ~~~
 
-If you think this is overkill, and I could just have an if-else for this case, consider that there are choices of PRISM/Multislice, the possibility of CPU-only or GPU-enabled, the possibility of streaming/singlexfer if we are using the GPU codes, etc. It would create a lot of divergences very quickly, and this is a better solution.
+If you think this is overkill, and I could just have an if-else for this case, consider that there are choice of PRISM/Multislice, the possibility of CPU-only or GPU-enabled, the possibility of streaming/singlexfer if we are using the GPU codes, etc. It would create a lot of divergences very quickly, and this is a better solution.
+
+## PRISM
+
+The `PRISM_entry` function is the top-tier control function for PRISM calculations, and handles running each of the steps and computing the various frozen phonon configurations. PRISM is divided into 3 steps:
+
+1. Compute projected potentials
+2. Compute compact S-matrix
+3. Compute final output
+
+During each of these steps, a number of different data structures are created and modified. To organize these internally used arrays, a `Parameters` class is used. So we now have two wrapping classes: `Metadata`, which contains the user-adjustable parameters, and `Parameters`, which contains the internally modified data structures. This prevents having to juggle around a lot of parameters for each function call, and makes things easier to read.
+
+~~~ c++
+#include "PRISM_entry.h"
+#include <iostream>
+#include <stdlib.h>
+#include <algorithm>
+#include "configure.h"
+#include "ArrayND.h"
+#include "PRISM01_calcPotential.h"
+#include "PRISM02_calcSMatrix.h"
+#include "PRISM03_calcOutput.h"
+#include "params.h"
+#include <vector>
+
+namespace PRISM{
+	using namespace std;
+	Parameters<PRISM_FLOAT_PRECISION> PRISM_entry(Metadata<PRISM_FLOAT_PRECISION>& meta){
+		Parameters<PRISM_FLOAT_PRECISION> prism_pars;
+		try { // read in atomic coordinates
+			prism_pars = Parameters<PRISM_FLOAT_PRECISION>(meta);
+		} catch(const std::runtime_error &e){
+			std::cout << "Terminating" << std::endl;
+			exit(1);
+		}
+
+		// compute projected potentials
+		PRISM01_calcPotential(prism_pars);
+
+		// compute compact S-matrix
+		PRISM02_calcSMatrix(prism_pars);
+
+		// compute final output
+		PRISM03_calcOutput(prism_pars);
+
+		// calculate remaining frozen phonon configurations
+        if (prism_pars.meta.numFP > 1) {
+            // run the rest of the frozen phonons
+            Array3D<PRISM_FLOAT_PRECISION> net_output(prism_pars.output);
+            for (auto fp_num = 1; fp_num < prism_pars.meta.numFP; ++fp_num){
+	            meta.random_seed = rand() % 100000;
+				Parameters<PRISM_FLOAT_PRECISION> prism_pars(meta);
+                cout << "Frozen Phonon #" << fp_num << endl;
+	            prism_pars.meta.toString();
+	        	PRISM01_calcPotential(prism_pars);
+	        	PRISM02_calcSMatrix(prism_pars);
+                PRISM03_calcOutput(prism_pars);
+                net_output += prism_pars.output;
+            }
+            // divide to take average
+            for (auto&i:net_output) i/=prism_pars.meta.numFP;
+	        prism_pars.output = net_output;
+        }
+        if (prism_pars.meta.save3DOutput)prism_pars.output.toMRC_f(prism_pars.meta.filename_output.c_str());
+
+		if (prism_pars.meta.save2DOutput) {
+			size_t lower = std::max((size_t)0, (size_t)(prism_pars.meta.integration_angle_min / prism_pars.meta.detector_angle_step));
+			size_t upper = std::min((size_t)prism_pars.detectorAngles.size(), (size_t)(prism_pars.meta.integration_angle_max / prism_pars.meta.detector_angle_step));
+			Array2D<PRISM_FLOAT_PRECISION> prism_image;
+			prism_image = zeros_ND<2, PRISM_FLOAT_PRECISION>(
+					{{prism_pars.output.get_dimk(), prism_pars.output.get_dimj()}});
+			for (auto y = 0; y < prism_pars.output.get_dimk(); ++y) {
+				for (auto x = 0; x < prism_pars.output.get_dimj(); ++x) {
+					for (auto b = lower; b < upper; ++b) {
+						prism_image.at(y, x) += prism_pars.output.at(y, x, b);
+					}
+				}
+			}
+			std::string image_filename = std::string("prism_2Doutput_") + prism_pars.meta.filename_output;
+			prism_image.toMRC_f(image_filename.c_str());
+		}
+
+        std::cout << "PRISM Calculation complete.\n" << std::endl;
+		return prism_pars;
+	}
+}
+~~~
+
+The `Parameters` object is created (it takes the metadata as one the parameters to its constructor). Next an attempt is made to read the atomic coordinates, and if that fails then the program terminates. If the atoms are successfully read, we then execute each of the three steps. Last we handle the remaining frozen phonons, average the results, and save the output.
+
+## Calculating Projected Potentials
+
+Now we assemble the projected potentials by computing the digitized potential for each atomic species and storing it in a lookup table. The full sliced and projected potential is then calculated by dividing the model into slices and using this lookup table to build each slice.
+
+#### Assembling the lookup table
+
+~~~c++
+	void PRISM01_calcPotential(Parameters<PRISM_FLOAT_PRECISION>& pars){
+		//builds projected, sliced potential
+
+		// setup some coordinates
+		cout << "Entering PRISM01_calcPotential" << endl;
+		PRISM_FLOAT_PRECISION yleng = std::ceil(pars.meta.potBound / pars.pixelSize[0]);
+		PRISM_FLOAT_PRECISION xleng = std::ceil(pars.meta.potBound / pars.pixelSize[1]);
+		ArrayND<1, vector<long> > xvec(vector<long>(2*(size_t)xleng + 1, 0),{{2*(size_t)xleng + 1}});
+		ArrayND<1, vector<long> > yvec(vector<long>(2*(size_t)yleng + 1, 0),{{2*(size_t)yleng + 1}});
+		{
+			PRISM_FLOAT_PRECISION tmpx = -xleng;
+			PRISM_FLOAT_PRECISION tmpy = -yleng;
+			for (auto &i : xvec)i = tmpx++;
+			for (auto &j : yvec)j = tmpy++;
+		}
+		Array1D<PRISM_FLOAT_PRECISION> xr(vector<PRISM_FLOAT_PRECISION>(2*(size_t)xleng + 1, 0),{{2*(size_t)xleng + 1}});
+		Array1D<PRISM_FLOAT_PRECISION> yr(vector<PRISM_FLOAT_PRECISION>(2*(size_t)yleng + 1, 0),{{2*(size_t)yleng + 1}});
+		for (auto i=0; i < xr.size(); ++i)xr[i] = (PRISM_FLOAT_PRECISION)xvec[i] * pars.pixelSize[1];
+		for (auto j=0; j < yr.size(); ++j)yr[j] = (PRISM_FLOAT_PRECISION)yvec[j] * pars.pixelSize[0];
+
+		vector<size_t> unique_species = get_unique_atomic_species(pars);
+
+		// initialize the lookup table
+		Array3D<PRISM_FLOAT_PRECISION> potentialLookup = zeros_ND<3, PRISM_FLOAT_PRECISION>({{unique_species.size(), 2*(size_t)yleng + 1, 2*(size_t)xleng + 1}});
+		
+		// precompute the unique potentials
+		fetch_potentials(potentialLookup, unique_species, xr, yr);
+
+		// populate the slices with the projected potentials
+		generateProjectedPotentials(pars, potentialLookup, unique_species, xvec, yvec);
+	}
+~~~
+
+`get_unique_atomic_species` just determines the minimal set of elements in the sample -- no point in precomputing the potential for atoms we don't have. `fetch_potentials` builds the lookup table based upon the relevant coordinates, which are determined by the pixel size and `potBound`, and then `generateProjectedPotentials` builds the full projected/sliced potential.
+
+Next is a big chunk of code that is conceptually accomplishing a simple task. Based on the relevant coordinates determined by the simulation pixel size, we compute the potential of each relevant element following Kirkland's book ["Advanced Computing in Electron Microscopy"](https://link.springer.com/book/10.1007%2F978-1-4419-6533-2) on an 8x supersampled grid, then integrate it, and store it.
+
+~~~c++
+	void fetch_potentials(Array3D<PRISM_FLOAT_PRECISION>& potentials,
+	                      const vector<size_t>& atomic_species,
+	                      const Array1D<PRISM_FLOAT_PRECISION>& xr,
+	                      const Array1D<PRISM_FLOAT_PRECISION>& yr){
+		Array2D<PRISM_FLOAT_PRECISION> cur_pot;
+		for (auto k =0; k < potentials.get_dimk(); ++k){
+			Array2D<PRISM_FLOAT_PRECISION> cur_pot = projPot(atomic_species[k], xr, yr);
+			for (auto j = 0; j < potentials.get_dimj(); ++j){
+				for (auto i = 0; i < potentials.get_dimi(); ++i){
+					potentials.at(k,j,i) = cur_pot.at(j,i);
+				}
+			}
+		}
+	}
+	
+	Array2D<PRISM_FLOAT_PRECISION> projPot(const size_t &Z,
+                                           const Array1D<PRISM_FLOAT_PRECISION> &xr,
+                                           const Array1D<PRISM_FLOAT_PRECISION> &yr) {
+		// compute the projected potential for a given atomic number following Kirkland
+
+		// setup some constants
+		static const PRISM_FLOAT_PRECISION pi = std::acos(-1);
+		PRISM_FLOAT_PRECISION ss    = 8;
+		PRISM_FLOAT_PRECISION a0    = 0.5292;
+		PRISM_FLOAT_PRECISION e     = 14.4;
+		PRISM_FLOAT_PRECISION term1 = 4*pi*pi*a0*e;
+		PRISM_FLOAT_PRECISION term2 = 2*pi*pi*a0*e;
+
+		// initialize array
+		ArrayND<2, std::vector<PRISM_FLOAT_PRECISION> > result = zeros_ND<2, PRISM_FLOAT_PRECISION>({{yr.size(), xr.size()}});
+
+		// setup some coordinates
+		const PRISM_FLOAT_PRECISION dx = xr[1] - xr[0];
+		const PRISM_FLOAT_PRECISION dy = yr[1] - yr[0];
+
+		PRISM_FLOAT_PRECISION start = -(ss-1)/ss/2;
+		const PRISM_FLOAT_PRECISION step  = 1/ss;
+		const PRISM_FLOAT_PRECISION end   = -start;
+		vector<PRISM_FLOAT_PRECISION> sub_data;
+		while (start <= end){
+			sub_data.push_back(start);
+			start+=step;
+		}
+		ArrayND<1, std::vector<PRISM_FLOAT_PRECISION> > sub(sub_data,{{sub_data.size()}});
+
+		std::pair<Array2D<PRISM_FLOAT_PRECISION>, Array2D<PRISM_FLOAT_PRECISION> > meshx = meshgrid(xr, sub*dx);
+		std::pair<Array2D<PRISM_FLOAT_PRECISION>, Array2D<PRISM_FLOAT_PRECISION> > meshy = meshgrid(yr, sub*dy);
+
+		ArrayND<1, std::vector<PRISM_FLOAT_PRECISION> > xv = zeros_ND<1, PRISM_FLOAT_PRECISION>({{meshx.first.size()}});
+		ArrayND<1, std::vector<PRISM_FLOAT_PRECISION> > yv = zeros_ND<1, PRISM_FLOAT_PRECISION>({{meshy.first.size()}});
+		{
+			auto t_x = xv.begin();
+			for (auto j = 0; j < meshx.first.get_dimj(); ++j) {
+				for (auto i = 0; i < meshx.first.get_dimi(); ++i) {
+					*t_x++ = meshx.first.at(j, i) + meshx.second.at(j, i);
+				}
+			}
+		}
+
+		{
+			auto t_y = yv.begin();
+			for (auto j = 0; j < meshy.first.get_dimj(); ++j) {
+				for (auto i = 0; i < meshy.first.get_dimi(); ++i) {
+					*t_y++ = meshy.first.at(j, i) + meshy.second.at(j, i);
+				}
+			}
+		}
+
+		std::pair<Array2D<PRISM_FLOAT_PRECISION>, Array2D<PRISM_FLOAT_PRECISION> > meshxy = meshgrid(yv, xv);
+		ArrayND<2, std::vector<PRISM_FLOAT_PRECISION> > r2 = zeros_ND<2, PRISM_FLOAT_PRECISION>({{yv.size(), xv.size()}});
+		ArrayND<2, std::vector<PRISM_FLOAT_PRECISION> > r  = zeros_ND<2, PRISM_FLOAT_PRECISION>({{yv.size(), xv.size()}});
+
+		{
+			auto t_y = r2.begin();
+			for (auto j = 0; j < meshxy.first.get_dimj(); ++j) {
+				for (auto i = 0; i < meshxy.first.get_dimi(); ++i) {
+					*t_y++ = pow(meshxy.first.at(j,i),2) + pow(meshxy.second.at(j,i),2);
+				}
+			}
+		}
+
+		for (auto i = 0; i < r.size(); ++i)r[i] = sqrt(r2[i]);
+		// construct potential
+		ArrayND<2, std::vector<PRISM_FLOAT_PRECISION> > potSS  = ones_ND<2, PRISM_FLOAT_PRECISION>({{r2.get_dimj(), r2.get_dimi()}});
+
+		// get the relevant table values
+		std::vector<PRISM_FLOAT_PRECISION> ap;
+		ap.resize(n_parameters);
+		for (auto i = 0; i < n_parameters; ++i){
+			ap[i] = fparams[(Z-1)*n_parameters + i];
+		}
+
+		// compute the potential
+		using namespace boost::math;
+		std::transform(r.begin(), r.end(),
+		               r2.begin(), potSS.begin(), [&ap, &term1, &term2](const PRISM_FLOAT_PRECISION& r_t, const PRISM_FLOAT_PRECISION& r2_t){
+
+					return term1*(ap[0] *
+					              cyl_bessel_k(0,2*pi*sqrt(ap[1])*r_t)          +
+					              ap[2]*cyl_bessel_k(0,2*pi*sqrt(ap[3])*r_t)    +
+					              ap[4]*cyl_bessel_k(0,2*pi*sqrt(ap[5])*r_t))   +
+					       term2*(ap[6]/ap[7]*exp(-pow(pi,2)/ap[7]*r2_t) +
+					              ap[8]/ap[9]*exp(-pow(pi,2)/ap[9]*r2_t)        +
+					              ap[10]/ap[11]*exp(-pow(pi,2)/ap[11]*r2_t));
+				});
+
+		// integrate
+		ArrayND<2, std::vector<PRISM_FLOAT_PRECISION> > pot = zeros_ND<2, PRISM_FLOAT_PRECISION>({{yr.size(), xr.size()}});
+		for (auto sy = 0; sy < ss; ++sy){
+			for (auto sx = 0; sx < ss; ++sx) {
+				for (auto j = 0; j < pot.get_dimj(); ++j) {
+					for (auto i = 0; i < pot.get_dimi(); ++i) {
+						pot.at(j, i) += potSS.at(j*ss + sy, i*ss + sx);
+					}
+				}
+			}
+		}
+		pot/=(ss*ss);
+
+		PRISM_FLOAT_PRECISION potMin = get_potMin(pot,xr,yr);
+		pot -= potMin;
+		transform(pot.begin(),pot.end(),pot.begin(),[](PRISM_FLOAT_PRECISION& a){return a<0?0:a;});
+
+		return pot;
+	}	
+~~~
+
+#### Building the sliced potentials
+
+First there's a bit of setup and we figure out which slice index each atom belongs to
+
+~~~ c++
+	void generateProjectedPotentials(Parameters<PRISM_FLOAT_PRECISION>& pars,
+	                                 const Array3D<PRISM_FLOAT_PRECISION>& potentialLookup,
+	                                 const vector<size_t>& unique_species,
+	                                 const Array1D<long>& xvec,
+	                                 const Array1D<long>& yvec){
+		// splits the atomic coordinates into slices and computes the projected potential for each.
+
+		// create arrays for the coordinates
+		Array1D<PRISM_FLOAT_PRECISION> x     = zeros_ND<1, PRISM_FLOAT_PRECISION>({{pars.atoms.size()}});
+		Array1D<PRISM_FLOAT_PRECISION> y     = zeros_ND<1, PRISM_FLOAT_PRECISION>({{pars.atoms.size()}});
+		Array1D<PRISM_FLOAT_PRECISION> z     = zeros_ND<1, PRISM_FLOAT_PRECISION>({{pars.atoms.size()}});
+		Array1D<PRISM_FLOAT_PRECISION> ID    = zeros_ND<1, PRISM_FLOAT_PRECISION>({{pars.atoms.size()}});
+		Array1D<PRISM_FLOAT_PRECISION> sigma = zeros_ND<1, PRISM_FLOAT_PRECISION>({{pars.atoms.size()}});
+
+		// populate arrays from the atoms structure
+		for (auto i = 0; i < pars.atoms.size(); ++i){
+			x[i]     = pars.atoms[i].x * pars.tiledCellDim[2];
+			y[i]     = pars.atoms[i].y * pars.tiledCellDim[1];
+			z[i]     = pars.atoms[i].z * pars.tiledCellDim[0];
+			ID[i]    = pars.atoms[i].species;
+			sigma[i] = pars.atoms[i].sigma;
+		}
+
+		// compute the z-slice index for each atom
+		auto max_z = std::max_element(z.begin(), z.end());
+		Array1D<PRISM_FLOAT_PRECISION> zPlane(z);
+		std::transform(zPlane.begin(), zPlane.end(), zPlane.begin(), [&max_z, &pars](PRISM_FLOAT_PRECISION &t_z) {
+			return round((-t_z + *max_z) / pars.meta.sliceThickness + 0.5) - 1; // If the +0.5 was to make the first slice z=1 not 0, can drop the +0.5 and -1
+		});
+		max_z = std::max_element(zPlane.begin(), zPlane.end());
+		pars.numPlanes = *max_z + 1;
+	
+#ifdef PRISM_BUILDING_GUI
+		pars.progressbar->signalPotentialUpdate(0, pars.numPlanes);
+#endif
+
+~~~
+
+A new idiom you see here is `#ifdef PRISM_BUILDING_GUI`. There is a progress bar that pops up in the GUI, and this macro is used to indicate whether or not to update it. When this source file is included in the CLI, `prism`, this macro is not defined, and thus the CLI doesn't need any of the Qt libraries that would be required to define this progress bar.
+
+Next we calculate the actual potentials, and this is the first time we encounter the `WorkDispatcher` in action. In this case, each slice of the potential is a different job, and  CPU threads will be spawned to populate each slice.
+
+~~~ c++
+		// initialize the potential array
+		pars.pot = zeros_ND<3, PRISM_FLOAT_PRECISION>({{pars.numPlanes, pars.imageSize[0], pars.imageSize[1]}});
+~~~
+
+As an aside, this `zeros_ND` function is essentially an implementation of MATLAB's `zeros` and creates a multidimensional array built on `std::vector` and is 0-initialized. 
+
+Now we make the `WorkDispatcher`, passing the lower and upper bounds of the work IDs into its constructor. The threads are then spawned and handed a lambda function defining the work loop. Each thread repeatedly calls `dispatcher.getWork`, which you'll recall from earlier returns true if a job was given. As long as work was provided, the thread will keep working, and once all the work is done the `WorkDispatcher` will begin returning false and the threads will finish. The main thread doesn't do any work -- it spawns the worker threads and then will wait at the line  `for (auto &t:workers)t.join();` until all the worker threads finish. The `join()` function is how you synchronize this multithreaded code. So the only parts that require synchronization are when each threads queries the `WorkDispatcher` and then when the main thread waits for the workers. The order in which the slices are worked on is nondeterministic. By the way, if you are wondering the cost of locking a mutex to hand out a work ID to each thread is completely negligible compared to how long it takes to do the work. The `WorkDispatcher` synchronization is effectively free.
+
+~~~ c++
+		// create a key-value map to match the atomic Z numbers with their place in the potential lookup table
+		map<size_t, size_t> Z_lookup;
+		for (auto i = 0; i < unique_species.size(); ++i)Z_lookup[unique_species[i]] = i;
+
+		//loop over each plane, perturb the atomic positions, and place the corresponding potential at each location
+		// using parallel calculation of each individual slice
+		std::vector<std::thread> workers;
+		workers.reserve(pars.meta.NUM_THREADS);
+
+		WorkDispatcher dispatcher(0, pars.numPlanes);
+		for (long t = 0; t < pars.meta.NUM_THREADS; ++t){
+			cout << "Launching thread #" << t << " to compute projected potential slices\n";
+			workers.push_back(thread([&pars, &x, &y, &z, &ID, &Z_lookup, &xvec, &sigma,
+											 &zPlane, &yvec,&potentialLookup, &dispatcher](){
+				// create a random number generator to simulate thermal effects
+				std::default_random_engine de(pars.meta.random_seed);
+				normal_distribution<PRISM_FLOAT_PRECISION> randn(0,1);
+				Array1D<long> xp;
+				Array1D<long> yp;
+
+				size_t currentBeam, stop;
+                currentBeam=stop=0;
+				while (dispatcher.getWork(currentBeam, stop)) { // synchronously get work assignment
+					Array2D<PRISM_FLOAT_PRECISION> projectedPotential = zeros_ND<2, PRISM_FLOAT_PRECISION>({{pars.imageSize[0], pars.imageSize[1]}});
+					while (currentBeam != stop) {
+						for (auto a2 = 0; a2 < x.size(); ++a2) {
+							if (zPlane[a2] == currentBeam) {
+								const long dim0 = (long) pars.imageSize[0];
+								const long dim1 = (long) pars.imageSize[1];
+								const size_t cur_Z = Z_lookup[ID[a2]];
+								PRISM_FLOAT_PRECISION X, Y;
+								if (pars.meta.include_thermal_effects) { // apply random perturbations
+									X = round((x[a2] + randn(de) * sigma[a2]) / pars.pixelSize[1]);
+									Y = round((y[a2] + randn(de) * sigma[a2]) / pars.pixelSize[0]);
+								} else {
+									X = round((x[a2]) / pars.pixelSize[1]); // this line uses no thermal factor
+									Y = round((y[a2]) / pars.pixelSize[0]); // this line uses no thermal factor
+								}
+								xp = xvec + (long) X;
+								for (auto &i:xp)i = (i % dim1 + dim1) % dim1; // make sure to get a positive value
+
+								yp = yvec + (long) Y;
+								for (auto &i:yp) i = (i % dim0 + dim0) % dim0;// make sure to get a positive value
+								for (auto ii = 0; ii < xp.size(); ++ii) {
+									for (auto jj = 0; jj < yp.size(); ++jj) {
+										// fill in value with lookup table
+										projectedPotential.at(yp[jj], xp[ii]) += potentialLookup.at(cur_Z, jj, ii);
+									}
+								}
+							}
+						}
+						// copy the result to the full array
+						copy(projectedPotential.begin(), projectedPotential.end(),&pars.pot.at(currentBeam,0,0));
+#ifdef PRISM_BUILDING_GUI
+                        pars.progressbar->signalPotentialUpdate(currentBeam, pars.numPlanes);
+#endif //PRISM_BUILDING_GUI
+						++currentBeam;
+					}
+				}
+			}));
+		}
+		cout << "Waiting for threads...\n";
+		for (auto &t:workers)t.join();
+#ifdef PRISM_BUILDING_GUI
+		pars.progressbar->setProgress(100);
+#endif //PRISM_BUILDING_GUI
+	};
+~~~

@@ -106,7 +106,7 @@ typename T::value_type& ArrayND<N, T>::at(const size_t& k, const size_t& j,const
 
 So the template parameter `T` represents the underlying buffer data type, which must behave as `std::vector`. The dimensions and array strides are stored in fixed arrays, and the `.at()` methods use these strides to compute offsets, such as in the example above for the 2D array case.
 
-I say "behave as" for the data buffer, because originally I also intended this class to be able to contain `thrust::host_vector` and `thrust::device_vector`. This would allow one to effectively use one template class to wrap multidimensional arrays that can transfer data back and force from the GPU without using the low level CUDA API calls. For example, you could overload the `=` operator for arrays of two different types and have the underying vector types copy from one another, also with the `=` operator. For example, `PRISM::ArrayND<T>` and `PRISM::ArrayND<U>` where `T` was a `thrust::host_vector` and `U` is a `thrust::device_vector` would invoke the assignment of a `thrust::host_vector` from a `thrust::device_vector`, calling `cudaMemcpy` under the hood, and I would never have to touch that. The same class simultaneously could be used to assign one `PRISM::ArrayND<std::vector>` to another. All of the metadata about the dimensions, etc, are stored host-side, so in principle this template class would allow you to use one syntax across all your host/device arrays and not see many cuda device calls at all. I have also written about this topic before with the approach of template specialization -- you can read about that [here](http://alanpryorjr.com/image/Flexible-CUDA/).
+I say "behave as" for the data buffer, because originally I also intended this class to be able to contain `thrust::host_vector` and `thrust::device_vector`. This would allow one to effectively use one template class to wrap multidimensional arrays that can transfer data back and forth from the GPU without using the low level CUDA API calls. For example, you could overload the `=` operator for arrays of two different types and have the underying vector types copy from one another, also with the `=` operator. For example, `PRISM::ArrayND<T> = PRISM::ArrayND<U>` where `T` was a `thrust::host_vector` and `U` is a `thrust::device_vector` would invoke the assignment of a `thrust::host_vector` from a `thrust::device_vector`, calling `cudaMemcpy` under the hood, and I would never have to touch that. The same class simultaneously could be used to assign one `PRISM::ArrayND<std::vector>` to another. All of the metadata about the dimensions, etc, are stored host-side, so in principle this template class would allow you to use one syntax across all your host/device arrays and not see many cuda device calls at all. I have also written about this topic before with the approach of template specialization -- you can read about that [here](http://alanpryorjr.com/image/Flexible-CUDA/).
 
 I still think this is a very good design pattern, but I ended up not using `thrust` at all, and the main reason was because you must use page-locked memory for asynchronous transfers. There is experimental support for a pinned memory allocator in thrust, `thrust::system::cuda::experimental::pinned_allocator< T >`, which can be passed into `thrust::host_vector`. However, with it being an experimental feature I was concerned about stability and figured if I was going to the trouble of customizing my array class specifically for performance I might as well also manually do my own allocations and not take risks. So `PRISM::ArrayND< std::vector<T> >` is used for the pageable host-side arrays, and then raw pointer are used for pinned memory and the device arrays.
 
@@ -126,7 +126,7 @@ int main(int argc, const char** argv) {
 	if (!PRISM::parseInputs(meta, argc, &argv))return 1;
 
 	// print metadata
-    meta.toString();
+        meta.toString();
 
 	// configure simulation behavior
 	PRISM::configure(meta);
@@ -143,7 +143,7 @@ My take on a command line parser is simple. It uses a `std::map` to connect comm
 
 ~~~ c++
 using parseFunction = bool (*)(Metadata<PRISM_FLOAT_PRECISION>& meta,
-                                      int& argc, const char*** argv);
+                               int& argc, const char*** argv);
 static std::map<std::string, parseFunction> parser{
         {"--input-file", parse_i}, {"-i", parse_i},
         {"--interp-factor", parse_f}, {"-f", parse_f}
@@ -905,35 +905,35 @@ for (auto t = 0; t < total_num_streams; ++t) {
 				if (currentBeam % PRISM_PRINT_FREQUENCY_BEAMS < pars.meta.batch_size_GPU | currentBeam == 100){
 					cout << "Computing Plane Wave #" << currentBeam << "/" << pars.numberBeams << endl;
 				}
-//						propagatePlaneWave_GPU_streaming(pars,
-//						                                 current_trans_ds,
-//						                                 trans_ph,
-//						                                 current_psi_ds,
-//						                                 current_psi_small_ds,
-//						                                 current_S_slice_ph,
-//						                                 current_qyInd_d,
-//						                                 current_qxInd_d,
-//						                                 current_prop_d,
-//						                                 current_beamsIndex,
-//						                                 currentBeam,
-//						                                 current_cufft_plan,
-//						                                 current_cufft_plan_small,
-//						                                 current_stream);
-				propagatePlaneWave_GPU_streaming_batch(pars,
-				                                       current_trans_ds,
-				                                       cuda_pars.trans_ph,
-				                                       current_psi_ds,
-				                                       current_psi_small_ds,
-				                                       current_S_slice_ph,
-				                                       current_qyInd_d,
-				                                       current_qxInd_d,
-				                                       current_prop_d,
-				                                       current_beamsIndex,
-				                                       currentBeam,
-				                                       stopBeam,
-				                                       current_cufft_plan,
-				                                       current_cufft_plan_small,
-				                                       current_stream);
+//			propagatePlaneWave_GPU_streaming(pars,
+//			                                 current_trans_ds,
+//			                                 trans_ph,
+//			                                 current_psi_ds,
+//			                                 current_psi_small_ds,
+//				                             current_S_slice_ph,
+//			                                 current_qyInd_d,
+//			                                 current_qxInd_d,
+//			                                 current_prop_d,
+//			                                 current_beamsIndex,
+//			                                 currentBeam,
+//			                                 current_cufft_plan,
+//			                                 current_cufft_plan_small,
+//	`		                                 current_stream);
+	propagatePlaneWave_GPU_streaming_batch(pars,
+	                                       current_trans_ds,
+	                                       cuda_pars.trans_ph,
+	                                       current_psi_ds,
+	                                       current_psi_small_ds,
+	                                       current_S_slice_ph,
+	                                       current_qyInd_d,
+	                                       current_qxInd_d,
+	                                       current_prop_d,
+	                                       current_beamsIndex,
+	                                       currentBeam,
+	                                       stopBeam,
+	                                       current_cufft_plan,
+	                                       current_cufft_plan_small,
+	                                       current_stream);
 //						++currentBeam;
 				currentBeam=stopBeam;
 #ifdef PRISM_BUILDING_GUI

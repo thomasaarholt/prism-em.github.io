@@ -1301,6 +1301,8 @@ while (dispatcher.getWork(Nstart, Nstop)) { // synchronously get work assignment
 }
 ~~~
 
+Okay, the last big thing is the GPU code for constructing the output at the probe position (`ax`,`ay`). A lot goes on so I'll go step by step
+
 ~~~ c++
     void buildSignal_GPU_streaming(Parameters<PRISM_FLOAT_PRECISION>&  pars,
                                    const size_t& ay,
@@ -1338,6 +1340,26 @@ while (dispatcher.getWork(Nstart, Nstop)) { // synchronously get work assignment
                 phaseCoeffs_ds, PsiProbeInit_d, qyaReduce_d, qxaReduce_d,
                 yBeams_d, xBeams_d, yp, xp, pars.yTiltShift, pars.xTiltShift, pars.imageSizeReduce[1], pars.numberBeams);
 
+~~~
+
+The first step is to shift the coordinates of the S-Matrix subset to be centered on the relevant output position:
+
+~~~ c++
+// from utility.cu
+__global__ void shiftIndices(long* vec_out, const long by, const long imageSize, const long N){
+        long idx = threadIdx.x + blockDim.x * blockIdx.x;
+        if (idx < N){
+            vec_out[idx] = (imageSize + ((idx - N/2 + by) % imageSize)) % imageSize;
+        }
+    }
+
+~~~
+
+The modular division operation (%) is to deal with wraparound, and because modular division in C++ can return negative values I add an outer addition and second modular operation, which is an idiom for guaranteeing a positive result.
+
+Next, for the streaming version, we have to copy the relevant subset of the compact S-Matrix. This can be done with at most 4 strided memory copies depending on whether or not the array subset wraps around in the X and/or Y directions.
+
+~~~ c++
         // Copy the relevant portion of the Scompact matrix. This can be accomplished with ideally one but at most 4 strided 3-D memory copies
         // depending on whether or not the coordinates wrap around.
         long x1,y1;
@@ -1406,6 +1428,11 @@ while (dispatcher.getWork(Nstart, Nstop)) { // synchronously get work assignment
                                          stream));
         }
 
+~~~
+
+Now we choose a launch configuration. This is discussed in detail in the PRISM algorithm paper, but the strategy is to choose a launch configuration that is preferably large along the direction of the plane-waves in the compact S-Matrix, which is the x-direction. Specifically $BlockSize_x$ is chosen to be the largest power of two less than the number of beams, or the maximum number of threads per block. This way there are usually enough threads to do the work, but you also get the advantage of having threads read multiple values before reducing, which is an optimization technique. So first there is some code to query the device properties and determine what parameters we have to work with.
+
+~~~ c++
         // The data is now copied and we can proceed with the actual calculation
 
         // re-center the indices
@@ -1442,6 +1469,11 @@ while (dispatcher.getWork(Nstart, Nstop)) { // synchronously get work assignment
         // Determine amount of shared memory needed
         const unsigned long smem = pars.numberBeams * sizeof(PRISM_CUDA_COMPLEX_FLOAT);
 
+~~~
+
+For rare simulation cases where there are very few beams, we will increase the block dimensions in X and Y, but most of the time there will be sufficient numbers of beams and the blocks will be effectively 1D. The actual reduction kernel we are then invoking is `scaleReduceS`. If the blockSize used for the function is visible at compile time, then the compiler can perform optimizations such as loop unrolling. However, we are determining the blockSize at runtime - but we can get around this by using a switch statement with a templated kernel. The compiler will see and separately optimize every version of the kernel, and then invoke the relevant one at runtime. There is both a 1-parameter and 2-parameter version of `scaleReduceS`, the latter being for the case where the blockSize is greater than 1 for Y/Z.
+
+~~~ c++
         if (BlockSize_numBeams >= 64) {
 
             const PRISM_FLOAT_PRECISION aspect_ratio = (PRISM_FLOAT_PRECISION)pars.imageSizeReduce[1] / (PRISM_FLOAT_PRECISION)pars.imageSizeReduce[0];
@@ -1544,6 +1576,168 @@ while (dispatcher.getWork(Nstart, Nstop)) { // synchronously get work assignment
                             pars.imageSizeReduce[1], pars.imageSizeReduce[0], pars.imageSizeReduce[1]);break;
             }
         }
+
+~~~
+
+Let's look at `scaleReduceS`, as it is one of the most important parts of *PRISM*.
+
+~~~ c++
+template <size_t BlockSizeX>
+    __global__ void scaleReduceS(const cuFloatComplex *permuted_Scompact_d,
+                                 const cuFloatComplex *phaseCoeffs_ds,
+                                 cuFloatComplex *psi_ds,
+                                 const long *z_ds,
+                                 const long* y_ds,
+                                 const size_t numberBeams,
+                                 const size_t dimk_S,
+                                 const size_t dimj_S,
+                                 const size_t dimj_psi,
+                                 const size_t dimi_psi) {
+        // This code is heavily modeled after Mark Harris's presentation on optimized parallel reduction
+        // http://developer.download.nvidia.com/compute/cuda/1.1-Beta/x86_website/projects/reduction/doc/reduction.pdf
+
+        // shared memory
+        __shared__ cuFloatComplex scaled_values[BlockSizeX]; // for holding the values to reduce
+        extern __shared__ cuFloatComplex coeff_cache []; // cache the coefficients to prevent repeated global reads
+
+        // for the permuted Scompact matrix, the x direction runs along the number of beams, leaving y and z to represent the
+        //  2D array of reduced values in psi
+        int idx = threadIdx.x + blockDim.x * blockIdx.x;
+        int y   = threadIdx.y + blockDim.y * blockIdx.y;
+        int z   = threadIdx.z + blockDim.z * blockIdx.z;
+
+        // determine grid size for stepping through the array
+        int gridSizeY = gridDim.y * blockDim.y;
+        int gridSizeZ = gridDim.z * blockDim.z;
+
+        // guarantee the shared memory is initialized to 0 so we can accumulate without bounds checking
+        scaled_values[threadIdx.x] = make_cuFloatComplex(0,0);
+        __syncthreads();
+
+        // read the coefficients into shared memory once
+        size_t offset_phase_idx = 0;
+        while (offset_phase_idx < numberBeams){
+            if (idx + offset_phase_idx < numberBeams){
+                coeff_cache[idx + offset_phase_idx] = phaseCoeffs_ds[idx + offset_phase_idx];
+            }
+            offset_phase_idx += BlockSizeX;
+        }
+        __syncthreads();
+
+//      // each block processes several reductions strided by the grid size
+        int y_saved = y;
+        while (z < dimj_psi){
+            y=y_saved; // reset y
+            while(y < dimi_psi){
+                //   read in first values
+                if (idx < numberBeams) {
+                    scaled_values[idx] = cuCmulf(permuted_Scompact_d[z_ds[z]*numberBeams*dimj_S + y_ds[y]*numberBeams + idx],
+                                                 coeff_cache[idx]);
+                    __syncthreads();
+                }
+
+//       step through global memory accumulating until values have been reduced to BlockSizeX elements in shared memory
+                size_t offset = BlockSizeX;
+                while (offset < numberBeams){
+                    if (idx + offset < numberBeams){
+                        scaled_values[idx] = cuCaddf(scaled_values[idx],
+                                                     cuCmulf( permuted_Scompact_d[z_ds[z]*numberBeams*dimj_S + y_ds[y]*numberBeams + idx + offset],
+                                                              coeff_cache[idx + offset]));
+                    }
+                    offset += BlockSizeX;
+                    __syncthreads();
+                }
+
+                // At this point we have exactly BlockSizeX elements to reduce from shared memory which we will add by recursively
+                // dividing the array in half
+
+                // Take advantage of templates. Because BlockSizeX is passed at compile time, all of these comparisons are also
+                // evaluated at compile time
+                if (BlockSizeX >= 1024){
+                    if (idx < 512){
+                        scaled_values[idx] = cuCaddf(scaled_values[idx], scaled_values[idx + 512]);
+                    }
+                    __syncthreads();
+                }
+
+                if (BlockSizeX >= 512){
+                    if (idx < 256){
+                        scaled_values[idx] = cuCaddf(scaled_values[idx], scaled_values[idx + 256]);
+                    }
+                    __syncthreads();
+                }
+
+                if (BlockSizeX >= 256){
+                    if (idx < 128){
+                        scaled_values[idx] = cuCaddf(scaled_values[idx], scaled_values[idx + 128]);
+                    }
+                    __syncthreads();
+                }
+
+                if (BlockSizeX >= 128){
+                    if (idx < 64){
+                        scaled_values[idx] = cuCaddf(scaled_values[idx], scaled_values[idx + 64]);
+                    }
+                    __syncthreads();
+                }
+
+                // use a special optimization for the last reductions
+                if (idx < 32 & BlockSizeX <= numberBeams){
+                    warpReduce_cx<BlockSizeX>(scaled_values, idx);
+
+                } else {
+                    warpReduce_cx<1>(scaled_values, idx);
+                }
+
+                // write out the result
+                if (idx == 0)psi_ds[z*dimi_psi + y] = scaled_values[0];
+
+                // increment
+                y+=gridSizeY;
+                __syncthreads();
+            }
+            z+=gridSizeZ;
+            __syncthreads();
+        }
+    }
+
+    template <size_t BlockSize_numBeams>
+    __device__  void warpReduce_cx(volatile cuFloatComplex* sdata, int idx){
+        // When 32 or fewer threads remain, there is only a single warp remaining and no need to synchronize; however,
+        // the volatile keyword is necessary otherwise the compiler will optimize these operations into registers
+        // and the result will be incorrect
+        if (BlockSize_numBeams >= 64){
+            sdata[idx].x += sdata[idx + 32].x;
+            sdata[idx].y += sdata[idx + 32].y;
+        }
+        if (BlockSize_numBeams >= 32){
+            sdata[idx].x += sdata[idx + 16].x;
+            sdata[idx].y += sdata[idx + 16].y;
+        }
+        if (BlockSize_numBeams >= 16){
+            sdata[idx].x += sdata[idx + 8].x;
+            sdata[idx].y += sdata[idx + 8].y;
+        }
+        if (BlockSize_numBeams >= 8){
+            sdata[idx].x += sdata[idx + 4].x;
+            sdata[idx].y += sdata[idx + 4].y;
+        }
+        if (BlockSize_numBeams >= 4){
+            sdata[idx].x += sdata[idx + 2].x;
+            sdata[idx].y += sdata[idx + 2].y;
+        }
+        if (BlockSize_numBeams >= 2){
+            sdata[idx].x += sdata[idx + 1].x;
+            sdata[idx].y += sdata[idx + 1].y;
+        }
+    }
+~~~
+
+The [presentation](http://developer.download.nvidia.com/compute/cuda/1.1-Beta/x86_website/projects/reduction/doc/reduction.pdf) I referenced on parallel reduction is extremely good, and if you have read through it then almost every step within `scaleReduceS` will be very clear. At the very beginning, we populate `coeff_cache`, which we read from global memory once and then will be reused at every position in `psi_ds` that we populate. The power of all of the statements like `if (BlockSizeX >= XX)` is that because `BlockSizeX` is a template parameter, it is visible at compile time, and thus these kinds of conditional checks don't have to be performed when you run PRISM simulations. They are effectively hard-coded into the functions, and when you are considering the parallel calculation consists of many thousands of threads each performing a relatively small number of operations, being able to skip *anything* can make quite a substantial difference in performance. I once again refer you to the talk if you want to get a sense of how much difference is made by the various optimizations used.
+
+To finish, we just take one last fft and call the formatting function, which deals with transferring the result back to the host.
+
+~~~ c++ 
         // final fft
         cufftErrchk(PRISM_CUFFT_EXECUTE(cufft_plan, &psi_ds[0], &psi_ds[0], CUFFT_FORWARD));
 
@@ -1557,5 +1751,16 @@ while (dispatcher.getWork(Nstart, Nstop)) { // synchronously get work assignment
     }
 ~~~
 
+You made it through! There are multiple variations of each of these functions, but if you understand what is happening in the streaming codes with batch FFTs then all of the other versions should also make sense.
 
 ## Combining CUDA and Qt with CMake
+
+From the beginning of this project, the intention was to create an cross-platform program that could utilize GPUs, but still would work without them, and that had both a GUI and a CLI. My focus was very strongly on trying to make it as easy as possible to get it up and running no matter the user's hardware, OS, background, etc. After all, this is a tool, and if nobody wants to use it then what good have I accomplished?
+
+That's a nice philosophy, but a lot easier said than done. The main challenge here is that NVIDIA has its own compiler, `nvcc` for compiling CUDA code, Qt has its own compiler, `moc`, which is an intermediate compiler that takes Qt specific directives for graphical objects and generates more C++ code which is then compiled with a normal C++ compiler like `gcc`. Getting source code to compile can be challenging on its own, so getting three different compilers to play nicely together alongsisde modern C++11 features and have it all run on Linux, Windows, and Mac was a bit daunting.
+
+`CMake` was absolutely critical to making this possible. Not only can it handle the process of managing the different compilers and combining all of the intermediate results, but it also made it easy for me to create additional configuration options. For example, if you are just compiling *PRISM* for the CLI, `prism`, to run on a cluster -- you probably don't care about about building the GUI, which requires several libraries from the rather large Qt framework. By setting the CMake option `PRISM_ENABLE_GPU=0`, I was able to add simple logic to prevent compilation from ever including anything about Qt. The same goes for enabling GPU support. So by default, *PRISM* compiles under the simplest of settings, only building the CLI with command line support, and then the user can expand from there based upon their needs.
+
+### Conclusion
+
+*I hope you found this walkthrough interesting. If you have comments, corrections, advice, criticisms, questions, or just want to talk about this (or really any other computing topic..), feel free to reach out to me via email (apryor6@gmail.com)*

@@ -918,7 +918,7 @@ for (auto t = 0; t < total_num_streams; ++t) {
 //			                                 currentBeam,
 //			                                 current_cufft_plan,
 //			                                 current_cufft_plan_small,
-//	`		                                 current_stream);
+//			                                 current_stream);
 	propagatePlaneWave_GPU_streaming_batch(pars,
 	                                       current_trans_ds,
 	                                       cuda_pars.trans_ph,

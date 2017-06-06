@@ -1301,4 +1301,261 @@ while (dispatcher.getWork(Nstart, Nstop)) { // synchronously get work assignment
 }
 ~~~
 
+~~~ c++
+    void buildSignal_GPU_streaming(Parameters<PRISM_FLOAT_PRECISION>&  pars,
+                                   const size_t& ay,
+                                   const size_t& ax,
+                                   PRISM_CUDA_COMPLEX_FLOAT *permuted_Scompact_ds,
+                                   const std::complex<PRISM_FLOAT_PRECISION> *permuted_Scompact_ph,
+                                   const PRISM_CUDA_COMPLEX_FLOAT *PsiProbeInit_d,
+                                   const PRISM_FLOAT_PRECISION *qxaReduce_d,
+                                   const PRISM_FLOAT_PRECISION *qyaReduce_d,
+                                   const size_t *yBeams_d,
+                                   const size_t *xBeams_d,
+                                   const PRISM_FLOAT_PRECISION *alphaInd_d,
+                                   PRISM_CUDA_COMPLEX_FLOAT *psi_ds,
+                                   PRISM_CUDA_COMPLEX_FLOAT *phaseCoeffs_ds,
+                                   PRISM_FLOAT_PRECISION *psi_intensity_ds,
+                                   long  *y_ds,
+                                   long  *x_ds,
+                                   PRISM_FLOAT_PRECISION *output_ph,
+                                   PRISM_FLOAT_PRECISION *integratedOutput_ds,
+                                   const cufftHandle &cufft_plan,
+                                   const cudaStream_t& stream,
+                                   CudaParameters<PRISM_FLOAT_PRECISION>& cuda_pars){
+
+        // the coordinates y and x of the output image phi map to z and y of the permuted S compact matrix
+        const PRISM_FLOAT_PRECISION yp = pars.yp[ay];
+        const PRISM_FLOAT_PRECISION xp = pars.xp[ax];
+        const size_t psi_size = pars.imageSizeReduce[0] * pars.imageSizeReduce[1];
+        shiftIndices <<<(pars.imageSizeReduce[0] - 1) / BLOCK_SIZE1D + 1, BLOCK_SIZE1D, 0, stream>>> (
+                y_ds, std::round(yp / pars.pixelSizeOutput[0]),pars.imageSize[0], pars.imageSizeReduce[0]);
+
+        shiftIndices <<<(pars.imageSizeReduce[1] - 1) / BLOCK_SIZE1D + 1, BLOCK_SIZE1D, 0, stream>>> (
+                x_ds, std::round(xp / pars.pixelSizeOutput[1]), pars.imageSize[1], pars.imageSizeReduce[1]);
+
+        computePhaseCoeffs <<<(pars.numberBeams - 1) / BLOCK_SIZE1D + 1, BLOCK_SIZE1D, 0, stream>>>(
+                phaseCoeffs_ds, PsiProbeInit_d, qyaReduce_d, qxaReduce_d,
+                yBeams_d, xBeams_d, yp, xp, pars.yTiltShift, pars.xTiltShift, pars.imageSizeReduce[1], pars.numberBeams);
+
+        // Copy the relevant portion of the Scompact matrix. This can be accomplished with ideally one but at most 4 strided 3-D memory copies
+        // depending on whether or not the coordinates wrap around.
+        long x1,y1;
+        y1 = pars.yVec[0] + std::round(yp / (PRISM_FLOAT_PRECISION)pars.pixelSizeOutput[0]);
+        x1 = pars.xVec[0] + std::round(xp / (PRISM_FLOAT_PRECISION)pars.pixelSizeOutput[1]);
+
+
+        // determine where in the coordinate list wrap-around occurs (if at all)
+        long xsplit, ysplit, nx2, ny2, xstart1, xstart2, ystart1, ystart2;
+        xsplit = (x1 < 0) ? -x1 : (x1 + pars.xVec.size() > pars.Scompact.get_dimi()) ? pars.Scompact.get_dimi() - x1 : pars.xVec.size();
+        ysplit = (y1 < 0) ? -y1 : (y1 + pars.yVec.size() > pars.Scompact.get_dimj()) ? pars.Scompact.get_dimj() - y1 : pars.yVec.size();
+
+        nx2 = pars.xVec.size() - xsplit;
+        ny2 = pars.yVec.size() - ysplit;
+
+        xstart1 = ((long) pars.imageSizeOutput[1] + (x1 % (long) pars.imageSizeOutput[1])) %
+                   (long) pars.imageSizeOutput[1];
+        xstart2 = ((long) pars.imageSizeOutput[1] + (x1 + xsplit % (long) pars.imageSizeOutput[1])) %
+                   (long) pars.imageSizeOutput[1];
+        ystart1 = ((long) pars.imageSizeOutput[0] + (y1 % (long) pars.imageSizeOutput[0])) %
+                   (long) pars.imageSizeOutput[0];
+        ystart2 = ((long) pars.imageSizeOutput[0] + (y1 + ysplit % (long) pars.imageSizeOutput[0])) %
+                   (long) pars.imageSizeOutput[0];
+
+        cudaErrchk(cudaMemcpy2DAsync(permuted_Scompact_ds,
+                                     pars.imageSizeReduce[1] * pars.numberBeams * sizeof(PRISM_CUDA_COMPLEX_FLOAT),
+                                     &permuted_Scompact_ph[ystart1 * pars.numberBeams * pars.Scompact.get_dimi() +
+                                                           xstart1 * pars.numberBeams],
+                                     pars.Scompact.get_dimi() * pars.numberBeams * sizeof(PRISM_CUDA_COMPLEX_FLOAT), // corresponds to stride between permuted Scompact elements in k-direction
+                                     xsplit * pars.numberBeams * sizeof(PRISM_CUDA_COMPLEX_FLOAT),
+                                     ysplit,
+                                     cudaMemcpyHostToDevice,
+                                     stream));
+        if (nx2 > 0 ) {
+            cudaErrchk(cudaMemcpy2DAsync(&permuted_Scompact_ds[xsplit * pars.numberBeams],
+                                         pars.imageSizeReduce[1] * pars.numberBeams * sizeof(PRISM_CUDA_COMPLEX_FLOAT),
+                                         &permuted_Scompact_ph[ystart1 * pars.numberBeams * pars.Scompact.get_dimi() +
+                                                               xstart2 * pars.numberBeams],
+                                         pars.Scompact.get_dimi() * pars.numberBeams * sizeof(PRISM_CUDA_COMPLEX_FLOAT), // corresponds to stride between permuted Scompact elements in k-direction
+                                         nx2 * pars.numberBeams * sizeof(PRISM_CUDA_COMPLEX_FLOAT),
+                                         ysplit,
+                                         cudaMemcpyHostToDevice,
+                                         stream));
+        }
+        if (ny2 > 0 ) {
+            cudaErrchk(cudaMemcpy2DAsync(&permuted_Scompact_ds[ysplit * pars.imageSizeReduce[1] * pars.numberBeams],
+                                         pars.imageSizeReduce[1] * pars.numberBeams * sizeof(PRISM_CUDA_COMPLEX_FLOAT),
+                                         &permuted_Scompact_ph[ystart2 * pars.numberBeams * pars.Scompact.get_dimi() +
+                                                               xstart1 * pars.numberBeams],
+                                         pars.Scompact.get_dimi() * pars.numberBeams * sizeof(PRISM_CUDA_COMPLEX_FLOAT), // corresponds to stride between permuted Scompact elements in k-direction
+                                         xsplit * pars.numberBeams * sizeof(PRISM_CUDA_COMPLEX_FLOAT),
+                                         ny2,
+                                         cudaMemcpyHostToDevice,
+                                         stream));
+        }
+        if (ny2 > 0 & nx2 > 0) {
+            cudaErrchk(cudaMemcpy2DAsync(&permuted_Scompact_ds[ysplit * pars.imageSizeReduce[1] * pars.numberBeams +
+                                                               xsplit * pars.numberBeams],
+                                         pars.imageSizeReduce[1] * pars.numberBeams * sizeof(PRISM_CUDA_COMPLEX_FLOAT),
+                                         &permuted_Scompact_ph[ystart2 * pars.numberBeams * pars.Scompact.get_dimi() +
+                                                               xstart2 * pars.numberBeams],
+                                         pars.Scompact.get_dimi() * pars.numberBeams * sizeof(PRISM_CUDA_COMPLEX_FLOAT), // corresponds to stride between permuted Scompact elements in k-direction
+                                         nx2 * pars.numberBeams * sizeof(PRISM_CUDA_COMPLEX_FLOAT),
+                                         ny2,
+                                         cudaMemcpyHostToDevice,
+                                         stream));
+        }
+
+        // The data is now copied and we can proceed with the actual calculation
+
+        // re-center the indices
+        resetIndices <<<(pars.imageSizeReduce[0] - 1) / BLOCK_SIZE1D + 1, BLOCK_SIZE1D, 0, stream>>> (
+                y_ds, pars.imageSizeReduce[0]);
+
+        resetIndices <<<(pars.imageSizeReduce[1] - 1) / BLOCK_SIZE1D + 1, BLOCK_SIZE1D, 0, stream>>> (
+                x_ds, pars.imageSizeReduce[1]);
+
+        // Choose a good launch configuration
+        // Heuristically use 2^p / 2 as the block size where p is the first power of 2 greater than the number of elements to work on.
+        // This balances having enough work per thread and enough blocks without having so many blocks that the shared memory doesn't last long
+
+        size_t p = getNextPower2(pars.numberBeams);
+        const size_t BlockSize_numBeams = min((size_t)pars.deviceProperties.maxThreadsPerBlock,(size_t)std::max(1.0, pow(2,p) / 2));
+
+        // Determine maximum threads per streaming multiprocessor based on the compute capability of the device
+        size_t max_threads_per_sm;
+        if (pars.deviceProperties.major > 3){
+            max_threads_per_sm = 2048;
+        } else if (pars.deviceProperties.major > 2) {
+            max_threads_per_sm = 1536;
+        } else {
+            max_threads_per_sm = pars.deviceProperties.minor == 0 ? 768 : 1024;
+        }
+
+        // Estimate max number of simultaneous blocks per streaming multiprocessor
+        const size_t max_blocks_per_sm = std::min((size_t)32, max_threads_per_sm / BlockSize_numBeams);
+
+        // We find providing around 3 times as many blocks as the estimated maximum provides good performance
+        const size_t target_blocks_per_sm = max_blocks_per_sm * 3;
+        const size_t total_blocks         = target_blocks_per_sm * pars.deviceProperties.multiProcessorCount;
+
+        // Determine amount of shared memory needed
+        const unsigned long smem = pars.numberBeams * sizeof(PRISM_CUDA_COMPLEX_FLOAT);
+
+        if (BlockSize_numBeams >= 64) {
+
+            const PRISM_FLOAT_PRECISION aspect_ratio = (PRISM_FLOAT_PRECISION)pars.imageSizeReduce[1] / (PRISM_FLOAT_PRECISION)pars.imageSizeReduce[0];
+            const size_t GridSizeZ = std::floor(sqrt(total_blocks / aspect_ratio));
+            const size_t GridSizeY = aspect_ratio * GridSizeZ;
+            dim3 grid(1, GridSizeY, GridSizeZ);
+            dim3 block(BlockSize_numBeams, 1, 1);
+//      // Launch kernel. Block size must be visible at compile time so we use a switch statement
+            switch (BlockSize_numBeams) {
+                case 1024 :
+                    scaleReduceS<1024> << < grid, block, smem, stream >> > (
+                            permuted_Scompact_ds, phaseCoeffs_ds, psi_ds, y_ds, x_ds, pars.numberBeams, pars.imageSizeReduce[0],
+                            pars.imageSizeReduce[1], pars.imageSizeReduce[0], pars.imageSizeReduce[1]);break;
+                case 512 :
+                    scaleReduceS<512> << < grid, block, smem, stream >> > (
+                            permuted_Scompact_ds, phaseCoeffs_ds, psi_ds, y_ds, x_ds, pars.numberBeams, pars.imageSizeReduce[0],
+                            pars.imageSizeReduce[1], pars.imageSizeReduce[0], pars.imageSizeReduce[1]);break;
+                case 256 :
+                    scaleReduceS<256> << < grid, block, smem, stream >> > (
+                            permuted_Scompact_ds, phaseCoeffs_ds, psi_ds, y_ds, x_ds, pars.numberBeams, pars.imageSizeReduce[0],
+                            pars.imageSizeReduce[1], pars.imageSizeReduce[0], pars.imageSizeReduce[1]);break;
+                case 128 :
+                    scaleReduceS<128> << < grid, block, smem, stream >> > (
+                            permuted_Scompact_ds, phaseCoeffs_ds, psi_ds, y_ds, x_ds, pars.numberBeams, pars.imageSizeReduce[0],
+                            pars.imageSizeReduce[1], pars.imageSizeReduce[0], pars.imageSizeReduce[1]);break;
+                case 64 :
+                    scaleReduceS<64> << < grid, block, smem, stream >> > (
+                            permuted_Scompact_ds, phaseCoeffs_ds, psi_ds, y_ds, x_ds, pars.numberBeams, pars.imageSizeReduce[0],
+                            pars.imageSizeReduce[1], pars.imageSizeReduce[0], pars.imageSizeReduce[1]);break;
+                case 32 :
+                    scaleReduceS<32> << < grid, block, smem, stream >> > (
+                            permuted_Scompact_ds, phaseCoeffs_ds, psi_ds, y_ds, x_ds, pars.numberBeams, pars.imageSizeReduce[0],
+                            pars.imageSizeReduce[1], pars.imageSizeReduce[0], pars.imageSizeReduce[1]);break;
+                case 16 :
+                    scaleReduceS<16> << < grid, block, smem, stream >> > (
+                            permuted_Scompact_ds, phaseCoeffs_ds, psi_ds, y_ds, x_ds, pars.numberBeams, pars.imageSizeReduce[0],
+                            pars.imageSizeReduce[1], pars.imageSizeReduce[0], pars.imageSizeReduce[1]);break;
+                case 8 :
+                    scaleReduceS<8> << < grid, block, smem, stream >> > (
+                            permuted_Scompact_ds, phaseCoeffs_ds, psi_ds, y_ds, x_ds, pars.numberBeams, pars.imageSizeReduce[0],
+                            pars.imageSizeReduce[1], pars.imageSizeReduce[0], pars.imageSizeReduce[1]);break;
+                case 4 :
+                    scaleReduceS<4> << < grid, block, smem, stream >> > (
+                            permuted_Scompact_ds, phaseCoeffs_ds, psi_ds, y_ds, x_ds, pars.numberBeams, pars.imageSizeReduce[0],
+                            pars.imageSizeReduce[1], pars.imageSizeReduce[0], pars.imageSizeReduce[1]);break;
+                default :
+                    scaleReduceS<2> << < grid, block, smem, stream >> > (
+                            permuted_Scompact_ds, phaseCoeffs_ds, psi_ds, y_ds, x_ds, pars.numberBeams, pars.imageSizeReduce[0],
+                            pars.imageSizeReduce[1], pars.imageSizeReduce[0], pars.imageSizeReduce[1]);break;
+            }
+        } else {
+            const size_t BlockSize_alongArray = 512 / BlockSize_numBeams;
+            const size_t GridSize_alongArray = total_blocks;
+            dim3 grid(1, GridSize_alongArray, 1);
+            dim3 block(BlockSize_numBeams, BlockSize_alongArray, 1);
+            // Determine amount of shared memory needed
+            const unsigned long smem = pars.numberBeams * sizeof(PRISM_CUDA_COMPLEX_FLOAT);
+
+            // Launch kernel. Block size must be visible at compile time so we use a switch statement
+            switch (BlockSize_numBeams) {
+                case 1024 :
+                    scaleReduceS<1024, 1> << < grid, block, smem, stream >> > (
+                            permuted_Scompact_ds, phaseCoeffs_ds, psi_ds, y_ds, x_ds, pars.numberBeams, pars.imageSizeReduce[0],
+                            pars.imageSizeReduce[1], pars.imageSizeReduce[0], pars.imageSizeReduce[1]);break;
+                case 512 :
+                    scaleReduceS<512, 1> << < grid, block, smem, stream >> > (
+                            permuted_Scompact_ds, phaseCoeffs_ds, psi_ds, y_ds, x_ds, pars.numberBeams, pars.imageSizeReduce[0],
+                            pars.imageSizeReduce[1], pars.imageSizeReduce[0], pars.imageSizeReduce[1]);break;
+                case 256 :
+                    scaleReduceS<256, 2> << < grid, block, smem, stream >> > (
+                            permuted_Scompact_ds, phaseCoeffs_ds, psi_ds, y_ds, x_ds, pars.numberBeams, pars.imageSizeReduce[0],
+                            pars.imageSizeReduce[1], pars.imageSizeReduce[0], pars.imageSizeReduce[1]);break;
+                case 128 :
+                    scaleReduceS<128, 4> << < grid, block, smem, stream >> > (
+                            permuted_Scompact_ds, phaseCoeffs_ds, psi_ds, y_ds, x_ds, pars.numberBeams, pars.imageSizeReduce[0],
+                            pars.imageSizeReduce[1], pars.imageSizeReduce[0], pars.imageSizeReduce[1]);break;
+                case 64 :
+                    scaleReduceS<64, 8> << < grid, block, smem, stream >> > (
+                            permuted_Scompact_ds, phaseCoeffs_ds, psi_ds, y_ds, x_ds, pars.numberBeams, pars.imageSizeReduce[0],
+                            pars.imageSizeReduce[1], pars.imageSizeReduce[0], pars.imageSizeReduce[1]);break;
+                case 32 :
+                    scaleReduceS<32, 16> << < grid, block, smem, stream >> > (
+                            permuted_Scompact_ds, phaseCoeffs_ds, psi_ds, y_ds, x_ds, pars.numberBeams, pars.imageSizeReduce[0],
+                            pars.imageSizeReduce[1], pars.imageSizeReduce[0], pars.imageSizeReduce[1]);break;
+                case 16 :
+                    scaleReduceS<16, 32> << < grid, block, smem, stream >> > (
+                            permuted_Scompact_ds, phaseCoeffs_ds, psi_ds, y_ds, x_ds, pars.numberBeams, pars.imageSizeReduce[0],
+                            pars.imageSizeReduce[1], pars.imageSizeReduce[0], pars.imageSizeReduce[1]);break;
+                case 8 :
+                    scaleReduceS<8, 64> << < grid, block, smem, stream >> > (
+                            permuted_Scompact_ds, phaseCoeffs_ds, psi_ds, y_ds, x_ds, pars.numberBeams, pars.imageSizeReduce[0],
+                            pars.imageSizeReduce[1], pars.imageSizeReduce[0], pars.imageSizeReduce[1]);break;
+                case 4 :
+                    scaleReduceS<4, 128> << < grid, block, smem, stream >> > (
+                            permuted_Scompact_ds, phaseCoeffs_ds, psi_ds, y_ds, x_ds, pars.numberBeams, pars.imageSizeReduce[0],
+                            pars.imageSizeReduce[1], pars.imageSizeReduce[0], pars.imageSizeReduce[1]);break;
+                default :
+                    scaleReduceS<1, 512> << < grid, block, smem, stream >> > (
+                            permuted_Scompact_ds, phaseCoeffs_ds, psi_ds, y_ds, x_ds, pars.numberBeams, pars.imageSizeReduce[0],
+                            pars.imageSizeReduce[1], pars.imageSizeReduce[0], pars.imageSizeReduce[1]);break;
+            }
+        }
+        // final fft
+        cufftErrchk(PRISM_CUFFT_EXECUTE(cufft_plan, &psi_ds[0], &psi_ds[0], CUFFT_FORWARD));
+
+        // convert to squared intensity
+        abs_squared <<< (psi_size - 1) / BLOCK_SIZE1D + 1, BLOCK_SIZE1D, 0, stream >>> (psi_intensity_ds, psi_ds, psi_size);
+
+        // output calculation result
+        formatOutput_GPU_integrate(pars, psi_intensity_ds, alphaInd_d, output_ph,
+                                   integratedOutput_ds, ay, ax, pars.imageSizeReduce[0],
+                                   pars.imageSizeReduce[1], stream, pars.scale);
+    }
+~~~
+
+
 ## Combining CUDA and Qt with CMake

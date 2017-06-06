@@ -61,7 +61,7 @@ I built a custom multidimensional array class for *PRISM*, mainly because I want
 
 I also added some convenience functions very similar to MATLAB's `zeros` and `ones`.. this was mainly to make my life easier when transcribing from MATLAB code.
 
-The full class can be found in "ArrayND.h" and as it is some 600 lines that are fairly repetetive I won't include the whole thing here. But as an example
+The full class can be found in "ArrayND.h" and as it is some 600 lines that are fairly repetitive I won't include the whole thing here. But as an example
 
 ~~~ c++
 namespace PRISM {
@@ -187,7 +187,7 @@ and this is set in "configure.cpp"
 ~~~ c++
 //configure.cpp
 if (meta.algorithm == Algorithm::PRISM) {
-	fill_Scompact = fill_Scompact_CPUOnly;
+	execute_plan = PRISM_entry;
 	//...
 	// bunch of other stuff..
 	// ...
@@ -196,7 +196,7 @@ if (meta.algorithm == Algorithm::PRISM) {
 }
 ~~~
 
-If you think this is overkill, and I could just have an if-else for this case, consider that there are choice of PRISM/Multislice, the possibility of CPU-only or GPU-enabled, the possibility of streaming/singlexfer if we are using the GPU codes, etc. It would create a lot of divergences very quickly, and this is a better solution.
+If you think this is overkill, and I could just have an if-else for this case, consider that there are choices of PRISM/Multislice, the possibility of CPU-only or GPU-enabled, the possibility of streaming/singlexfer if we are using the GPU codes, etc. It would create a lot of divergences very quickly, and this is a better solution.
 
 ## PRISM
 

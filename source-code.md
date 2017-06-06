@@ -1035,7 +1035,7 @@ for (auto &t:workers_GPU)t.join();
 }
 ~~~
 
-The main function within the worker threads is `propagatePlaneWave_GPU_streaming_batch`, which contains our first kernel invocation, which are the function calls with the "<<< >>>" syntax. We'll look at the details of the CUDA kernel in a second, but conceptually this function is doing the same thing as a multislice simulation: alternatingly FFT/IFFT the current wave function and multiply it element-wise with either the transmission or propagation function. There is also a division by the array size to account for the overall scaling factor applied when taking a forward/backward FFT (cuFFT is unnormalized).
+The main function within the worker threads is `propagatePlaneWave_GPU_streaming_batch`, which contains our first kernel invocation, which are the function calls with the "\<\<\<  \>\>\>" syntax. We'll look at the details of the CUDA kernel in a second, but conceptually this function is doing the same thing as a multislice simulation: alternatingly FFT/IFFT the current wave function and multiply it element-wise with either the transmission or propagation function. There is also a division by the array size to account for the overall scaling factor applied when taking a forward/backward FFT (cuFFT is unnormalized).
 
 `propagatePlaneWave_GPU_streaming_batch`:
 

@@ -1,5 +1,5 @@
 # About PRISM
-*PRISM* is a CUDA/C++ software package for fast image simulation in scanning transmission electron microscopy (STEM). It includes parallel, data-streaming implementations of both the plane-wave reciprocal-space interpolated scattering matrix (PRISM) and multislice algorithms using multicore CPUs and CUDA-enabled GPU(s), in some cases achieving accelerations as high as 1000 or more relative to traditional methods. *PRISM* is fast, free, open-sourced, and contains a graphical user interface.
+*PRISM* is a CUDA/C++ software package for fast image simulation in scanning transmission electron microscopy (STEM). It includes parallel, data-streaming implementations of both the plane-wave reciprocal-space interpolated scattering matrix (PRISM) and multislice algorithms using multicore CPUs and CUDA-enabled GPU(s), in some cases achieving accelerations as high as 1000x or more relative to traditional methods. *PRISM* is fast, free, open-sourced, and contains a graphical user interface.
 
 ## File Formats
 

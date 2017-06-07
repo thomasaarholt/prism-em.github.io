@@ -29,6 +29,7 @@ navbar-links:
   Downloads:
     - Source Code: "http://example.com"
     - Installers: "http://www.example.com"
+  Installation: "installation"
   Tutorials:
     - Tutorial: "tutorial"
     - Source Code Walkthrough: "source-code"

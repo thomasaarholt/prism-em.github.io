@@ -23,8 +23,6 @@ description: Documentation, tutorials, and source code for the software package 
 
 # List of links in the navigation bar
 navbar-links: 
-  About:
-    - Test: "about"
   Downloads:
     - Source Code: "http://example.com"
     - Installers: "http://www.example.com"

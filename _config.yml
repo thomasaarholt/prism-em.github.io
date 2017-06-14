@@ -23,9 +23,7 @@ description: Documentation, tutorials, and source code for the software package 
 
 # List of links in the navigation bar
 navbar-links:
-  About:
-    - PRISM: "about"
-    - Authors: "authors"
+  About: "about"
   Downloads:
     - Source Code: "http://example.com"
     - Installers: "http://www.example.com"

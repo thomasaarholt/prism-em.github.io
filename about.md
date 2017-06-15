@@ -9,7 +9,7 @@ Input files containing the atomic coordinates should be in the following XYZ for
 
 * 1 comment line
 * 1 line with the 3 unit cell dimensions a,b,c (in Angstroms)
-* *N* lines of the form Z, x, y, z, occ, thermal_sigma where Z is the atomic number, x, y, and z are the coordinates of the atom within the unit cell (in Angstroms), occ is the occupancy number (almost always 1, and currently not used in PRISM), and thermal_sigma is the standard deviation of random thermal motion (Debye-Waller effect).
+* *N* lines of the form Z, x, y, z, occ, thermal_sigma where Z is the atomic number, x, y, and z are the coordinates of the atom within the unit cell (in Angstroms), occ is the occupancy number (almost always 1, and currently not used in *Prismatic*), and thermal_sigma is the standard deviation of random thermal motion (Debye-Waller effect).
 * -1 to indicate end of file
 
 Here is a sample file, "SI100.XYZ"
@@ -36,6 +36,6 @@ Outputs are written to binary [.mrc](http://bio3d.colorado.edu/imod/doc/mrc_form
 * 3D output: Controlled by command line option "-3D 0/1" where 0 or 1 is a boolean on/off. The 3D output is saved to `filename_output`. By default this is on.
 * 4D output: Controlled by command line option "-4D 0/1" where 0 or 1 is a boolean on/off. The 4D output saves a separate 2D MRC image for each X/Y probe scan position. The output name for each image is tagged with the X and Y scan position index + `filename_output`. By default this is off.
 
-For example, the `prism` command 
-`prism -i atoms.XYZ -2D 0 10 -4D 1 -3D 1 -o example.mrc`
+For example, the `prismatic` command 
+`./prismatic -i atoms.XYZ -2D 0 10 -4D 1 -3D 1 -o example.mrc`
 will produce "prism\_2Doutput\_example.mrc" with the 2D bright field image integrated from 0-10 mrad, the 3D output in "example.mrc", and many 2D images of the form "example\_X##\_Y##\_FP##.mrc". For the time being, it will likely require some scripting on the user's part to wrangle the 4D output. In the future, we intend to introduce an hdf5 format to contain each of these outputs in a unified way. 

@@ -1,4 +1,4 @@
-# PRISM
+# *Prismatic*
 C++/CUDA implementation of compact S-matrix formulism for fast image simulation in Scanning Transmission Electron Microscopy (STEM).
 
 ## Installation
@@ -7,41 +7,39 @@ C++/CUDA implementation of compact S-matrix formulism for fast image simulation 
 
 *Links to binary installers should go here in the future*
 
-## Building PRISM from the source code
+## Building *Prismatic* from the source code
 
-PRISM is built on top of [CMake](https://cmake.org/), a cross-platform compilation utility that 
+*Prismatic* is built on top of [CMake](https://cmake.org/), a cross-platform compilation utility that 
 allows a single source tree to be compiled into a variety of formats including UNIX Makefiles, 
-Microsoft Visual Studio projects, Mac OS XCode projects, etc. Only having to maintain one project 
-means PRISM developers spend less time managing multiple code-bases and more time optimizing, debugging, 
-and extending PRISM, resulting in a better end-user experience.  
+Microsoft Visual Studio projects, Mac OS XCode projects, etc.
 
 ### External dependencies
 
-To install PRISM, you must first install [Cmake](https://cmake.org/install/) and [FFTW](http://www.fftw.org/fftw2_doc/fftw_6.html). 
+To install *Prismatic*, you must first install [Cmake](https://cmake.org/install/) and [FFTW](http://www.fftw.org/fftw2_doc/fftw_6.html). 
 
-To accelerate PRISM with CUDA GPUs, you must also install [the CUDA toolkit](https://developer.nvidia.com/cuda-toolkit) and have a CUDA enabled GPU of compute capability 2.0 or higher.
-PRISM was developed using CUDA 8.0, but likely works with older versions as well and we welcome feedback from any user who attempts to do so (CUDA 7.0, 7.5 also have been reported to work).
+To accelerate *Prismatic* with CUDA GPUs, you must also install [the CUDA toolkit](https://developer.nvidia.com/cuda-toolkit) and have a CUDA enabled GPU of compute capability 2.0 or higher.
+*Prismatic* was developed using CUDA 8.0, but likely works with older versions as well and we welcome feedback from any user who attempts to do so (CUDA 7.0, 7.5 also have been reported to work).
 *Note: Even if you download a binary version of the GPU codes, you will still need to have the CUDA toolkit installed so that the `cuFFT` libraries can be found at runtime.*
 
 If you are building the GUI from source, you will also need [Qt5](https://www.qt.io).
 
 ### Getting the source code 
 
-Once the dependencies are installed get the PRISM source either from [compressed source files](www.example.com) or directly 
+Once the dependencies are installed get the *Prismatic* source either from [compressed source files](www.example.com) or directly 
 from [Github](www.example.com) using `git clone`
 
 ## Building with CMake from the command line
 
-To build PRISM from the command line with CMake, open a terminal and navigate to the top of the source directory 
+To build *Prismatic* from the command line with CMake, open a terminal and navigate to the top of the source directory 
 
 ```
-cd /path/to/PRISM/
+cd /path/to/Prismatic/
 ```
 
 Conventional CMake practice is to use out-of-source builds, which means we will compile the source code into
 a separate directory. This has a number of advantages including providing the flexibility to build multiple
-version of PRISM (such as compiling with/without GPU support), and allowing for easier cleanup. First, 
-make a build directory (the name doesn't matter) at the top of the PRISM source tree.
+version of *Prismatic* (such as compiling with/without GPU support), and allowing for easier cleanup. First, 
+make a build directory (the name doesn't matter) at the top of the *Prismatic* source tree.
 
 ```
 mkdir build
@@ -53,9 +51,9 @@ Then invoke CMake
 cmake ../
 ```
 
-This will generate a Makefile/Visual Studio Project/Xcode project with the necessary dependencies and paths to compile PRISM. The default
+This will generate a Makefile/Visual Studio Project/Xcode project with the necessary dependencies and paths to compile *Prismatic*. The default
 behavior is to build only the CLI without GPU support. These options can be enabled as described in later sections.
-Finally, compile and install PRISM with:
+Finally, compile and install *Prismatic* with:
 
 ```
 make
@@ -67,7 +65,7 @@ For faster compilation, add the `-j` switch to `make` to use multiple threads, f
 make -j 8
 ```
 
-If this succeeds, the executable file `prism` has been built and can be run from within the build directory. To permanently 
+If this succeeds, the executable file `prismatic` has been built and can be run from within the build directory. To permanently 
 install them, invoke
 
 ``` 
@@ -76,12 +74,12 @@ make install
 
 which may require `sudo` privileges. This will place the files in `/usr/local/bin` on Unix systems. 
 
-CMake will attempt to locate the various dependencies needed by *PRISM*, but if it cannot then it will produce an error and set the variable to NOTFOUND. For example, if the `Boost_INCLUDE_DIR` (the location of the Boost libraries), is not found, it will be set to `Boost_INCLUDE_DIR-NOTFOUND`. You will need to manually set the path to boost (see below for how to set options), and then rerun `cmake`.
+CMake will attempt to locate the various dependencies needed by *Prismatic*, but if it cannot then it will produce an error and set the variable to NOTFOUND. For example, if the `Boost_INCLUDE_DIR` (the location of the Boost libraries), is not found, it will be set to `Boost_INCLUDE_DIR-NOTFOUND`. You will need to manually set the path to boost (see below for how to set options), and then rerun `cmake`.
 
 
 ### Setting CMake options
 
-All aspects of how PRISM is compiled, such as whether or not to include GUI or GPU support, are controlled through CMake variables.
+All aspects of how *Prismatic* is compiled, such as whether or not to include GUI or GPU support, are controlled through CMake variables.
 There are at least four different ways to adjust these:
 
 If you are using the CMake GUI, then options are turned on/off with check boxes
@@ -102,17 +100,17 @@ before the changes will actually take effect
 ## Operating System Specific Comments
 These are some various quirks you may want to be aware of, depending on your OS
 ####Windows
-* When installing FFTW, be sure to create the .lib files as described [in the FFTW documentation.](http://www.fftw.org/install/windows.html). You will then set `FFTW_INCLUDE_DIR` to the directory containing "fftw3.h", and `FFTW_LIBRARY` to the path to "libfftw3f-3.lib". The "f" after fftw3 indicates single-precision, which is the default in PRISM. If you are compiling with `PRISM_ENABLE_DOUBLE_PRECISION=1` then this will be ""libfftw3-3.lib" instead.
+* When installing FFTW, be sure to create the .lib files as described [in the FFTW documentation.](http://www.fftw.org/install/windows.html). You will then set `FFTW_INCLUDE_DIR` to the directory containing "fftw3.h", and `FFTW_LIBRARY` to the path to "libfftw3f-3.lib". The "f" after fftw3 indicates single-precision, which is the default in *Prismatic*. If you are compiling with `PRISMATIC_ENABLE_DOUBLE_PRECISION=1` then this will be ""libfftw3-3.lib" instead.
 
 ## Enabling GPU support
 
-To enable GPU support, set the CMake variable `PRISM_ENABLE_GPU=1`. You must have the CUDA toolkit installed and the 
+To enable GPU support, set the CMake variable `PRISMATIC_ENABLE_GPU=1`. You must have the CUDA toolkit installed and the 
 appropriate paths setup as described [in the CUDA documentation](http://docs.nvidia.com/cuda/cuda-installation-guide-linux/#post-installation-actions) so that CMake
-may find `nvcc` and the necessary libraries to build/run PRISM. 
+may find `nvcc` and the necessary libraries to build/run *Prismatic*. 
 
 ## Enabling the GUI
 
-To build the GUI from source, you must install [Qt5](https://www.qt.io) and set the CMake variable `PRISM_ENABLE_GUI=1`.
+To build the GUI from source, you must install [Qt5](https://www.qt.io) and set the CMake variable `PRISMATIC_ENABLE_GUI=1`.
 I find that CMake sometimes has trouble automatically finding Qt5, and at configuration time may complain about 
 being unable to find packages such as `Qt5Widgets`. An easy solution is to follow CMake's suggestion and set
 `CMAKE_PREFIX_PATH=/path/to/Qt5` where `/path/to/Qt5` should be replaced with the path on your machine. For example,
@@ -125,14 +123,14 @@ make install
 ```
 
 ## Enabling Double Precision
-The default behavior for *PRISM* is to use single precision (type float). You can use double precision instead by setting `PRISM_ENABLE_DOUBLE_PRECISION=1`. Note that as of this writing double precision operations are ~4x slower on the GPU, and by every test I have done the precision difference is entirely unnoticeable. However, I leave it as an option . If you find a case where using double precision is impactful, I would be very interested to hear about it.
+The default behavior for *Prismatic* is to use single precision (type float). You can use double precision instead by setting `PRISMATIC_ENABLE_DOUBLE_PRECISION=1`. Note that as of this writing double precision operations are ~4x slower on the GPU, and by every test I have done the precision difference is entirely unnoticeable. However, I leave it as an option . If you find a case where using double precision is impactful, I would be very interested to hear about it.
 
-## Using PRISM from the command line
+## Using *Prismatic* from the command line
 
-PRISM contains a command line tool, `prism`, that can be used to run simulations from within a terminal, bash script, etc. Building it requires the CMake variable `PRISM_ENABLE_CLI=1` at compilation time, which is the default behavior.
+*Prismatic* contains a command line tool, `prismatic`, that can be used to run simulations from within a terminal, bash script, etc. Building it requires the CMake variable `PRISM_ENABLE_CLI=1` at compilation time, which is the default behavior.
 
 ### Options
-The following options are available with `prism`, each documented as **_long form_** **_(short form)_** *parameters* : description
+The following options are available with `prismatic`, each documented as **_long form_** **_(short form)_** *parameters* : description
 
 * --input-file (-i) filename : the filename containing the atomic coordinates, which should be a plain text file with comma-separated values in the format x, y, z, Z 
 * --output-file(-o) filename : output filename

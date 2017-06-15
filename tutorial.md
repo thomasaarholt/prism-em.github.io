@@ -1,4 +1,4 @@
-# PRISM
+# *Prismatic*
 C++/CUDA implementation of compact S-matrix formulism for fast image simulation in Scanning Transmission Electron Microscopy (STEM).
 
 ## Installation
@@ -76,7 +76,7 @@ make install
 
 which may require `sudo` privileges. This will place the files in `/usr/local/bin` on Unix systems. 
 
-CMake will attempt to locate the various dependencies needed by *PRISM*, but if it cannot then it will produce an error and set the variable to NOTFOUND. For example, if the `Boost_INCLUDE_DIR` (the location of the Boost libraries), is not found, it will be set to `Boost_INCLUDE_DIR-NOTFOUND`. You will need to manually set the path to boost (see below for how to set options), and then rerun `cmake`.
+CMake will attempt to locate the various dependencies needed by *Prismatic*, but if it cannot then it will produce an error and set the variable to NOTFOUND. For example, if the `Boost_INCLUDE_DIR` (the location of the Boost libraries), is not found, it will be set to `Boost_INCLUDE_DIR-NOTFOUND`. You will need to manually set the path to boost (see below for how to set options), and then rerun `cmake`.
 
 
 ### Setting CMake options
@@ -125,7 +125,7 @@ make install
 ```
 
 ## Enabling Double Precision
-The default behavior for *PRISM* is to use single precision (type float). You can use double precision instead by setting `PRISM_ENABLE_DOUBLE_PRECISION=1`. Note that as of this writing double precision operations are ~4x slower on the GPU, and by every test I have done the precision difference is entirely unnoticeable. However, I leave it as an option . If you find a case where using double precision is impactful, I would be very interested to hear about it.
+The default behavior for *Prismatic* is to use single precision (type float). You can use double precision instead by setting `PRISM_ENABLE_DOUBLE_PRECISION=1`. Note that as of this writing double precision operations are ~4x slower on the GPU, and by every test I have done the precision difference is entirely unnoticeable. However, I leave it as an option . If you find a case where using double precision is impactful, I would be very interested to hear about it.
 
 ## Using PRISM from the command line
 

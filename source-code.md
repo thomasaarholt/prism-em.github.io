@@ -1,11 +1,11 @@
-# PRISM Source Code Walkthrough
+# *Prismatic* Source Code Walkthrough
 
-Just because a project is open source doesn't mean that it is immediately obvious how all of its moving parts fit together.  I've spent a lot of time thinking about *PRISM* and how to design it from a software engineering perspective, and I'm fairly satisfied with the result. This document is meant to be a sort of tour through the source code of *PRISM* in a much more casual environment than a formal academic paper. This is not a tutorial for how to use the code (that is [here](www.example.com)), but rather an explanation of the code itself. Thus it is more focused towards developers and less so to most users. For those of you who haven't frantically closed the browser at this point, I hope that you find it useful either as a GPU programming example, or as a guide to become a future developer of *PRISM* itself.
+Just because a project is open source doesn't mean that it is immediately obvious how all of its moving parts fit together.  I've spent a lot of time thinking about *Prismatic* and how to design it from a software engineering perspective, and I'm fairly satisfied with the result. This document is meant to be a sort of tour through the source code of *Prismatic* in a much more casual environment than a formal academic paper. This is not a tutorial for how to use the code (that is [here](www.example.com)), but rather an explanation of the code itself. Thus it is more focused towards developers and less so to most users. For those of you who haven't frantically closed the browser at this point, I hope that you find it useful either as a GPU programming example, or as a guide to become a future developer of *Prismatic* itself.
 
 
 ### Work Dispatcher
 
-The `WorkDispatcher` class is critical to how parallel work is performed in *PRISM*. Conceptually the idea is that there is a bunch of tasks to be done, and there exist a number of worker threads to do these tasks. At this level we don't really care how the worker is doing the work as long as it gets done. So the `WorkDispatcher` exists to hand out tasks to the workers in a synchronized manner, and is extremely simple to implement using `std::mutex`.
+The `WorkDispatcher` class is critical to how parallel work is performed in *Prismatic*. Conceptually the idea is that there is a bunch of tasks to be done, and there exist a number of worker threads to do these tasks. At this level we don't really care how the worker is doing the work as long as it gets done. So the `WorkDispatcher` exists to hand out tasks to the workers in a synchronized manner, and is extremely simple to implement using `std::mutex`.
 
 ~~~ c++
 // WorkDispatcher.h
@@ -14,7 +14,7 @@ The `WorkDispatcher` class is critical to how parallel work is performed in *PRI
 #include "params.h"
 #include "configure.h"
 #include <mutex>
-namespace PRISM {
+namespace Prismatic {
     class WorkDispatcher {
     public:
         WorkDispatcher(size_t _current,
@@ -36,7 +36,7 @@ Whenever we end up at a point in the calculation that we want to consume in para
 #include <mutex>
 // helper function for dispatching work
 
-namespace PRISM {
+namespace Prismatic {
         WorkDispatcher::WorkDispatcher(size_t _current,
 					   size_t _stop) :
 					   current(_current),
@@ -55,16 +55,16 @@ namespace PRISM {
 
 The constructor just initializes the relevant fields with the input parameters. The `getWork` function locks the mutex with a `std::lock_guard` in [RAII](https://en.wikipedia.org/wiki/Resource_acquisition_is_initialization) style such that it is guaranteed to be unlocked if anything bad happens. Everything after the creation of the `lock_guard` is synchronized, and the `WorkDispatcher` then tries to set `job_start` and `job_stop` to a range of `num_requested` jobs if possible, and fewer if necessary. It's really that simple.
 
-### Multidimensional Arrays in PRISM 
+### Multidimensional Arrays in *Prismatic* 
 
-I built a custom multidimensional array class for *PRISM*, mainly because I wanted to have full control over how the data was represented to get the best performance (i.e. make sure the data is always contiguous and use raw pointers when I could get away with it). The contiguous bit is super important. You could choose to represent multidimensional arrays in C++ as pointers-to-pointers or pointers-to-pointers-to-pointers, etc, which allows for enticing syntax like `data[0][0]`; however, this method allocates more memory and almost certainly allocates it discontiguously. This would totally kill your performance by causing each data access to invoke multiple pointer dereferences, requiring more operations and causing cache misses all over the place. Even if you use a clever trick to make repeated syntax bracket reduce to a single index, it generates unnecessary function call overhead. My solution was to instead store the data internally in a 1D buffer and then access it with a `.at()` member function that is aware of what the "actual" dimensionality of the `PRISM::Array` is supposed to be. Because the last dimension changes the fastest in C-style ordering, I chose the syntax of the `at()` method to be slowest-to-fastest indices as you read left-to-right. For example that is `.at(y,x)` for a 2D array, `.at(z,y,x)` for a 3D array, etc. By choosing `std::vector` to hold that 1D data buffer, I don't have to worry about `new`/`delete` or any other dynamic allocation business and garbage collection. Whenever I need to loop over the whole array (common), I also implemented the typical `begin()` and `end()` methods, which conveniently also allow for [range-based for loops](http://en.cppreference.com/w/cpp/language/range-for) with modern C++. Many operations in *PRISM* are loops operating on and incrementing raw pointers.
+I built a custom multidimensional array class for *Prismatic*, mainly because I wanted to have full control over how the data was represented to get the best performance (i.e. make sure the data is always contiguous and use raw pointers when I could get away with it). The contiguous bit is super important. You could choose to represent multidimensional arrays in C++ as pointers-to-pointers or pointers-to-pointers-to-pointers, etc, which allows for enticing syntax like `data[0][0]`; however, this method allocates more memory and almost certainly allocates it discontiguously. This would totally kill your performance by causing each data access to invoke multiple pointer dereferences, requiring more operations and causing cache misses all over the place. Even if you use a clever trick to make repeated syntax bracket reduce to a single index, it generates unnecessary function call overhead. My solution was to instead store the data internally in a 1D buffer and then access it with a `.at()` member function that is aware of what the "actual" dimensionality of the `*Prismatic*::Array` is supposed to be. Because the last dimension changes the fastest in C-style ordering, I chose the syntax of the `at()` method to be slowest-to-fastest indices as you read left-to-right. For example that is `.at(y,x)` for a 2D array, `.at(z,y,x)` for a 3D array, etc. By choosing `std::vector` to hold that 1D data buffer, I don't have to worry about `new`/`delete` or any other dynamic allocation business and garbage collection. Whenever I need to loop over the whole array (common), I also implemented the typical `begin()` and `end()` methods, which conveniently also allow for [range-based for loops](http://en.cppreference.com/w/cpp/language/range-for) with modern C++. Many operations in *Prismatic* are loops operating on and incrementing raw pointers.
 
 I also added some convenience functions very similar to MATLAB's `zeros` and `ones`.. this was mainly to make my life easier when transcribing from MATLAB code.
 
 The full class can be found in "ArrayND.h" and as it is some 600 lines that are fairly repetitive I won't include the whole thing here. But as an example
 
 ~~~ c++
-namespace PRISM {
+namespace *Prismatic* {
 template <size_t N, class T>
 class ArrayND {
         // ND array class for data indexed as C-style, i.e. arr.at(k,j,i) where i is the fastest varying index
@@ -106,9 +106,9 @@ typename T::value_type& ArrayND<N, T>::at(const size_t& k, const size_t& j,const
 
 So the template parameter `T` represents the underlying buffer data type, which must behave as `std::vector`. The dimensions and array strides are stored in fixed arrays, and the `.at()` methods use these strides to compute offsets, such as in the example above for the 2D array case.
 
-I say "behave as" for the data buffer, because originally I also intended this class to be able to contain `thrust::host_vector` and `thrust::device_vector`. This would allow one to effectively use one template class to wrap multidimensional arrays that can transfer data back and forth from the GPU without using the low level CUDA API calls. For example, you could overload the `=` operator for arrays of two different types and have the underying vector types copy from one another, also with the `=` operator. For example, `PRISM::ArrayND<T> = PRISM::ArrayND<U>` where `T` was a `thrust::host_vector` and `U` is a `thrust::device_vector` would invoke the assignment of a `thrust::host_vector` from a `thrust::device_vector`, calling `cudaMemcpy` under the hood, and I would never have to touch that. The same class simultaneously could be used to assign one `PRISM::ArrayND<std::vector>` to another. All of the metadata about the dimensions, etc, are stored host-side, so in principle this template class would allow you to use one syntax across all your host/device arrays and not see many cuda device calls at all. I have also written about this topic before with the approach of template specialization -- you can read about that [here](http://alanpryorjr.com/image/Flexible-CUDA/).
+I say "behave as" for the data buffer, because originally I also intended this class to be able to contain `thrust::host_vector` and `thrust::device_vector`. This would allow one to effectively use one template class to wrap multidimensional arrays that can transfer data back and forth from the GPU without using the low level CUDA API calls. For example, you could overload the `=` operator for arrays of two different types and have the underying vector types copy from one another, also with the `=` operator. For example, `*Prismatic*::ArrayND<T> = *Prismatic*::ArrayND<U>` where `T` was a `thrust::host_vector` and `U` is a `thrust::device_vector` would invoke the assignment of a `thrust::host_vector` from a `thrust::device_vector`, calling `cudaMemcpy` under the hood, and I would never have to touch that. The same class simultaneously could be used to assign one `*Prismatic*::ArrayND<std::vector>` to another. All of the metadata about the dimensions, etc, are stored host-side, so in principle this template class would allow you to use one syntax across all your host/device arrays and not see many cuda device calls at all. I have also written about this topic before with the approach of template specialization -- you can read about that [here](http://alanpryorjr.com/image/Flexible-CUDA/).
 
-I still think this is a very good design pattern, but I ended up not using `thrust` at all, and the main reason was because you must use page-locked memory for asynchronous transfers. There is experimental support for a pinned memory allocator in thrust, `thrust::system::cuda::experimental::pinned_allocator< T >`, which can be passed into `thrust::host_vector`. However, with it being an experimental feature I was concerned about stability and figured if I was going to the trouble of customizing my array class specifically for performance I might as well also manually do my own allocations and not take risks. So `PRISM::ArrayND< std::vector<T> >` is used for the pageable host-side arrays, and then raw pointer are used for pinned memory and the device arrays.
+I still think this is a very good design pattern, but I ended up not using `thrust` at all, and the main reason was because you must use page-locked memory for asynchronous transfers. There is experimental support for a pinned memory allocator in thrust, `thrust::system::cuda::experimental::pinned_allocator< T >`, which can be passed into `thrust::host_vector`. However, with it being an experimental feature I was concerned about stability and figured if I was going to the trouble of customizing my array class specifically for performance I might as well also manually do my own allocations and not take risks. So `*Prismatic*::ArrayND< std::vector<T> >` is used for the pageable host-side arrays, and then raw pointer are used for pinned memory and the device arrays.
 
 ### Metadata
 
@@ -116,23 +116,23 @@ The primary way the simulation is setup is through the `Metadata` class. Simulat
 
 ### Command Line Interface
 
-The CLI program, `prism`, is very simple.
+The CLI program, `prismatic`, is very simple.
 
 ~~~ c++
 int main(int argc, const char** argv) {
-	PRISM::Metadata<PRISM_FLOAT_PRECISION> meta;
+	*Prismatic*::Metadata<PRISMATIC_FLOAT_PRECISION> meta;
 
 	// parse command line options
-	if (!PRISM::parseInputs(meta, argc, &argv))return 1;
+	if (!Prismatic::parseInputs(meta, argc, &argv))return 1;
 
 	// print metadata
         meta.toString();
 
 	// configure simulation behavior
-	PRISM::configure(meta);
+	Prismatic::configure(meta);
 
 	// execute simulation
-	PRISM::execute_plan(meta);
+	Prismatic::execute_plan(meta);
 	return 0;
 }
 ~~~
@@ -142,7 +142,7 @@ The various command line options are parsed by the function `parseInputs`, which
 My take on a command line parser is simple. It uses a `std::map` to connect command argument keywords with functions that handle that particular argument. These functions all have the same signature. Using `std::map` allows for better lookup speed than a switch statement, but more importantly it makes it very easy to connect multiple keywords with the same parsing function. For example, I might have
 
 ~~~ c++
-using parseFunction = bool (*)(Metadata<PRISM_FLOAT_PRECISION>& meta,
+using parseFunction = bool (*)(Metadata<PRISMATIC_FLOAT_PRECISION>& meta,
                                int& argc, const char*** argv);
 static std::map<std::string, parseFunction> parser{
         {"--input-file", parse_i}, {"-i", parse_i},
@@ -153,7 +153,7 @@ static std::map<std::string, parseFunction> parser{
 So the variable `parser` connects both the verbose and shorthand keywords "--interp-factor" and "-f" to the function `parse_f`, which is the function responsible for populating the PRISM interpolation factor in the metadata.
 
 ~~~ c++
-bool parse_f(Metadata<PRISM_FLOAT_PRECISION>& meta,
+bool parse_f(Metadata<PRISMATIC_FLOAT_PRECISION>& meta,
                     int& argc, const char*** argv){
     if (argc < 2){
         cout << "No interpolation factor provided for -f (syntax is -f interpolation_factor)\n";
@@ -174,11 +174,11 @@ I check that there are at least two remaining arguments, otherwise there isn't a
 
 ### Configuration
 
-Several places in *PRISM* there are divergences in how the simulation proceeds, such as whether to perform the calculation with multislice or PRISM. Rather than constantly having if-then-else statements for this type of logic, I'll instead create a single function pointer that is set to point to the desired behavior by the `configure` function. For example, both PRISM and multislice have entrypoint functions, cleverly named `PRISM_entry` and `Multislice_entry`. There is as corresponding function pointer defined in "configure.h" that is the `execute_plan` function used earlier in the driver:
+Several places in *Prismatic* there are divergences in how the simulation proceeds, such as whether to perform the calculation with multislice or PRISM. Rather than constantly having if-then-else statements for this type of logic, I'll instead create a single function pointer that is set to point to the desired behavior by the `configure` function. For example, both PRISM and multislice have entrypoint functions, cleverly named `PRISM_entry` and `Multislice_entry`. There is as corresponding function pointer defined in "configure.h" that is the `execute_plan` function used earlier in the driver:
 
 ~~~ c+++
 //configure.h
-using entry_func = Parameters<PRISM_FLOAT_PRECISION>  (*)(Metadata<PRISM_FLOAT_PRECISION>&);
+using entry_func = Parameters<PRISMATIC_FLOAT_PRECISION>  (*)(Metadata<PRISMATIC_FLOAT_PRECISION>&);
 entry_func execute_plan;
 ~~~
 
@@ -223,65 +223,65 @@ During each of these steps, a number of different data structures are created an
 #include "params.h"
 #include <vector>
 
-namespace PRISM{
+namespace Prismatic{
 	using namespace std;
-	Parameters<PRISM_FLOAT_PRECISION> PRISM_entry(Metadata<PRISM_FLOAT_PRECISION>& meta){
-		Parameters<PRISM_FLOAT_PRECISION> prism_pars;
+	Parameters<PRISMATIC_FLOAT_PRECISION> PRISM_entry(Metadata<PRISMATIC_FLOAT_PRECISION>& meta){
+		Parameters<PRISMATIC_FLOAT_PRECISION> prismatic_pars;
 		try { // read in atomic coordinates
-			prism_pars = Parameters<PRISM_FLOAT_PRECISION>(meta);
+			prismatic_pars = Parameters<PRISMATIC_FLOAT_PRECISION>(meta);
 		} catch(const std::runtime_error &e){
 			std::cout << "Terminating" << std::endl;
 			exit(1);
 		}
 
 		// compute projected potentials
-		PRISM01_calcPotential(prism_pars);
+		PRISM01_calcPotential(prismatic_pars);
 
 		// compute compact S-matrix
-		PRISM02_calcSMatrix(prism_pars);
+		PRISM02_calcSMatrix(prismatic_pars);
 
 		// compute final output
-		PRISM03_calcOutput(prism_pars);
+		PRISM03_calcOutput(prismatic_pars);
 
 		// calculate remaining frozen phonon configurations
-        if (prism_pars.meta.numFP > 1) {
+        if (prismatic_pars.meta.numFP > 1) {
             // run the rest of the frozen phonons
-            Array3D<PRISM_FLOAT_PRECISION> net_output(prism_pars.output);
-            for (auto fp_num = 1; fp_num < prism_pars.meta.numFP; ++fp_num){
+            Array3D<PRISMATIC_FLOAT_PRECISION> net_output(prismatic_pars.output);
+            for (auto fp_num = 1; fp_num < prismatic_pars.meta.numFP; ++fp_num){
 	            meta.random_seed = rand() % 100000;
-				Parameters<PRISM_FLOAT_PRECISION> prism_pars(meta);
+				Parameters<PRISMATIC_FLOAT_PRECISION> prismatic_pars(meta);
                 cout << "Frozen Phonon #" << fp_num << endl;
-	            prism_pars.meta.toString();
-	        	PRISM01_calcPotential(prism_pars);
-	        	PRISM02_calcSMatrix(prism_pars);
-                PRISM03_calcOutput(prism_pars);
-                net_output += prism_pars.output;
+	            prismatic_pars.meta.toString();
+	        	PRISM01_calcPotential(prismatic_pars);
+	        	PRISM02_calcSMatrix(prismatic_pars);
+                PRISM03_calcOutput(prismatic_pars);
+                net_output += prismatic_pars.output;
             }
             // divide to take average
-            for (auto&i:net_output) i/=prism_pars.meta.numFP;
-	        prism_pars.output = net_output;
+            for (auto&i:net_output) i/=prismatic_pars.meta.numFP;
+	        prismatic_pars.output = net_output;
         }
-        if (prism_pars.meta.save3DOutput)prism_pars.output.toMRC_f(prism_pars.meta.filename_output.c_str());
+        if (prismatic_pars.meta.save3DOutput)prismatic_pars.output.toMRC_f(prismatic_pars.meta.filename_output.c_str());
 
-		if (prism_pars.meta.save2DOutput) {
-			size_t lower = std::max((size_t)0, (size_t)(prism_pars.meta.integration_angle_min / prism_pars.meta.detector_angle_step));
-			size_t upper = std::min((size_t)prism_pars.detectorAngles.size(), (size_t)(prism_pars.meta.integration_angle_max / prism_pars.meta.detector_angle_step));
-			Array2D<PRISM_FLOAT_PRECISION> prism_image;
-			prism_image = zeros_ND<2, PRISM_FLOAT_PRECISION>(
-					{{prism_pars.output.get_dimk(), prism_pars.output.get_dimj()}});
-			for (auto y = 0; y < prism_pars.output.get_dimk(); ++y) {
-				for (auto x = 0; x < prism_pars.output.get_dimj(); ++x) {
+		if (prismatic_pars.meta.save2DOutput) {
+			size_t lower = std::max((size_t)0, (size_t)(prismatic_pars.meta.integration_angle_min / prismatic_pars.meta.detector_angle_step));
+			size_t upper = std::min((size_t)prismatic_pars.detectorAngles.size(), (size_t)(prismatic_pars.meta.integration_angle_max / prismatic_pars.meta.detector_angle_step));
+			Array2D<PRISMATIC_FLOAT_PRECISION> prism_image;
+			prism_image = zeros_ND<2, PRISMATIC_FLOAT_PRECISION>(
+					{{prismatic_pars.output.get_dimk(), prismatic_pars.output.get_dimj()}});
+			for (auto y = 0; y < prismatic_pars.output.get_dimk(); ++y) {
+				for (auto x = 0; x < prismatic_pars.output.get_dimj(); ++x) {
 					for (auto b = lower; b < upper; ++b) {
-						prism_image.at(y, x) += prism_pars.output.at(y, x, b);
+						prism_image.at(y, x) += prismatic_pars.output.at(y, x, b);
 					}
 				}
 			}
-			std::string image_filename = std::string("prism_2Doutput_") + prism_pars.meta.filename_output;
+			std::string image_filename = std::string("prism_2Doutput_") + prismatic_pars.meta.filename_output;
 			prism_image.toMRC_f(image_filename.c_str());
 		}
 
         std::cout << "PRISM Calculation complete.\n" << std::endl;
-		return prism_pars;
+		return prismatic_pars;
 	}
 }
 ~~~
@@ -295,30 +295,30 @@ Now we assemble the projected potentials by computing the digitized potential fo
 #### Assembling the lookup table
 
 ~~~c++
-	void PRISM01_calcPotential(Parameters<PRISM_FLOAT_PRECISION>& pars){
+	void PRISM01_calcPotential(Parameters<PRISMATIC_FLOAT_PRECISION>& pars){
 		//builds projected, sliced potential
 
 		// setup some coordinates
 		cout << "Entering PRISM01_calcPotential" << endl;
-		PRISM_FLOAT_PRECISION yleng = std::ceil(pars.meta.potBound / pars.pixelSize[0]);
-		PRISM_FLOAT_PRECISION xleng = std::ceil(pars.meta.potBound / pars.pixelSize[1]);
+		PRISMATIC_FLOAT_PRECISION yleng = std::ceil(pars.meta.potBound / pars.pixelSize[0]);
+		PRISMATIC_FLOAT_PRECISION xleng = std::ceil(pars.meta.potBound / pars.pixelSize[1]);
 		ArrayND<1, vector<long> > xvec(vector<long>(2*(size_t)xleng + 1, 0),{{2*(size_t)xleng + 1}});
 		ArrayND<1, vector<long> > yvec(vector<long>(2*(size_t)yleng + 1, 0),{{2*(size_t)yleng + 1}});
 		{
-			PRISM_FLOAT_PRECISION tmpx = -xleng;
-			PRISM_FLOAT_PRECISION tmpy = -yleng;
+			PRISMATIC_FLOAT_PRECISION tmpx = -xleng;
+			PRISMATIC_FLOAT_PRECISION tmpy = -yleng;
 			for (auto &i : xvec)i = tmpx++;
 			for (auto &j : yvec)j = tmpy++;
 		}
-		Array1D<PRISM_FLOAT_PRECISION> xr(vector<PRISM_FLOAT_PRECISION>(2*(size_t)xleng + 1, 0),{{2*(size_t)xleng + 1}});
-		Array1D<PRISM_FLOAT_PRECISION> yr(vector<PRISM_FLOAT_PRECISION>(2*(size_t)yleng + 1, 0),{{2*(size_t)yleng + 1}});
-		for (auto i=0; i < xr.size(); ++i)xr[i] = (PRISM_FLOAT_PRECISION)xvec[i] * pars.pixelSize[1];
-		for (auto j=0; j < yr.size(); ++j)yr[j] = (PRISM_FLOAT_PRECISION)yvec[j] * pars.pixelSize[0];
+		Array1D<PRISMATIC_FLOAT_PRECISION> xr(vector<PRISMATIC_FLOAT_PRECISION>(2*(size_t)xleng + 1, 0),{{2*(size_t)xleng + 1}});
+		Array1D<PRISMATIC_FLOAT_PRECISION> yr(vector<PRISMATIC_FLOAT_PRECISION>(2*(size_t)yleng + 1, 0),{{2*(size_t)yleng + 1}});
+		for (auto i=0; i < xr.size(); ++i)xr[i] = (PRISMATIC_FLOAT_PRECISION)xvec[i] * pars.pixelSize[1];
+		for (auto j=0; j < yr.size(); ++j)yr[j] = (PRISMATIC_FLOAT_PRECISION)yvec[j] * pars.pixelSize[0];
 
 		vector<size_t> unique_species = get_unique_atomic_species(pars);
 
 		// initialize the lookup table
-		Array3D<PRISM_FLOAT_PRECISION> potentialLookup = zeros_ND<3, PRISM_FLOAT_PRECISION>({{unique_species.size(), 2*(size_t)yleng + 1, 2*(size_t)xleng + 1}});
+		Array3D<PRISMATIC_FLOAT_PRECISION> potentialLookup = zeros_ND<3, PRISMATIC_FLOAT_PRECISION>({{unique_species.size(), 2*(size_t)yleng + 1, 2*(size_t)xleng + 1}});
 		
 		// precompute the unique potentials
 		fetch_potentials(potentialLookup, unique_species, xr, yr);
@@ -333,13 +333,13 @@ Now we assemble the projected potentials by computing the digitized potential fo
 Next is a big chunk of code that is conceptually accomplishing a simple task. Based on the relevant coordinates determined by the simulation pixel size, we compute the potential of each relevant element following Kirkland's book ["Advanced Computing in Electron Microscopy"](https://link.springer.com/book/10.1007%2F978-1-4419-6533-2) on an 8x supersampled grid, then integrate it, and store it.
 
 ~~~c++
-void fetch_potentials(Array3D<PRISM_FLOAT_PRECISION>& potentials,
+void fetch_potentials(Array3D<PRISMATIC_FLOAT_PRECISION>& potentials,
                       const vector<size_t>& atomic_species,
-                      const Array1D<PRISM_FLOAT_PRECISION>& xr,
-                      const Array1D<PRISM_FLOAT_PRECISION>& yr){
-	Array2D<PRISM_FLOAT_PRECISION> cur_pot;
+                      const Array1D<PRISMATIC_FLOAT_PRECISION>& xr,
+                      const Array1D<PRISMATIC_FLOAT_PRECISION>& yr){
+	Array2D<PRISMATIC_FLOAT_PRECISION> cur_pot;
 	for (auto k =0; k < potentials.get_dimk(); ++k){
-		Array2D<PRISM_FLOAT_PRECISION> cur_pot = projPot(atomic_species[k], xr, yr);
+		Array2D<PRISMATIC_FLOAT_PRECISION> cur_pot = projPot(atomic_species[k], xr, yr);
 		for (auto j = 0; j < potentials.get_dimj(); ++j){
 			for (auto i = 0; i < potentials.get_dimi(); ++i){
 				potentials.at(k,j,i) = cur_pot.at(j,i);
@@ -348,41 +348,41 @@ void fetch_potentials(Array3D<PRISM_FLOAT_PRECISION>& potentials,
 	}
 }
 	
-Array2D<PRISM_FLOAT_PRECISION> projPot(const size_t &Z,
-                                       const Array1D<PRISM_FLOAT_PRECISION> &xr,
-                                       const Array1D<PRISM_FLOAT_PRECISION> &yr) {
+Array2D<PRISMATIC_FLOAT_PRECISION> projPot(const size_t &Z,
+                                       const Array1D<PRISMATIC_FLOAT_PRECISION> &xr,
+                                       const Array1D<PRISMATIC_FLOAT_PRECISION> &yr) {
 	// compute the projected potential for a given atomic number following Kirkland
 
 	// setup some constants
-	static const PRISM_FLOAT_PRECISION pi = std::acos(-1);
-	PRISM_FLOAT_PRECISION ss    = 8;
-	PRISM_FLOAT_PRECISION a0    = 0.5292;
-	PRISM_FLOAT_PRECISION e     = 14.4;
-	PRISM_FLOAT_PRECISION term1 = 4*pi*pi*a0*e;
-	PRISM_FLOAT_PRECISION term2 = 2*pi*pi*a0*e;
+	static const PRISMATIC_FLOAT_PRECISION pi = std::acos(-1);
+	PRISMATIC_FLOAT_PRECISION ss    = 8;
+	PRISMATIC_FLOAT_PRECISION a0    = 0.5292;
+	PRISMATIC_FLOAT_PRECISION e     = 14.4;
+	PRISMATIC_FLOAT_PRECISION term1 = 4*pi*pi*a0*e;
+	PRISMATIC_FLOAT_PRECISION term2 = 2*pi*pi*a0*e;
 
 	// initialize array
-	ArrayND<2, std::vector<PRISM_FLOAT_PRECISION> > result = zeros_ND<2, PRISM_FLOAT_PRECISION>({{yr.size(), xr.size()}});
+	ArrayND<2, std::vector<PRISMATIC_FLOAT_PRECISION> > result = zeros_ND<2, PRISMATIC_FLOAT_PRECISION>({{yr.size(), xr.size()}});
 
 	// setup some coordinates
-	const PRISM_FLOAT_PRECISION dx = xr[1] - xr[0];
-	const PRISM_FLOAT_PRECISION dy = yr[1] - yr[0];
+	const PRISMATIC_FLOAT_PRECISION dx = xr[1] - xr[0];
+	const PRISMATIC_FLOAT_PRECISION dy = yr[1] - yr[0];
 
-	PRISM_FLOAT_PRECISION start = -(ss-1)/ss/2;
-	const PRISM_FLOAT_PRECISION step  = 1/ss;
-	const PRISM_FLOAT_PRECISION end   = -start;
-	vector<PRISM_FLOAT_PRECISION> sub_data;
+	PRISMATIC_FLOAT_PRECISION start = -(ss-1)/ss/2;
+	const PRISMATIC_FLOAT_PRECISION step  = 1/ss;
+	const PRISMATIC_FLOAT_PRECISION end   = -start;
+	vector<PRISMATIC_FLOAT_PRECISION> sub_data;
 	while (start <= end){
 		sub_data.push_back(start);
 		start+=step;
 	}
-	ArrayND<1, std::vector<PRISM_FLOAT_PRECISION> > sub(sub_data,{{sub_data.size()}});
+	ArrayND<1, std::vector<PRISMATIC_FLOAT_PRECISION> > sub(sub_data,{{sub_data.size()}});
 
-	std::pair<Array2D<PRISM_FLOAT_PRECISION>, Array2D<PRISM_FLOAT_PRECISION> > meshx = meshgrid(xr, sub*dx);
-	std::pair<Array2D<PRISM_FLOAT_PRECISION>, Array2D<PRISM_FLOAT_PRECISION> > meshy = meshgrid(yr, sub*dy);
+	std::pair<Array2D<PRISMATIC_FLOAT_PRECISION>, Array2D<PRISMATIC_FLOAT_PRECISION> > meshx = meshgrid(xr, sub*dx);
+	std::pair<Array2D<PRISMATIC_FLOAT_PRECISION>, Array2D<PRISMATIC_FLOAT_PRECISION> > meshy = meshgrid(yr, sub*dy);
 
-	ArrayND<1, std::vector<PRISM_FLOAT_PRECISION> > xv = zeros_ND<1, PRISM_FLOAT_PRECISION>({{meshx.first.size()}});
-	ArrayND<1, std::vector<PRISM_FLOAT_PRECISION> > yv = zeros_ND<1, PRISM_FLOAT_PRECISION>({{meshy.first.size()}});
+	ArrayND<1, std::vector<PRISMATIC_FLOAT_PRECISION> > xv = zeros_ND<1, PRISMATIC_FLOAT_PRECISION>({{meshx.first.size()}});
+	ArrayND<1, std::vector<PRISMATIC_FLOAT_PRECISION> > yv = zeros_ND<1, PRISMATIC_FLOAT_PRECISION>({{meshy.first.size()}});
 	{
 		auto t_x = xv.begin();
 		for (auto j = 0; j < meshx.first.get_dimj(); ++j) {
@@ -401,9 +401,9 @@ Array2D<PRISM_FLOAT_PRECISION> projPot(const size_t &Z,
 		}
 	}
 
-	std::pair<Array2D<PRISM_FLOAT_PRECISION>, Array2D<PRISM_FLOAT_PRECISION> > meshxy = meshgrid(yv, xv);
-	ArrayND<2, std::vector<PRISM_FLOAT_PRECISION> > r2 = zeros_ND<2, PRISM_FLOAT_PRECISION>({{yv.size(), xv.size()}});
-	ArrayND<2, std::vector<PRISM_FLOAT_PRECISION> > r  = zeros_ND<2, PRISM_FLOAT_PRECISION>({{yv.size(), xv.size()}});
+	std::pair<Array2D<PRISMATIC_FLOAT_PRECISION>, Array2D<PRISMATIC_FLOAT_PRECISION> > meshxy = meshgrid(yv, xv);
+	ArrayND<2, std::vector<PRISMATIC_FLOAT_PRECISION> > r2 = zeros_ND<2, PRISMATIC_FLOAT_PRECISION>({{yv.size(), xv.size()}});
+	ArrayND<2, std::vector<PRISMATIC_FLOAT_PRECISION> > r  = zeros_ND<2, PRISMATIC_FLOAT_PRECISION>({{yv.size(), xv.size()}});
 
 	{
 		auto t_y = r2.begin();
@@ -416,10 +416,10 @@ Array2D<PRISM_FLOAT_PRECISION> projPot(const size_t &Z,
 
 	for (auto i = 0; i < r.size(); ++i)r[i] = sqrt(r2[i]);
 	// construct potential
-	ArrayND<2, std::vector<PRISM_FLOAT_PRECISION> > potSS  = ones_ND<2, PRISM_FLOAT_PRECISION>({{r2.get_dimj(), r2.get_dimi()}});
+	ArrayND<2, std::vector<PRISMATIC_FLOAT_PRECISION> > potSS  = ones_ND<2, PRISMATIC_FLOAT_PRECISION>({{r2.get_dimj(), r2.get_dimi()}});
 
 	// get the relevant table values
-	std::vector<PRISM_FLOAT_PRECISION> ap;
+	std::vector<PRISMATIC_FLOAT_PRECISION> ap;
 	ap.resize(n_parameters);
 	for (auto i = 0; i < n_parameters; ++i){
 		ap[i] = fparams[(Z-1)*n_parameters + i];
@@ -428,7 +428,7 @@ Array2D<PRISM_FLOAT_PRECISION> projPot(const size_t &Z,
 	// compute the potential
 	using namespace boost::math;
 	std::transform(r.begin(), r.end(),
-	               r2.begin(), potSS.begin(), [&ap, &term1, &term2](const PRISM_FLOAT_PRECISION& r_t, const PRISM_FLOAT_PRECISION& r2_t){
+	               r2.begin(), potSS.begin(), [&ap, &term1, &term2](const PRISMATIC_FLOAT_PRECISION& r_t, const PRISMATIC_FLOAT_PRECISION& r2_t){
 
 				return term1*(ap[0] *
 				              cyl_bessel_k(0,2*pi*sqrt(ap[1])*r_t)          +
@@ -440,7 +440,7 @@ Array2D<PRISM_FLOAT_PRECISION> projPot(const size_t &Z,
 			});
 
 	// integrate
-	ArrayND<2, std::vector<PRISM_FLOAT_PRECISION> > pot = zeros_ND<2, PRISM_FLOAT_PRECISION>({{yr.size(), xr.size()}});
+	ArrayND<2, std::vector<PRISMATIC_FLOAT_PRECISION> > pot = zeros_ND<2, PRISMATIC_FLOAT_PRECISION>({{yr.size(), xr.size()}});
 	for (auto sy = 0; sy < ss; ++sy){
 		for (auto sx = 0; sx < ss; ++sx) {
 			for (auto j = 0; j < pot.get_dimj(); ++j) {
@@ -452,9 +452,9 @@ Array2D<PRISM_FLOAT_PRECISION> projPot(const size_t &Z,
 	}
 	pot/=(ss*ss);
 
-	PRISM_FLOAT_PRECISION potMin = get_potMin(pot,xr,yr);
+	PRISMATIC_FLOAT_PRECISION potMin = get_potMin(pot,xr,yr);
 	pot -= potMin;
-	transform(pot.begin(),pot.end(),pot.begin(),[](PRISM_FLOAT_PRECISION& a){return a<0?0:a;});
+	transform(pot.begin(),pot.end(),pot.begin(),[](PRISMATIC_FLOAT_PRECISION& a){return a<0?0:a;});
 
 	return pot;
 }	
@@ -465,19 +465,19 @@ Array2D<PRISM_FLOAT_PRECISION> projPot(const size_t &Z,
 First there's a bit of setup and we figure out which slice index each atom belongs to
 
 ~~~ c++
-void generateProjectedPotentials(Parameters<PRISM_FLOAT_PRECISION>& pars,
-                                 const Array3D<PRISM_FLOAT_PRECISION>& potentialLookup,
+void generateProjectedPotentials(Parameters<PRISMATIC_FLOAT_PRECISION>& pars,
+                                 const Array3D<PRISMATIC_FLOAT_PRECISION>& potentialLookup,
                                  const vector<size_t>& unique_species,
                                  const Array1D<long>& xvec,
                                  const Array1D<long>& yvec){
 	// splits the atomic coordinates into slices and computes the projected potential for each.
 
 	// create arrays for the coordinates
-	Array1D<PRISM_FLOAT_PRECISION> x     = zeros_ND<1, PRISM_FLOAT_PRECISION>({{pars.atoms.size()}});
-	Array1D<PRISM_FLOAT_PRECISION> y     = zeros_ND<1, PRISM_FLOAT_PRECISION>({{pars.atoms.size()}});
-	Array1D<PRISM_FLOAT_PRECISION> z     = zeros_ND<1, PRISM_FLOAT_PRECISION>({{pars.atoms.size()}});
-	Array1D<PRISM_FLOAT_PRECISION> ID    = zeros_ND<1, PRISM_FLOAT_PRECISION>({{pars.atoms.size()}});
-	Array1D<PRISM_FLOAT_PRECISION> sigma = zeros_ND<1, PRISM_FLOAT_PRECISION>({{pars.atoms.size()}});
+	Array1D<PRISMATIC_FLOAT_PRECISION> x     = zeros_ND<1, PRISMATIC_FLOAT_PRECISION>({{pars.atoms.size()}});
+	Array1D<PRISMATIC_FLOAT_PRECISION> y     = zeros_ND<1, PRISMATIC_FLOAT_PRECISION>({{pars.atoms.size()}});
+	Array1D<PRISMATIC_FLOAT_PRECISION> z     = zeros_ND<1, PRISMATIC_FLOAT_PRECISION>({{pars.atoms.size()}});
+	Array1D<PRISMATIC_FLOAT_PRECISION> ID    = zeros_ND<1, PRISMATIC_FLOAT_PRECISION>({{pars.atoms.size()}});
+	Array1D<PRISMATIC_FLOAT_PRECISION> sigma = zeros_ND<1, PRISMATIC_FLOAT_PRECISION>({{pars.atoms.size()}});
 
 	// populate arrays from the atoms structure
 	for (auto i = 0; i < pars.atoms.size(); ++i){
@@ -490,8 +490,8 @@ void generateProjectedPotentials(Parameters<PRISM_FLOAT_PRECISION>& pars,
 
 	// compute the z-slice index for each atom
 	auto max_z = std::max_element(z.begin(), z.end());
-	Array1D<PRISM_FLOAT_PRECISION> zPlane(z);
-	std::transform(zPlane.begin(), zPlane.end(), zPlane.begin(), [&max_z, &pars](PRISM_FLOAT_PRECISION &t_z) {
+	Array1D<PRISMATIC_FLOAT_PRECISION> zPlane(z);
+	std::transform(zPlane.begin(), zPlane.end(), zPlane.begin(), [&max_z, &pars](PRISMATIC_FLOAT_PRECISION &t_z) {
 		return round((-t_z + *max_z) / pars.meta.sliceThickness + 0.5) - 1; // If the +0.5 was to make the first slice z=1 not 0, can drop the +0.5 and -1
 	});
 	max_z = std::max_element(zPlane.begin(), zPlane.end());
@@ -509,7 +509,7 @@ Next we calculate the actual potentials, and this is the first time we encounter
 
 ~~~ c++
 // initialize the potential array
-pars.pot = zeros_ND<3, PRISM_FLOAT_PRECISION>({{pars.numPlanes, pars.imageSize[0], pars.imageSize[1]}});
+pars.pot = zeros_ND<3, PRISMATIC_FLOAT_PRECISION>({{pars.numPlanes, pars.imageSize[0], pars.imageSize[1]}});
 ~~~
 
 As an aside, this `zeros_ND` function is essentially an implementation of MATLAB's `zeros` and creates a multidimensional array built on `std::vector` and is 0-initialized. 
@@ -533,21 +533,21 @@ for (long t = 0; t < pars.meta.NUM_THREADS; ++t){
 									 &zPlane, &yvec,&potentialLookup, &dispatcher](){
 		// create a random number generator to simulate thermal effects
 		std::default_random_engine de(pars.meta.random_seed);
-		normal_distribution<PRISM_FLOAT_PRECISION> randn(0,1);
+		normal_distribution<PRISMATIC_FLOAT_PRECISION> randn(0,1);
 		Array1D<long> xp;
 		Array1D<long> yp;
 
 		size_t currentBeam, stop;
         currentBeam=stop=0;
 		while (dispatcher.getWork(currentBeam, stop)) { // synchronously get work assignment
-			Array2D<PRISM_FLOAT_PRECISION> projectedPotential = zeros_ND<2, PRISM_FLOAT_PRECISION>({{pars.imageSize[0], pars.imageSize[1]}});
+			Array2D<PRISMATIC_FLOAT_PRECISION> projectedPotential = zeros_ND<2, PRISMATIC_FLOAT_PRECISION>({{pars.imageSize[0], pars.imageSize[1]}});
 			while (currentBeam != stop) {
 				for (auto a2 = 0; a2 < x.size(); ++a2) {
 					if (zPlane[a2] == currentBeam) {
 						const long dim0 = (long) pars.imageSize[0];
 						const long dim1 = (long) pars.imageSize[1];
 						const size_t cur_Z = Z_lookup[ID[a2]];
-						PRISM_FLOAT_PRECISION X, Y;
+						PRISMATIC_FLOAT_PRECISION X, Y;
 						if (pars.meta.include_thermal_effects) { // apply random perturbations
 							X = round((x[a2] + randn(de) * sigma[a2]) / pars.pixelSize[1]);
 							Y = round((y[a2] + randn(de) * sigma[a2]) / pars.pixelSize[0]);
@@ -591,7 +591,7 @@ for (long t = 0; t < pars.meta.NUM_THREADS; ++t){
 The calculation of the compact S-Matrix is very similar to multislcie. To break things up, the various steps are broken up into subfunctions.
 
 ~~~c++
-void PRISM02_calcSMatrix(Parameters<PRISM_FLOAT_PRECISION> &pars) {
+void PRISM02_calcSMatrix(Parameters<PRISMATIC_FLOAT_PRECISION> &pars) {
 	// propagate plane waves to construct compact S-matrix
 
 	cout << "Entering PRISM02_calcSMatrix" << endl;
@@ -615,14 +615,14 @@ void PRISM02_calcSMatrix(Parameters<PRISM_FLOAT_PRECISION> &pars) {
 }
 ~~~
 
-`setupCoordinates`, `setupBeams`, and `setupSMatrixCoordinates` are not particularly interesting for the purpose of this document -- they just are allocating some arrays and figuring out which plane waves need to be computed for the given simulation settings. The important function is `fill_Scompact`, which is the first place we may encounter GPU code and is instance of a function pointer that is set by `PRISM::configure` (in this case, it is set to either point to a CPU or CPU+GPU implementation to calculate the S-Matrix).
+`setupCoordinates`, `setupBeams`, and `setupSMatrixCoordinates` are not particularly interesting for the purpose of this document -- they just are allocating some arrays and figuring out which plane waves need to be computed for the given simulation settings. The important function is `fill_Scompact`, which is the first place we may encounter GPU code and is instance of a function pointer that is set by `Prismatic::configure` (in this case, it is set to either point to a CPU or CPU+GPU implementation to calculate the S-Matrix).
 
 The CPU+GPU code includes the CPU code, so I'll just discuss the former here. The CPU+GPU code contains two memory models, the streaming and the single-transfer. The streaming code is essentially the same as the single-transfer except that there are additional calls to `cudaMemcpyAsync`. Therefore, I'll just discuss the streaming CPU+GPU version and you can look at the full source code for the details of the others. 
 
 There is a `CudaParameters` for the same reasons as the `Parameters` class exists -- mostly to keep things organized and avoid having very elaborate function signatures. Again, I break everything up into smaller functions to make it easier to understand. Because this is the first code we're looking at that includes CUDA API calls and kernel invocations I'll explain in a bit more detail each of these.
 
 ~~~c++
-void fill_Scompact_GPU_streaming(Parameters <PRISM_FLOAT_PRECISION> &pars) {
+void fill_Scompact_GPU_streaming(Parameters <PRISMATIC_FLOAT_PRECISION> &pars) {
 
 #ifdef PRISM_BUILDING_GUI
 	pars.progressbar->signalDescriptionMessage("Computing compact S-matrix");
@@ -630,7 +630,7 @@ void fill_Scompact_GPU_streaming(Parameters <PRISM_FLOAT_PRECISION> &pars) {
 #endif
 	// This version streams each slice of the transmission matrix, which is less efficient but can tolerate very large arrays
 	//initialize data
-	CudaParameters<PRISM_FLOAT_PRECISION> cuda_pars;
+	CudaParameters<PRISMATIC_FLOAT_PRECISION> cuda_pars;
 
 	// determine the batch size to use
 	pars.meta.batch_size_GPU = min(pars.meta.batch_size_target_GPU, max((size_t)1, pars.numberBeams / max((size_t)1,(pars.meta.NUM_STREAMS_PER_GPU*pars.meta.NUM_GPUS))));
@@ -666,14 +666,14 @@ The batch size correction is to avoid a scenario where the batch size is too big
 `setupArrays2`: build the transmission function by exponentiating the potential with the scale factor `sigma` and initialize the compact S-matrix.
 
 ~~~c++
-inline void setupArrays2(Parameters<PRISM_FLOAT_PRECISION>& pars){
+inline void setupArrays2(Parameters<PRISMATIC_FLOAT_PRECISION>& pars){
 
 	// setup some needed arrays
-	const PRISM_FLOAT_PRECISION pi = acos(-1);
-	const std::complex<PRISM_FLOAT_PRECISION> i(0, 1);
-	pars.Scompact = zeros_ND<3, complex<PRISM_FLOAT_PRECISION> >(
+	const PRISMATIC_FLOAT_PRECISION pi = acos(-1);
+	const std::complex<PRISMATIC_FLOAT_PRECISION> i(0, 1);
+	pars.Scompact = zeros_ND<3, complex<PRISMATIC_FLOAT_PRECISION> >(
 			{{pars.numberBeams, pars.imageSize[0] / 2, pars.imageSize[1] / 2}});
-	pars.transmission = zeros_ND<3, complex<PRISM_FLOAT_PRECISION> >(
+	pars.transmission = zeros_ND<3, complex<PRISMATIC_FLOAT_PRECISION> >(
 			{{pars.pot.get_dimk(), pars.pot.get_dimj(), pars.pot.get_dimi()}});
 	{
 		auto p = pars.pot.begin();
@@ -685,8 +685,8 @@ inline void setupArrays2(Parameters<PRISM_FLOAT_PRECISION>& pars){
 `createStreamsAndPlans2`: create/initialize the CUDA streams and setup the cuFFT plans. There are two cuFFT plans: one that is for the FFT/IFFT as the plane wave(s) are propagated/transmitted through the sample, and then a "small" cuFFT plan for calculating the final FFT after the output wave has been subsetted. We set the relevant device with `cudaSetDevice` and then use `cudaStreamCreate` to initialize the CUDA stream. `cufftSetStream` is used to associate the cuFFT plan with the appropriate stream.
 
 ~~~c++
-inline void createStreamsAndPlans2(Parameters<PRISM_FLOAT_PRECISION> &pars,
-                                  CudaParameters<PRISM_FLOAT_PRECISION> &cuda_pars){
+inline void createStreamsAndPlans2(Parameters<PRISMATIC_FLOAT_PRECISION> &pars,
+                                  CudaParameters<PRISMATIC_FLOAT_PRECISION> &cuda_pars){
 	// create CUDA streams
 	const int total_num_streams = pars.meta.NUM_GPUS * pars.meta.NUM_STREAMS_PER_GPU;
 	cuda_pars.streams 		    = new cudaStream_t[total_num_streams];
@@ -725,19 +725,19 @@ inline void createStreamsAndPlans2(Parameters<PRISM_FLOAT_PRECISION> &pars,
 `allocatePinnedHostMemory_streaming2`: To copy data from the host to the device asynchronously, the source data must be in page-locked memory. Here we allocate such arrays using `cudaMallocHost`
 
 ~~~c++
-inline void allocatePinnedHostMemory_streaming2(Parameters<PRISM_FLOAT_PRECISION> &pars,
-                                         CudaParameters<PRISM_FLOAT_PRECISION> &cuda_pars){
+inline void allocatePinnedHostMemory_streaming2(Parameters<PRISMATIC_FLOAT_PRECISION> &pars,
+                                         CudaParameters<PRISMATIC_FLOAT_PRECISION> &cuda_pars){
 	const int total_num_streams = pars.meta.NUM_GPUS * pars.meta.NUM_STREAMS_PER_GPU;
 
 	// allocate pinned memory
-	cuda_pars.Scompact_slice_ph = new std::complex<PRISM_FLOAT_PRECISION>*[total_num_streams];
+	cuda_pars.Scompact_slice_ph = new std::complex<PRISMATIC_FLOAT_PRECISION>*[total_num_streams];
 	for (auto s = 0; s < total_num_streams; ++s) {
 		cudaErrchk(cudaMallocHost((void **) &cuda_pars.Scompact_slice_ph[s],
 		                          pars.Scompact.get_dimj() * pars.Scompact.get_dimi() *
-		                          sizeof(std::complex<PRISM_FLOAT_PRECISION>)));
+		                          sizeof(std::complex<PRISMATIC_FLOAT_PRECISION>)));
 	}
-	cudaErrchk(cudaMallocHost((void **) &cuda_pars.trans_ph,      pars.transmission.size() * sizeof(std::complex<PRISM_FLOAT_PRECISION>)));
-	cudaErrchk(cudaMallocHost((void **) &cuda_pars.prop_ph,       pars.prop.size()         * sizeof(std::complex<PRISM_FLOAT_PRECISION>)));
+	cudaErrchk(cudaMallocHost((void **) &cuda_pars.trans_ph,      pars.transmission.size() * sizeof(std::complex<PRISMATIC_FLOAT_PRECISION>)));
+	cudaErrchk(cudaMallocHost((void **) &cuda_pars.prop_ph,       pars.prop.size()         * sizeof(std::complex<PRISMATIC_FLOAT_PRECISION>)));
 	cudaErrchk(cudaMallocHost((void **) &cuda_pars.qxInd_ph,      pars.qxInd.size()        * sizeof(size_t)));
 	cudaErrchk(cudaMallocHost((void **) &cuda_pars.qyInd_ph,      pars.qyInd.size()        * sizeof(size_t)));
 	cudaErrchk(cudaMallocHost((void **) &cuda_pars.beamsIndex_ph, pars.beamsIndex.size()   * sizeof(size_t)));
@@ -747,17 +747,17 @@ inline void allocatePinnedHostMemory_streaming2(Parameters<PRISM_FLOAT_PRECISION
 `copyToPinnedMemory_streaming2`: And now we copy the relevant memory into the pinned buffers. This is a host-to-host transfer.
 
 ~~~c++
-inline void copyToPinnedMemory_streaming2(Parameters<PRISM_FLOAT_PRECISION> &pars,
-                                         CudaParameters<PRISM_FLOAT_PRECISION> &cuda_pars){
+inline void copyToPinnedMemory_streaming2(Parameters<PRISMATIC_FLOAT_PRECISION> &pars,
+                                         CudaParameters<PRISMATIC_FLOAT_PRECISION> &cuda_pars){
 	const int total_num_streams = pars.meta.NUM_GPUS * pars.meta.NUM_STREAMS_PER_GPU;
 
 	// copy host memory to pinned
 	for (auto s = 0; s < total_num_streams; ++s) {
 		memset(cuda_pars.Scompact_slice_ph[s], 0, pars.Scompact.get_dimj() * pars.Scompact.get_dimi() *
-		                                          sizeof(std::complex<PRISM_FLOAT_PRECISION>));
+		                                          sizeof(std::complex<PRISMATIC_FLOAT_PRECISION>));
 	}
-	memcpy(cuda_pars.trans_ph,      &pars.transmission[0], pars.transmission.size() * sizeof(std::complex<PRISM_FLOAT_PRECISION>));
-	memcpy(cuda_pars.prop_ph,       &pars.prop[0],         pars.prop.size()         * sizeof(std::complex<PRISM_FLOAT_PRECISION>));
+	memcpy(cuda_pars.trans_ph,      &pars.transmission[0], pars.transmission.size() * sizeof(std::complex<PRISMATIC_FLOAT_PRECISION>));
+	memcpy(cuda_pars.prop_ph,       &pars.prop[0],         pars.prop.size()         * sizeof(std::complex<PRISMATIC_FLOAT_PRECISION>));
 	memcpy(cuda_pars.qxInd_ph,      &pars.qxInd[0],        pars.qxInd.size()        * sizeof(size_t));
 	memcpy(cuda_pars.qyInd_ph,      &pars.qyInd[0],        pars.qyInd.size()        * sizeof(size_t));
 	memcpy(cuda_pars.beamsIndex_ph, &pars.beamsIndex[0],   pars.beamsIndex.size()   * sizeof(size_t));
@@ -767,8 +767,8 @@ inline void copyToPinnedMemory_streaming2(Parameters<PRISM_FLOAT_PRECISION> &par
 `allocateDeviceMemory_streaming2`: Now we allocate memory on the device with `cudaMalloc`. This includes read-only arrays being allocated once per GPU, and read/write arrays being allocated once per stream.
 
 ~~~c++
-inline void allocateDeviceMemory_streaming2(Parameters<PRISM_FLOAT_PRECISION> &pars,
-                                           CudaParameters<PRISM_FLOAT_PRECISION> &cuda_pars){
+inline void allocateDeviceMemory_streaming2(Parameters<PRISMATIC_FLOAT_PRECISION> &pars,
+                                           CudaParameters<PRISMATIC_FLOAT_PRECISION> &cuda_pars){
 	const int total_num_streams = pars.meta.NUM_GPUS * pars.meta.NUM_STREAMS_PER_GPU;
 	// pointers to read-only GPU memory (one copy per GPU)
 	cuda_pars.prop_d       = new PRISM_CUDA_COMPLEX_FLOAT*[pars.meta.NUM_GPUS];
@@ -810,8 +810,8 @@ inline void allocateDeviceMemory_streaming2(Parameters<PRISM_FLOAT_PRECISION> &p
 `copyToDeviceMemory_streaming2`: Here we copy some arrays to the device. Note that although this is the streaming code, the only data that is streamed is that of the large 3D arrays, in this case the transmission function. Smaller data structures are still transferred once, and that is done here. The stream is incremented in between each copy simply because it can make this step slightly faster. At the end we synchronize to ensure that all of the copying is done.
 
 ~~~c++
-inline void copyToDeviceMemory_streaming2(Parameters<PRISM_FLOAT_PRECISION> &pars,
-                                         CudaParameters<PRISM_FLOAT_PRECISION> &cuda_pars){
+inline void copyToDeviceMemory_streaming2(Parameters<PRISMATIC_FLOAT_PRECISION> &pars,
+                                         CudaParameters<PRISMATIC_FLOAT_PRECISION> &cuda_pars){
 const int total_num_streams = pars.meta.NUM_GPUS * pars.meta.NUM_STREAMS_PER_GPU;
 
 // Copy memory to each GPU asynchronously from the pinned host memory spaces.
@@ -825,7 +825,7 @@ for (auto g = 0; g < pars.meta.NUM_GPUS; ++g) {
 	stream_id = (stream_id + pars.meta.NUM_GPUS) % total_num_streams;
 	cudaErrchk(cudaMemcpyAsync(cuda_pars.prop_d[g],
 	                           &cuda_pars.prop_ph[0],
-	                           pars.prop.size() * sizeof(std::complex<PRISM_FLOAT_PRECISION>),
+	                           pars.prop.size() * sizeof(std::complex<PRISMATIC_FLOAT_PRECISION>),
 	                           cudaMemcpyHostToDevice,
 	             				    cuda_pars.streams[stream_id]));
 
@@ -862,8 +862,8 @@ for (auto g = 0; g < pars.meta.NUM_GPUS; ++g) {
 `launchWorkers_streaming`: This is very similar to the work loop from the projected potential section. The relevant arrays are passed to a worker thread which enters a while loop getting work from a `WorkDispatcher`, this time one that passing out jobs corresponding to plane waves to propagate. This uses batch FFTs, and the worker thread gets one batch of work from the dispatcher and then completes it, so the while loop only occurs once. Originally, only one plane wave was propagated at a time, but it was possible to query multiple jobs from the dispatcher. This has since been updated, but I left both versions there in case it is revisited in the future (i.e. for the case of batch size 1, it might be faster to ignore the batch FFT planning step).
 
 ~~~c++
-void launchWorkers_streaming(Parameters<PRISM_FLOAT_PRECISION> &pars,
-                                    CudaParameters<PRISM_FLOAT_PRECISION> &cuda_pars){
+void launchWorkers_streaming(Parameters<PRISMATIC_FLOAT_PRECISION> &pars,
+                                    CudaParameters<PRISMATIC_FLOAT_PRECISION> &cuda_pars){
 
  // launch workers
 const int total_num_streams = pars.meta.NUM_GPUS * pars.meta.NUM_STREAMS_PER_GPU;
@@ -890,7 +890,7 @@ for (auto t = 0; t < total_num_streams; ++t) {
 	PRISM_CUDA_COMPLEX_FLOAT *current_psi_small_ds     = cuda_pars.psi_small_ds[stream_count];
 	cufftHandle &current_cufft_plan                    = cuda_pars.cufft_plans[stream_count];
 	cufftHandle &current_cufft_plan_small              = cuda_pars.cufft_plans_small[stream_count];
-	complex<PRISM_FLOAT_PRECISION> *current_S_slice_ph = cuda_pars.Scompact_slice_ph[stream_count];
+	complex<PRISMATIC_FLOAT_PRECISION> *current_S_slice_ph = cuda_pars.Scompact_slice_ph[stream_count];
 
 	workers_GPU.push_back(thread([&pars, current_trans_ds, current_prop_d, current_qxInd_d, current_qyInd_d, &dispatcher,
 			                             current_psi_ds, current_psi_small_ds, &current_cufft_plan, &current_cufft_plan_small,
@@ -965,14 +965,14 @@ for (auto t = 0; t < pars.meta.NUM_THREADS; ++t) {
 		currentBeam=stopBeam=0;
 		if (pars.meta.NUM_GPUS > 0){
 			// if there are no GPUs, make sure to do all work on CPU
-			early_CPU_stop = (size_t)std::max((PRISM_FLOAT_PRECISION)0.0,pars.numberBeams - pars.meta.gpu_cpu_ratio*pars.meta.batch_size_CPU);
+			early_CPU_stop = (size_t)std::max((PRISMATIC_FLOAT_PRECISION)0.0,pars.numberBeams - pars.meta.gpu_cpu_ratio*pars.meta.batch_size_CPU);
 		} else {
 			early_CPU_stop = pars.numberBeams;
 		}
 
 		if (dispatcher.getWork(currentBeam, stopBeam, pars.meta.batch_size_CPU, early_CPU_stop)) {
 			// allocate array for psi just once per thread
-			Array1D<complex<PRISM_FLOAT_PRECISION> > psi_stack = zeros_ND<1, complex<PRISM_FLOAT_PRECISION> >(
+			Array1D<complex<PRISMATIC_FLOAT_PRECISION> > psi_stack = zeros_ND<1, complex<PRISMATIC_FLOAT_PRECISION> >(
 					{{pars.imageSize[0]*pars.imageSize[1]*pars.meta.batch_size_CPU}});
 
 			// setup batch FFTW parameters
@@ -1009,7 +1009,7 @@ for (auto t = 0; t < pars.meta.NUM_THREADS; ++t) {
 						cout << "Computing Plane Wave #" << currentBeam << "/" << pars.numberBeams << endl;
 					}
 					// re-zero psi each iteration
-					memset((void *) &psi_stack[0], 0, psi_stack.size() * sizeof(complex<PRISM_FLOAT_PRECISION>));
+					memset((void *) &psi_stack[0], 0, psi_stack.size() * sizeof(complex<PRISMATIC_FLOAT_PRECISION>));
 //								propagatePlaneWave_CPU(pars, currentBeam, psi, plan_forward, plan_inverse, fftw_plan_lock);
 					propagatePlaneWave_CPU_batch(pars, currentBeam, stopBeam, psi_stack, plan_forward, plan_inverse, fftw_plan_lock);
 #ifdef PRISM_BUILDING_GUI
@@ -1040,11 +1040,11 @@ The main function within the worker threads is `propagatePlaneWave_GPU_streaming
 `propagatePlaneWave_GPU_streaming_batch`:
 
 ~~~ c++
-void propagatePlaneWave_GPU_streaming_batch(Parameters<PRISM_FLOAT_PRECISION> &pars,
+void propagatePlaneWave_GPU_streaming_batch(Parameters<PRISMATIC_FLOAT_PRECISION> &pars,
                                             PRISM_CUDA_COMPLEX_FLOAT* trans_d,
-                                            const std::complex<PRISM_FLOAT_PRECISION> *trans_ph,
+                                            const std::complex<PRISMATIC_FLOAT_PRECISION> *trans_ph,
                                             PRISM_CUDA_COMPLEX_FLOAT* psi_d,
-                                            PRISM_CUDA_COMPLEX_FLOAT* psi_small_d,                                     complex<PRISM_FLOAT_PRECISION>* Scompact_slice_ph,
+                                            PRISM_CUDA_COMPLEX_FLOAT* psi_small_d,                                     complex<PRISMATIC_FLOAT_PRECISION>* Scompact_slice_ph,
 const size_t* qyInd_d,
 const size_t* qxInd_d,
                                             const PRISM_CUDA_COMPLEX_FLOAT* prop_d,
@@ -1138,15 +1138,15 @@ __global__ void multiply_cx(cuFloatComplex* arr,
 
 ~~~
 
-The macro `PRISM_CUFFT_EXECUTE` is an alias for either `cufftExecC2C` or `cufftExecZ2Z` depending on whether *PRISM* has been compiled for single or double precision.
+The macro `PRISM_CUFFT_EXECUTE` is an alias for either `cufftExecC2C` or `cufftExecZ2Z` depending on whether *Prismatic* has been compiled for single or double precision.
 
 Once the wave function has been propagated through the entire sample, there is one last kernel to crop the probe based upon the PRISM interpolation factor, then a final IFFT on the subsetted array is taken, which forms the calculated slice of the compact S-matrix. This is then asynchronously streamed back to the page-locked output slice buffer. The stream is then synchronized to guarantee this memory transfer completes, and then there is a final host-to-host memory transfer to copy the result to the compact S-matrix inside of `Parameters`. This effectively completes the task.
 
 `cleanupMemory2`: free all of the memory on the device and the host once all jobs are completed.
 
 ~~~c++
-inline void cleanupMemory2(Parameters<PRISM_FLOAT_PRECISION> &pars,
-                          CudaParameters<PRISM_FLOAT_PRECISION> &cuda_pars){
+inline void cleanupMemory2(Parameters<PRISMATIC_FLOAT_PRECISION> &pars,
+                          CudaParameters<PRISMATIC_FLOAT_PRECISION> &cuda_pars){
 
 	// free host and device memory
 	const int total_num_streams = pars.meta.NUM_GPUS * pars.meta.NUM_STREAMS_PER_GPU;
@@ -1208,7 +1208,7 @@ inline void cleanupMemory2(Parameters<PRISM_FLOAT_PRECISION> &pars,
 The last step of PRISM is to compute the output wave for each probe position. The top-level portion of the PRISM03_calcOutput step looks very similar to the second step and I won't go through the details as before. The point is there are many sub functions that setup coordinates and arrays, and then the "real work" occurs in `buildPRISMOutput`, which is another configured function pointer that represents one of the various ways to populate the PRISM output.
 
 ~~~ c++
-void PRISM03_calcOutput(Parameters<PRISM_FLOAT_PRECISION> &pars) {
+void PRISM03_calcOutput(Parameters<PRISMATIC_FLOAT_PRECISION> &pars) {
 	// compute final image
 
 	cout << "Entering PRISM03_calcOutput" << endl;
@@ -1239,14 +1239,14 @@ void PRISM03_calcOutput(Parameters<PRISM_FLOAT_PRECISION> &pars) {
 }
 ~~~
 
-where `buildPRISMOutput` might point to `buildPRISMOutput_GPU_streaming`. Just as in the calculation of the compact S-matrix, there are a series of steps for allocating/copying to pinned/device memory. This is followed by launch of the workers, and lastly cleanup. These kinds of programming patterns are repeated all throughout *PRISM* -- there's really not that much craziness going on.
+where `buildPRISMOutput` might point to `buildPRISMOutput_GPU_streaming`. Just as in the calculation of the compact S-matrix, there are a series of steps for allocating/copying to pinned/device memory. This is followed by launch of the workers, and lastly cleanup. These kinds of programming patterns are repeated all throughout *Prismatic* -- there's really not that much craziness going on.
 
 ~~~c++	
-void buildPRISMOutput_GPU_streaming(Parameters<PRISM_FLOAT_PRECISION> &pars){
+void buildPRISMOutput_GPU_streaming(Parameters<PRISMATIC_FLOAT_PRECISION> &pars){
 #ifdef PRISM_BUILDING_GUI
 	pars.progressbar->signalDescriptionMessage("Computing final output (PRISM)");
 #endif
-	CudaParameters<PRISM_FLOAT_PRECISION> cuda_pars;
+	CudaParameters<PRISMATIC_FLOAT_PRECISION> cuda_pars;
 	// construct the PRISM output array using GPUs
 
 	// create CUDA streams and cuFFT plans
@@ -1304,31 +1304,31 @@ while (dispatcher.getWork(Nstart, Nstop)) { // synchronously get work assignment
 Okay, the last big thing is the GPU code for constructing the output at the probe position (`ax`,`ay`). A lot goes on so I'll go step by step
 
 ~~~ c++
-void buildSignal_GPU_streaming(Parameters<PRISM_FLOAT_PRECISION>&  pars,
+void buildSignal_GPU_streaming(Parameters<PRISMATIC_FLOAT_PRECISION>&  pars,
                                const size_t& ay,
                                const size_t& ax,
                                PRISM_CUDA_COMPLEX_FLOAT *permuted_Scompact_ds,
-                               const std::complex<PRISM_FLOAT_PRECISION> *permuted_Scompact_ph,
+                               const std::complex<PRISMATIC_FLOAT_PRECISION> *permuted_Scompact_ph,
                                const PRISM_CUDA_COMPLEX_FLOAT *PsiProbeInit_d,
-                               const PRISM_FLOAT_PRECISION *qxaReduce_d,
-                               const PRISM_FLOAT_PRECISION *qyaReduce_d,
+                               const PRISMATIC_FLOAT_PRECISION *qxaReduce_d,
+                               const PRISMATIC_FLOAT_PRECISION *qyaReduce_d,
                                const size_t *yBeams_d,
                                const size_t *xBeams_d,
-                               const PRISM_FLOAT_PRECISION *alphaInd_d,
+                               const PRISMATIC_FLOAT_PRECISION *alphaInd_d,
                                PRISM_CUDA_COMPLEX_FLOAT *psi_ds,
                                PRISM_CUDA_COMPLEX_FLOAT *phaseCoeffs_ds,
-                               PRISM_FLOAT_PRECISION *psi_intensity_ds,
+                               PRISMATIC_FLOAT_PRECISION *psi_intensity_ds,
                                long  *y_ds,
                                long  *x_ds,
-                               PRISM_FLOAT_PRECISION *output_ph,
-                               PRISM_FLOAT_PRECISION *integratedOutput_ds,
+                               PRISMATIC_FLOAT_PRECISION *output_ph,
+                               PRISMATIC_FLOAT_PRECISION *integratedOutput_ds,
                                const cufftHandle &cufft_plan,
                                const cudaStream_t& stream,
-                               CudaParameters<PRISM_FLOAT_PRECISION>& cuda_pars){
+                               CudaParameters<PRISMATIC_FLOAT_PRECISION>& cuda_pars){
 
     // the coordinates y and x of the output image phi map to z and y of the permuted S compact matrix
-    const PRISM_FLOAT_PRECISION yp = pars.yp[ay];
-    const PRISM_FLOAT_PRECISION xp = pars.xp[ax];
+    const PRISMATIC_FLOAT_PRECISION yp = pars.yp[ay];
+    const PRISMATIC_FLOAT_PRECISION xp = pars.xp[ax];
     const size_t psi_size = pars.imageSizeReduce[0] * pars.imageSizeReduce[1];
     shiftIndices <<<(pars.imageSizeReduce[0] - 1) / BLOCK_SIZE1D + 1, BLOCK_SIZE1D, 0, stream>>> (
             y_ds, std::round(yp / pars.pixelSizeOutput[0]),pars.imageSize[0], pars.imageSizeReduce[0]);
@@ -1363,8 +1363,8 @@ Next, for the streaming version, we have to copy the relevant subset of the comp
 // Copy the relevant portion of the Scompact matrix. This can be accomplished with ideally one but at most 4 strided 3-D memory copies
 // depending on whether or not the coordinates wrap around.
 long x1,y1;
-y1 = pars.yVec[0] + std::round(yp / (PRISM_FLOAT_PRECISION)pars.pixelSizeOutput[0]);
-x1 = pars.xVec[0] + std::round(xp / (PRISM_FLOAT_PRECISION)pars.pixelSizeOutput[1]);
+y1 = pars.yVec[0] + std::round(yp / (PRISMATIC_FLOAT_PRECISION)pars.pixelSizeOutput[0]);
+x1 = pars.xVec[0] + std::round(xp / (PRISMATIC_FLOAT_PRECISION)pars.pixelSizeOutput[1]);
 
 
 // determine where in the coordinate list wrap-around occurs (if at all)
@@ -1476,7 +1476,7 @@ For rare simulation cases where there are very few beams, we will increase the b
 ~~~ c++
 if (BlockSize_numBeams >= 64) {
 
-    const PRISM_FLOAT_PRECISION aspect_ratio = (PRISM_FLOAT_PRECISION)pars.imageSizeReduce[1] / (PRISM_FLOAT_PRECISION)pars.imageSizeReduce[0];
+    const PRISMATIC_FLOAT_PRECISION aspect_ratio = (PRISMATIC_FLOAT_PRECISION)pars.imageSizeReduce[1] / (PRISMATIC_FLOAT_PRECISION)pars.imageSizeReduce[0];
     const size_t GridSizeZ = std::floor(sqrt(total_blocks / aspect_ratio));
     const size_t GridSizeY = aspect_ratio * GridSizeZ;
     dim3 grid(1, GridSizeY, GridSizeZ);
@@ -1579,7 +1579,7 @@ if (BlockSize_numBeams >= 64) {
 
 ~~~
 
-Let's look at `scaleReduceS`, as it is one of the most important parts of *PRISM*.
+Let's look at `scaleReduceS`, as it is one of the most important parts of *Prismatic*.
 
 ~~~ c++
 template <size_t BlockSizeX>
@@ -1762,7 +1762,7 @@ From the beginning of this project, the intention was to create an cross-platfor
 
 That's a nice philosophy, but a lot easier said than done. The main challenge here is that NVIDIA has its own compiler, `nvcc` for compiling CUDA code, Qt has its own compiler, `moc`, which is an intermediate compiler that takes Qt specific directives for graphical objects and generates more C++ code which is then compiled with a normal C++ compiler like `gcc`. Getting source code to compile can be challenging on its own, so getting three different compilers to play nicely together alongsisde modern C++11 features and have it all run on Linux, Windows, and Mac was a bit daunting.
 
-`CMake` was absolutely critical to making this possible. Not only can it handle the process of managing the different compilers and combining all of the intermediate results, but it also made it easy for me to create additional configuration options. For example, if you are just compiling *PRISM* for the CLI, `prism`, to run on a cluster -- you probably don't care about about building the GUI, which requires several libraries from the rather large Qt framework. By setting the CMake option `PRISM_ENABLE_GPU=0`, simple logic prevents compilation from ever including anything about Qt. The same goes for enabling GPU support. So by default, *PRISM* compiles under the simplest of settings, only building the CLI with command line support without GPUs, and then the user can expand from there based upon their needs.
+`CMake` was absolutely critical to making this possible. Not only can it handle the process of managing the different compilers and combining all of the intermediate results, but it also made it easy for me to create additional configuration options. For example, if you are just compiling *Prismatic* for the CLI, `prism`, to run on a cluster -- you probably don't care about about building the GUI, which requires several libraries from the rather large Qt framework. By setting the CMake option `PRISM_ENABLE_GPU=0`, simple logic prevents compilation from ever including anything about Qt. The same goes for enabling GPU support. So by default, *Prismatic* compiles under the simplest of settings, only building the CLI with command line support without GPUs, and then the user can expand from there based upon their needs.
 
 ### Conclusion
 

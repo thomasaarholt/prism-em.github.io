@@ -1,7 +1,4 @@
-# *Prismatic*
-C++/CUDA implementation of compact S-matrix formulism for fast image simulation in Scanning Transmission Electron Microscopy (STEM).
-
-## Installation
+# Installing *Prismatic*
 
 ## Binary Installers
 

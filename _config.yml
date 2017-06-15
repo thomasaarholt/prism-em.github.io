@@ -23,7 +23,6 @@ description: Documentation, tutorials, and source code for the software package 
 
 # List of links in the navigation bar
 navbar-links: 
-  About: "about"
   Downloads:
     - Source Code: "http://example.com"
     - Installers: "http://www.example.com"
@@ -31,6 +30,9 @@ navbar-links:
   Tutorials:
     - Tutorial: "tutorial"
     - Source Code Walkthrough: "source-code"
+  Resources:
+    - About: "about"
+    - Downloads:
   Citing PRISM: "citeus"
 
 # Image to show in the navigation bar - image must be a square (width = height)

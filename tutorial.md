@@ -1,4 +1,4 @@
-# *Prismatic*
+# *Prismatic* Tutorial
 C++/CUDA implementation of compact S-matrix formulism for fast image simulation in Scanning Transmission Electron Microscopy (STEM).
 
 ## Installation
@@ -102,17 +102,17 @@ before the changes will actually take effect
 ## Operating System Specific Comments
 These are some various quirks you may want to be aware of, depending on your OS
 ####Windows
-* When installing FFTW, be sure to create the .lib files as described [in the FFTW documentation.](http://www.fftw.org/install/windows.html). You will then set `FFTW_INCLUDE_DIR` to the directory containing "fftw3.h", and `FFTW_LIBRARY` to the path to "libfftw3f-3.lib". The "f" after fftw3 indicates single-precision, which is the default in PRISM. If you are compiling with `PRISM_ENABLE_DOUBLE_PRECISION=1` then this will be ""libfftw3-3.lib" instead.
+* When installing FFTW, be sure to create the .lib files as described [in the FFTW documentation.](http://www.fftw.org/install/windows.html). You will then set `FFTW_INCLUDE_DIR` to the directory containing "fftw3.h", and `FFTW_LIBRARY` to the path to "libfftw3f-3.lib". The "f" after fftw3 indicates single-precision, which is the default in PRISM. If you are compiling with `PRISMATIC_ENABLE_DOUBLE_PRECISION=1` then this will be ""libfftw3-3.lib" instead.
 
 ## Enabling GPU support
 
-To enable GPU support, set the CMake variable `PRISM_ENABLE_GPU=1`. You must have the CUDA toolkit installed and the 
+To enable GPU support, set the CMake variable `PRISMATIC_ENABLE_GPU=1`. You must have the CUDA toolkit installed and the 
 appropriate paths setup as described [in the CUDA documentation](http://docs.nvidia.com/cuda/cuda-installation-guide-linux/#post-installation-actions) so that CMake
 may find `nvcc` and the necessary libraries to build/run PRISM. 
 
 ## Enabling the GUI
 
-To build the GUI from source, you must install [Qt5](https://www.qt.io) and set the CMake variable `PRISM_ENABLE_GUI=1`.
+To build the GUI from source, you must install [Qt5](https://www.qt.io) and set the CMake variable `PRISMATIC_ENABLE_GUI=1`.
 I find that CMake sometimes has trouble automatically finding Qt5, and at configuration time may complain about 
 being unable to find packages such as `Qt5Widgets`. An easy solution is to follow CMake's suggestion and set
 `CMAKE_PREFIX_PATH=/path/to/Qt5` where `/path/to/Qt5` should be replaced with the path on your machine. For example,
@@ -125,11 +125,11 @@ make install
 ```
 
 ## Enabling Double Precision
-The default behavior for *Prismatic* is to use single precision (type float). You can use double precision instead by setting `PRISM_ENABLE_DOUBLE_PRECISION=1`. Note that as of this writing double precision operations are ~4x slower on the GPU, and by every test I have done the precision difference is entirely unnoticeable. However, I leave it as an option . If you find a case where using double precision is impactful, I would be very interested to hear about it.
+The default behavior for *Prismatic* is to use single precision (type float). You can use double precision instead by setting `PRISMATIC_ENABLE_DOUBLE_PRECISION=1`. Note that as of this writing double precision operations are ~4x slower on the GPU, and by every test I have done the precision difference is entirely unnoticeable. However, I leave it as an option . If you find a case where using double precision is impactful, I would be very interested to hear about it.
 
 ## Using PRISM from the command line
 
-PRISM contains a command line tool, `prism`, that can be used to run simulations from within a terminal, bash script, etc. Building it requires the CMake variable `PRISM_ENABLE_CLI=1` at compilation time, which is the default behavior.
+PRISM contains a command line tool, `prism`, that can be used to run simulations from within a terminal, bash script, etc. Building it requires the CMake variable `PRISMATIC_ENABLE_CLI=1` at compilation time, which is the default behavior.
 
 ### Options
 The following options are available with `prism`, each documented as **_long form_** **_(short form)_** *parameters* : description

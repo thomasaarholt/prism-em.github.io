@@ -1,5 +1,4 @@
 # Installing *Prismatic*
-
 ## Binary Installers
 
 *Links to binary installers should go here in the future*

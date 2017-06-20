@@ -1,7 +1,7 @@
 # Installing *Prismatic*
-Table of Contents
-	- [Binary Installers](#binary-installers)
-	- [Getting the Source Code](#getting-the-source-code)
+Table of Contents 
+	- [Binary Installers](#binary-installers) 
+	- [Getting the Source Code](#getting-the-source-code) 
 ## Binary Installers
 
 *Links to binary installers should go here in the future*

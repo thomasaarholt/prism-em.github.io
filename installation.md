@@ -176,20 +176,12 @@ The following options are available with `prismatic`, each documented as **_long
 
 <a name="python-installing-pyprismatic"></a>
 ## Python: Installing PyPrismatic
-blabla
-bla
-bla
+
 
 <a name="installing-with-pip"></a>
 
 ### Installing with Pip
-blabla
-bla
-bla
 
 <a name="installing-with-setup"></a>
 
 ### Installing with setup.py
-blabla
-bla
-bla

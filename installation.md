@@ -1,7 +1,11 @@
 # Installing *Prismatic*
 Table of Contents 
 	- [Binary Installers](#binary-installers) 
-	- [Getting the Source Code](#getting-the-source-code) 
+	- [Compiling from Source]
+		- [Getting the Source Code](#getting-the-source-code) 
+	- [Python: Installing PyPrismatic](#python-installing-pyprismatic)
+		- [Installing with Pip](#installing-with-pip)
+		- [Installing with setup.py](#installing-with-setup.pu)
 ## Binary Installers
 
 *Links to binary installers should go here in the future*
@@ -170,3 +174,22 @@ The following options are available with `prismatic`, each documented as **_long
 * --save-3D-output (-3D) bool=true : Also save the 3D output at the detector for each probe (3D output mode)
 * --save-4D-output (-4D) bool=false : Also save the 4D output at the detector for each probe (4D output mode)
 
+<a name="python-installing-pyprismatic"></a>
+## Python: Installing PyPrismatic
+blabla
+bla
+bla
+
+<a name="installing-with-pip"></a>
+
+### Installing with Pip
+blabla
+bla
+bla
+
+<a name="installing-with-setup.py"></a>
+
+### Installing with setup.py
+blabla
+bla
+bla

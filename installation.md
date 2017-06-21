@@ -1,11 +1,11 @@
 # Installing *Prismatic*
 Table of Contents 
 	- [Binary Installers](#binary-installers) 
-	- [Compiling from Source]
+	- [Compiling from Source](#getting-the-source-code) 
 		- [Getting the Source Code](#getting-the-source-code) 
-	- [Python: Installing PyPrismatic](#python-installing-pyprismatic)
-		- [Installing with Pip](#installing-with-pip)
-		- [Installing with setup.py](#installing-with-setup.pu)
+	- [Python: Installing PyPrismatic](#python-installing-pyprismatic) 
+		- [Installing with Pip](#installing-with-pip) 
+		- [Installing with setup.py](#installing-with-setup) 
 ## Binary Installers
 
 *Links to binary installers should go here in the future*
@@ -187,7 +187,7 @@ blabla
 bla
 bla
 
-<a name="installing-with-setup.py"></a>
+<a name="installing-with-setup"></a>
 
 ### Installing with setup.py
 blabla

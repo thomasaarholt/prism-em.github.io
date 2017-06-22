@@ -201,6 +201,8 @@ export CPLUS_INCLUDE_PATH=/usr/local/boost_1_60_0:/usr/local/cuda-8.0/include:$C
 export LIBRARY_PATH=/usr/local/cuda-8.0/lib64:$LIBRARY_PATH
 ~~~
 
+These variables are default places the C++ compiler will look to find necessary code, and these commands are just adding relevant directories the beginning of the search path.
+
 According to [here](https://msdn.microsoft.com/en-us/library/f2ccy3wt.aspx), the Windows equivalent variables appear to be `INCLUDE` and `LIBPATH`. The actual pathnames will likely be different on your machine than mine, so replace them accordingly.
 
 Once you have configured the environmental variables, continue the installation with either `pip` (recommended) or using the `setup.py` script as described below.

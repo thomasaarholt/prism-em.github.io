@@ -188,7 +188,7 @@ The following options are available with `prismatic`, each documented as **_long
 
 ### Setting environmental variables
 
- However, if one of the above dependencies is not found you will need to tell `pip` where to find them. In my opinion the easiest way to do this (on Linux/Mac) is by setting the environmental variables `CPLUS_INCLUDE_PATH` and `LIBRARY_PATH`. For example, I might invoke the following for CPU-only mode
+Python's `setuptools` needs to know where to find the above dependencies in order to build the package. In my opinion the easiest way to do this (on Linux/Mac) is by setting the environmental variables `CPLUS_INCLUDE_PATH` and `LIBRARY_PATH`. For example, I might invoke the following for CPU-only mode
 
 ~~~
 export CPLUS_INCLUDE_PATH=/usr/local/boost_1_60_0:$CPLUS_INCLUDE_PATH
@@ -203,7 +203,7 @@ export LIBRARY_PATH=/usr/local/cuda-8.0/lib64:$LIBRARY_PATH
 
 According to [here](https://msdn.microsoft.com/en-us/library/f2ccy3wt.aspx), the Windows equivalent variables appear to be `INCLUDE` and `LIBPATH`. The actual pathnames will likely be different on your machine than mine, so replace them accordingly.
 
-Once you have configured the environmental variables, retry the above `pip install` command
+Once you have configured the environmental variables, continue the installation with either `pip` (recommended) or using the `setup.py` script as described below.
 
 
 <a name="installing-with-pip-cuda"></a>

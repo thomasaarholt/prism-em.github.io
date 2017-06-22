@@ -253,7 +253,7 @@ to compile in CPU-only mode, or the following to compile the GPU version
 python3 setup.py build_ext --include-dirs=/usr/local/boost_1_60_0:/usr/local/cuda-8.0/include --library-dirs=/usr/local/cuda-8.0/lib64 install --enable-gpu
 ~~~
 
-If you have [setup your environmental variables](#environmental-setup), you can ignore the extra arguments and just use `python3 setup.py install`
+If you have [setup your environmental variables](#environmental-setup), you can ignore the extra arguments and just use `python3 setup.py install` or `python3 setup.py install --enable-gpu` 
 
 <a name="testing-pyprismatic"></a>
 ### Testing PyPrismatic

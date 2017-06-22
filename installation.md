@@ -188,7 +188,7 @@ The following options are available with `prismatic`, each documented as **_long
 
 ### Setting environmental variables
 
-Python's `setuptools` needs to know where to find the above dependencies in order to build the package. In my opinion the easiest way to do this (on Linux/Mac) is by setting the environmental variables `CPLUS_INCLUDE_PATH` and `LIBRARY_PATH`. For example, I might invoke the following for CPU-only mode
+Python's `setuptools` needs to know where to find the above dependencies in order to build `PyPrismatic`. In my opinion the easiest way to do this (on Linux/Mac) is by setting the environmental variables `CPLUS_INCLUDE_PATH` and `LIBRARY_PATH`. For example, I might invoke the following for CPU-only mode
 
 ~~~
 export CPLUS_INCLUDE_PATH=/usr/local/boost_1_60_0:$CPLUS_INCLUDE_PATH

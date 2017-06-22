@@ -179,10 +179,10 @@ The following options are available with `prismatic`, each documented as **_long
 
 <a name="python-installing-pyprismatic"></a>
 ## Python: Installing PyPrismatic
-`PyPrismatic` is a Python package for invoking the C++/CUDA code in `Prismatic`. It can be installed easily with `pip` provided the following dependencies are installed:
-	1. [Boost](http://www.boost.org/)
-	2. [FFTW](www.fftw.org)
-	3. [The CUDA Toolkit](https://developer.nvidia.com/cuda-downloads) (This is only necessary if you wish to use the GPU code. You will also need an NVIDIA GPU with compute capability 2.0 or greater and will add the `--enable-gpu` to the installation command. More details can be found below)
+`PyPrismatic` is a Python package for invoking the C++/CUDA code in `Prismatic`. It can be installed easily with `pip` provided the following dependencies are installed:  
+	1. [Boost](http://www.boost.org/) 
+	2. [FFTW](www.fftw.org)  
+	3. [The CUDA Toolkit](https://developer.nvidia.com/cuda-downloads) (This is only necessary if you wish to use the GPU code. You will also need an NVIDIA GPU with compute capability 2.0 or greater and will add the `--enable-gpu` to the installation command. More details can be found below)  
 
 <a name="environmental-setup"></a>
 

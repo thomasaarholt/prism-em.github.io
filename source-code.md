@@ -1755,6 +1755,7 @@ formatOutput_GPU_integrate(pars, psi_intensity_ds, alphaInd_d, output_ph,
 
 You made it through! There are multiple variations of each of these functions, but if you understand what is happening in the streaming codes with batch FFTs then all of the other versions should also make sense.
 
+<a name="combining"></a>
 ## Combining CUDA and Qt with CMake
 
 From the beginning of this project, the intention was to create an cross-platform program that could utilize GPUs, but still would work without them, and that had both a GUI and a CLI. My focus was very strongly on trying to make it as easy as possible to get it up and running no matter the user's hardware, OS, background, etc. After all, this is a tool, and if nobody wants to use it then what good have I accomplished?

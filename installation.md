@@ -2,7 +2,8 @@
 Table of Contents  
 	- [Binary Installers](#binary-installers)  
 	- [Compiling from Source](#getting-the-source-code)  
-	- [Python: Installing PyPrismatic](#python-installing-pyprismatic)  
+	- [Python: Installing PyPrismatic](#python-installing-pyprismatic) 
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Building the cuPrismatic library](#cuprismatic) 
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Installing CPU-only PyPrismatic with Pip](#installing-with-pip)  
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Installing GPU PyPrismatic with Pip](#installing-with-pip-cuda) 
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	- [Installing with setup.py](#installing-with-setup)  
@@ -182,7 +183,14 @@ The following options are available with `prismatic`, each documented as **_long
 `PyPrismatic` is a Python package for invoking the C++/CUDA code in `Prismatic`. It can be installed easily with `pip` provided the following dependencies are installed:  
 	1. [Boost](http://www.boost.org/)  
 	2. [FFTW](www.fftw.org)  
-	3. [The CUDA Toolkit](https://developer.nvidia.com/cuda-downloads) (This is only necessary if you wish to use the GPU code. You will also need an NVIDIA GPU with compute capability 2.0 or greater and will add the `--enable-gpu` to the installation command. More details can be found below)  
+	3. *(Optional)*[The CUDA Toolkit](https://developer.nvidia.com/cuda-downloads) 
+	4. *(Optional)*[The cuPrismatic library](#cuprismatic)
+
+	*#3 and #4 are only necessary if you wish to use the GPU code. You will also need an NVIDIA GPU with compute capability 2.0 or greater and will add the `--enable-gpu` to the installation command. More details can be found below*  
+
+<a name="cuprismatic"></a>
+###Building the cuPrismatic library
+In [this section](http://prism-em.com/sourcecode#combining)
 
 <a name="environmental-setup"></a>
 

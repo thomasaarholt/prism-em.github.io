@@ -190,7 +190,8 @@ The following options are available with `prismatic`, each documented as **_long
 	*#3 and #4 are only necessary if you wish to use the GPU code. You will also need an NVIDIA GPU with compute capability 2.0 or greater and will add the `--enable-gpu` to the installation command. More details can be found below*  
 
 <a name="cuprismatic"></a>
-###Building the cuPrismatic library
+
+### Building the cuPrismatic library
 
 One of the great features about CMake is that it can easily tolerate the complicated task of compiling a single program with multiple compilers, which is necessary when mixing CUDA and Qt (discussed more [here](http://prism-em.com/source-code/#combining)).  For a CPU-only version of `PyPrismatic`, the necessary C++ source code can be distributed with the Python package, and `setuptools` can easily compile the necessary C++ extension module. Unfortunately, to my knowledge `setuptools` does not play nicely with `nvcc`, which makes distributing a Python package that utilizes custom GPU code more challenging. My solution was just to compile the CUDA code into a a single shared library called `cuPrismatic`, which can then be linked against in the Python package as if it were any other C++ library. There is no "new" code in `cuPrismatic`, it simply serves as an intermediate step to help Python out by bundling the GPU code together into something it can work with. As an aside, this type of step is all CMake is doing under-the-hood to make CUDA and Qt play nicely in the first place -- it's just compiling the various formats of source code into a commonly understood form, in this case a shared library.
 

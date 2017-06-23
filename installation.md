@@ -5,7 +5,7 @@ Table of Contents
 	- [Python: Installing PyPrismatic](#python-installing-pyprismatic)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Building the cuPrismatic library](#cuprismatic)  
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Installing CPU-only PyPrismatic with Pip](#installing-with-pip)  
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Installing GPU PyPrismatic with Pip](#installing-with-pip-cuda) 
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Installing GPU PyPrismatic with Pip](#installing-with-pip-cuda)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	- [Installing with setup.py](#installing-with-setup)  
 	- [Python: Testing PyPrismatic](#testing-pyprismatic) 
 

@@ -13,7 +13,7 @@ Table of Contents
 
 *Links to binary installers should go here in the future*
 
-<a name=from-source></a>
+<a name="from-source"></a>
 ## Building *Prismatic* from the source code
 
 *Prismatic* is built on top of [CMake](https://cmake.org/), a cross-platform compilation utility that 

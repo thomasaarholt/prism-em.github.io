@@ -2,7 +2,7 @@
 Table of Contents  
 	- [Binary Installers](#binary-installers)  
 	- [Compiling from Source](#getting-the-source-code)  
-	- [Python: Installing PyPrismatic](#python-installing-pyprismatic) 
+	- [Python: Installing PyPrismatic](#python-installing-pyprismatic)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Building the cuPrismatic library](#cuprismatic)  
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Installing CPU-only PyPrismatic with Pip](#installing-with-pip)  
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Installing GPU PyPrismatic with Pip](#installing-with-pip-cuda) 
@@ -190,7 +190,7 @@ The following options are available with `prismatic`, each documented as **_long
 
 <a name="cuprismatic"></a>
 ###Building the cuPrismatic library
-In [this section](http://prism-em.com/sourcecode#combining)
+In [this section](http://prism-em.com/source-code/#combining)
 
 <a name="environmental-setup"></a>
 

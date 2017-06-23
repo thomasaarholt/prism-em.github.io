@@ -254,7 +254,7 @@ pip install pyprismatic --global-option=build_ext --global-option="-I/usr/local/
 
 ### Installing with setup.py
 
-To install the python package from the source code with `setup.py`, first [get the source code](#get-source-code). Then navigate to the top directory (the one with `setup.py`) and invoke either
+To install the python package from the source code with `setup.py`, first [get the source code](#get-source-code). Then navigate to the top directory (the one with `setup.py`) and invoke either (*you should change the actual names of the paths to match your machine, this is just an example*)
 
 ~~~
 python3 setup.py build_ext --include-dirs=/usr/local/boost_1_60_0 install

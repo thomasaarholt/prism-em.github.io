@@ -2,6 +2,37 @@
 Just because a project is open source doesn't mean that it is immediately obvious how all of its moving parts fit together.  I've spent a lot of time thinking about *Prismatic* and how to design it from a software engineering perspective, and I'm fairly satisfied with the result. This document is meant to be a sort of tour through the source code of *Prismatic* in a much more casual environment than a formal academic paper. This is not a tutorial for how to use the code (that is [here](www.example.com)), but rather an explanation of the code itself. Thus it is more focused towards developers and less so to most users. For those of you who haven't frantically closed the browser at this point, I hope that you find it useful either as a GPU programming example, or as a guide to become a future developer of *Prismatic* itself.
 
 
+### A note on macros
+
+The default floating-point precision used by *Prismatic* is `float` (single-precision); however, it is also possible to compile *Prismatic* for double precision. To make this possible, there are a number of macro definitions set in "defines.h". There are also similar definitions for API calls to FFTW and CUDA found elsewhere in the same file.
+
+~~~ c++
+#ifdef PRISMATIC_ENABLE_DOUBLE_PRECISION
+    typedef double PRISMATIC_FLOAT_PRECISION;
+#define PRISM_FFTW_PLAN fftw_plan
+#define PRISM_FFTW_PLAN_DFT_2D fftw_plan_dft_2d
+#define PRISM_FFTW_PLAN_DFT_BATCH fftw_plan_many_dft
+#define PRISM_FFTW_EXECUTE fftw_execute
+#define PRISM_FFTW_DESTROY_PLAN fftw_destroy_plan
+#define PRISM_FFTW_COMPLEX fftw_complex
+#define PRISM_FFTW_INIT_THREADS fftw_init_threads
+#define PRISM_FFTW_PLAN_WITH_NTHREADS fftw_plan_with_nthreads
+#define PRISM_FFTW_CLEANUP_THREADS fftw_cleanup_threads
+
+#else
+    typedef float PRISMATIC_FLOAT_PRECISION;
+#define PRISM_FFTW_PLAN fftwf_plan
+#define PRISM_FFTW_PLAN_DFT_2D fftwf_plan_dft_2d
+#define PRISM_FFTW_PLAN_DFT_BATCH fftwf_plan_many_dft
+#define PRISM_FFTW_EXECUTE fftwf_execute
+#define PRISM_FFTW_DESTROY_PLAN fftwf_destroy_plan
+#define PRISM_FFTW_COMPLEX fftwf_complex
+#define PRISM_FFTW_INIT_THREADS fftwf_init_threads
+#define PRISM_FFTW_PLAN_WITH_NTHREADS fftwf_plan_with_nthreads
+#define PRISM_FFTW_CLEANUP_THREADS fftwf_cleanup_threads
+#endif //PRISM_ENABLE_DOUBLE_PRECISION
+~~~
+
 ### Work Dispatcher
 
 The `WorkDispatcher` class is critical to how parallel work is performed in *Prismatic*. Conceptually the idea is that there is a bunch of tasks to be done, and there exist a number of worker threads to do these tasks. At this level we don't really care how the worker is doing the work as long as it gets done. So the `WorkDispatcher` exists to hand out tasks to the workers in a synchronized manner, and is extremely simple to implement using `std::mutex`.
@@ -60,10 +91,10 @@ I built a custom multidimensional array class for *Prismatic*, mainly because I 
 
 I also added some convenience functions very similar to MATLAB's `zeros` and `ones`.. this was mainly to make my life easier when transcribing from MATLAB code.
 
-The full class can be found in "ArrayND.h" and as it is some 600 lines that are fairly repetitive I won't include the whole thing here. But as an example
+The full class can be found in "ArrayND.h" and as it is some 600 lines that are fairly repetitive I won't include the whole thing here. But the following is a reasonable summary of what's important
 
 ~~~ c++
-namespace *Prismatic* {
+namespace Prismatic {
 template <size_t N, class T>
 class ArrayND {
         // ND array class for data indexed as C-style, i.e. arr.at(k,j,i) where i is the fastest varying index
@@ -96,14 +127,14 @@ class ArrayND {
         T data;
 }
     
-// ... an example .at() implementation late in the filer
+// ... an example .at() implementation later in the file
   template <size_t N, class T>
 typename T::value_type& ArrayND<N, T>::at(const size_t& k, const size_t& j,const size_t& i){
     return data[k*strides[0] + j*strides[1] + i];
 }
 ~~~
 
-So the template parameter `T` represents the underlying buffer data type, which must behave as `std::vector`. The dimensions and array strides are stored in fixed arrays, and the `.at()` methods use these strides to compute offsets, such as in the example above for the 2D array case.
+So the template parameter `T` represents the underlying buffer data type, which must behave as `std::vector`. The other template parameter, `N`, is the number of dimensions in the array. The size of each dimension and correspnoding array strides are computed at construction and stored in fixed arrays, and the `.at()` methods use these strides to compute offsets, such as in the example above for the 2D array case. The phrases like `typename T::value_type` are used to expose the underlying datatype within the buffer. For example, a `Prismatic::ArrayND<2, std::vector< float > >` is a 2D PRISM array where the underlying data is held in a single std::vector<float> and `typename T::value_type` resolves to `float`.
 
 I say "behave as" for the data buffer, because originally I also intended this class to be able to contain `thrust::host_vector` and `thrust::device_vector`. This would allow one to effectively use one template class to wrap multidimensional arrays that can transfer data back and forth from the GPU without using the low level CUDA API calls. For example, you could overload the `=` operator for arrays of two different types and have the underying vector types copy from one another, also with the `=` operator. For example, `Prismatic::ArrayND<T> = Prismatic::ArrayND<U>` where `T` was a `thrust::host_vector` and `U` is a `thrust::device_vector` would invoke the assignment of a `thrust::host_vector` from a `thrust::device_vector`, calling `cudaMemcpy` under the hood, and I would never have to touch that. The same class simultaneously could be used to assign one `Prismatic::ArrayND<std::vector>` to another. All of the metadata about the dimensions, etc, are stored host-side, so in principle this template class would allow you to use one syntax across all your host/device arrays and not see many cuda device calls at all. I have also written about this topic before with the approach of template specialization -- you can read about that [here](http://alanpryorjr.com/image/Flexible-CUDA/).
 
@@ -181,10 +212,14 @@ using entry_func = Parameters<PRISMATIC_FLOAT_PRECISION>  (*)(Metadata<PRISMATIC
 entry_func execute_plan;
 ~~~
 
-and this is set in "configure.cpp"
+and this is set in `configure` within "configure.cpp"
 
 ~~~ c++
 //configure.cpp
+void configure(Metadata<PRISMATIC_FLOAT_PRECISION>& meta) {
+/*
+// more code..
+*/
 if (meta.algorithm == Algorithm::PRISM) {
 	execute_plan = PRISM_entry;
 	//...
@@ -193,9 +228,14 @@ if (meta.algorithm == Algorithm::PRISM) {
 } else if (meta.algorithm == Algorithm::Multislice){	
 	execute_plan = Multislice_entry;
 }
+
+/*
+// more code..
+*/
+}
 ~~~
 
-If you think this is overkill, and I could just have an if-else for this case, consider that there are choices of PRISM/Multislice, the possibility of CPU-only or GPU-enabled, the possibility of streaming/singlexfer if we are using the GPU codes, etc. It would create a lot of divergences very quickly, and this is a better solution.
+If you think this is overkill, and I could just have an if-else for this case, consider that there are choices of PRISM/multislice, the possibility of CPU-only or GPU-enabled, the possibility of streaming/singlexfer if we are using the GPU codes, etc. It would create a lot of divergences very quickly, and this is a better solution.
 
 ## PRISM
 

@@ -2,8 +2,7 @@
 *This tutorial will be available in the very near future*
 
 ## Table of Contents  
-
-	- [PyPrismatic: Using Pristmatic through Python](#pyprismatic)  
+- [PyPrismatic: Using Prismatic through Python](#pyprismatic)  
 	<!-- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Building the cuPrismatic library](#cuprismatic)  -->
 
 <a name="pyprismatic"></a>

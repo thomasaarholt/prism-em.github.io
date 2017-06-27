@@ -19,7 +19,7 @@ meta.go()
 ~~~
 <a name="metadata"></a>
 
-## Metadata Parameters
+## List of Metadata parameters
 
 **interpolationFactorX** : PRISM interpolation factor in x-direction  
 **interpolationFactorY** : PRISM interpolation factor in y-direction  

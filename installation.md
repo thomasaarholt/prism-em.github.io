@@ -154,7 +154,7 @@ The following options are available with `prismatic`, each documented as **_long
 * --slice-thickness (-s) thickness : thickness of each slice of projected potential (in Angstroms)
 * --help(-h) : print information about the available options
 * --pixel-size (-p) pixel_size : size of simulation pixel size
-* --detector-angle-step (-d) step_size : angular step size for detector integration bins
+* --detector-angle-step (-d) step_size : angular step size for detector integration bins (in mrad)
 * --cell-dimension (-c) x y z : size of sample in x, y, z directions (in Angstroms)
 * --tile-uc (-t) x y z : tile the unit cell x, y, z number of times in x, y, z directions, respectively
 * --algorithm (-a) p/m : the simulation algorithm to use, either (p)rism or (m)ultislice
@@ -169,7 +169,7 @@ The following options are available with `prismatic`, each documented as **_long
 * --random-seed (-rs) step_size : random number seed
 * --probe-xtilt (-tx) value : probe X tilt
 * --probe-ytilt (-ty) value : probe X tilt
-* --probe-defocus (-df) value : probe defocus
+* --probe-defocus (-df) value : probe defocus (in Angstroms)
 * --probe-semiangle (-sa) value : maximum probe semiangle
 * --scan-window-x (-wx) min max : size of the window to scan the probe in X (in fractional coordinates between 0 and 1)
 * --scan-window-y (-wy) min max : size of the window to scan the probe in Y (in fractional coordinates between 0 and 1)

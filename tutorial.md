@@ -1,7 +1,7 @@
 # Prismatic Tutorial (Under Construction)   
 *This tutorial will be available in the very near future*
 
-##Table of Contents  
+## Table of Contents  
 	- [PyPrismatic: Using Pristmatic through Python](#pyprismatic)  
 	<!-- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Building the cuPrismatic library](#cuprismatic)  -->
 

@@ -47,7 +47,7 @@ alphaBeamMax** : the maximum probe angle to consider (in mrad)
 **scanWindowYMax** : upper Y size of the window to scan the probe (in fractional coordinates)  
 **randomSeed** : number to use for random seeding of thermal effects  
 **algorithm** : simulation algorithm to use, "prism" or "multislice"  
-**includeThermalEffects" : true/false to apply random thermal displacements (Debye-Waller effect)  
+**includeThermalEffects : true/false to apply random thermal displacements (Debye-Waller effect)  
 **alsoDoCPUWork** : true/false to spawn CPU workers in addition to GPU workers  
 **save2DOutput** : save the 2D STEM image integrated between integrationAngleMin and integrationAngleMax  
 **save3DOutput** : true/false Also save the 3D output at the detector for each probe (3D output mode)  

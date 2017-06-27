@@ -7,7 +7,7 @@ Table of Contents
 
 <a name="pyprismatic"></a>
 
-##PyPrismatic: Using Prismatic through Python
+## PyPrismatic: Using Prismatic through Python  
 
 ~~~ python
 	"interpolationFactorX" : PRISM interpolation factor in x-direction

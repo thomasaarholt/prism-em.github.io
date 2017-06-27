@@ -11,7 +11,7 @@
 
 **interpolationFactorX** : PRISM interpolation factor in x-direction  
 **interpolationFactorY** : PRISM interpolation factor in y-direction  
-**filenameAtoms** : filename containing input atom information in XYZ format (see http://prism-em.com/about/ for more details)  
+**filenameAtoms** : filename containing input atom information in XYZ format (see [here](http://prism-em.com/about/) for more details)  
 **filenameOutput** : filename in which to save the 3D output. Also serves as base filename for 2D and 4D outputs if used  
 **realspacePixelSizeX** : size of pixel size in X for probe/potential arrays  
 **realspacePixelSizeY** : size of pixel size in Y for probe/potential arrays  

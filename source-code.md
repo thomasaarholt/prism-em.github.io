@@ -1815,8 +1815,8 @@ The graphical user interface, `prismatic-gui`, is programmed with [Qt5](https://
 
 GUI programming is pretty verbose, and so I'm not going to dump a bunch of code into this document, but I will make a few comments about the general process for building a n application like `prismatic-gui`. All of the GUI code is contained with `Qt/` within the `Prismatic` package.
 
-    * The layout of the GUI was entirely done with Qt Designer. Some will argue that it is better to manually program the widgets, but I found Qt Designer to be totally sufficient for my purposes. I made extensive use of horizontal/vertical layouts to make things align and resize properly.
-    * 
+* The layout of the GUI was entirely done with Qt Designer. Some will argue that it is better to manually program the widgets, but I found Qt Designer to be totally sufficient for my purposes. I made extensive use of horizontal/vertical layouts to make things align and resize properly.
+* Like the CLI, the GUI is used to create a `Metadata` object that is used to run the simulation. Custom slots were used to connect GUI widgets with the appropriate `Metadata` parameters.
 
 <a name="combining"></a>
 ## Combining CUDA and Qt with CMake

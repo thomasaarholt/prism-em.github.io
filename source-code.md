@@ -1,12 +1,14 @@
 # *Prismatic* Source Code Walkthrough
 Just because a project is open source doesn't mean that it is immediately obvious how all of its moving parts fit together.  I've spent a lot of time thinking about *Prismatic* and how to design it from a software engineering perspective, and I'm fairly satisfied with the result. This document is meant to be a sort of tour through the source code of *Prismatic* in a much more casual environment than a formal academic paper. This is not a tutorial for how to use the code (that is [here](www.example.com)), but rather an explanation of the code itself. Thus it is more focused towards developers and less so to most users. For those of you who haven't frantically closed the browser at this point, I hope that you find it useful either as a GPU programming example, or as a guide to become a future developer of *Prismatic* itself.
 
-## Table of Contents
-    -  [Work Dispatcher](#work-dispatcher)
+## Table of Contents  
+-  [A note on macros](#a-note-on-macros)  
+-  [Work Dispatcher](#work-dispatcher)  
+-  [Multidimensional Arrays](#multidim-arrays)  
 
 ### A note on macros
 
-The default floating-point precision used by *Prismatic* is `float` (single-precision); however, it is also possible to compile *Prismatic* for double precision. To make this possible, there are a number of macro definitions set in "defines.h". There are also similar definitions for API calls to FFTW and CUDA found elsewhere in the same file.
+The default floating-point precision used by *Prismatic* is `float` (single-precision) as this consumes less memory than double and on GPUs single-precision operations are faster than double. However, it is also possible to compile *Prismatic* for double precision. Many API calls in the cuFFT and FFTW libraries (as well as others) are different when invoking double or single-precision code. To make both precisions usable in `Prismatic`, there are a number of macro definitions set in "defines.h". 
 
 ~~~ c++
 #ifdef PRISMATIC_ENABLE_DOUBLE_PRECISION
@@ -86,6 +88,8 @@ namespace Prismatic {
 ~~~
 
 The constructor just initializes the relevant fields with the input parameters. The `getWork` function locks the mutex with a `std::lock_guard` in [RAII](https://en.wikipedia.org/wiki/Resource_acquisition_is_initialization) style such that it is guaranteed to be unlocked if anything bad happens. Everything after the creation of the `lock_guard` is synchronized, and the `WorkDispatcher` then tries to set `job_start` and `job_stop` to a range of `num_requested` jobs if possible, and fewer if necessary. It's really that simple.
+
+<a name="multidim-array"></a>
 
 ### Multidimensional Arrays in *Prismatic* 
 

@@ -3,8 +3,9 @@ Table of Contents
 	- [Binary Installers](#binary-installers)  
 	- [Compiling from Source](#getting-the-source-code)  
 	- [Python: Installing PyPrismatic](#python-installing-pyprismatic)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Building the cuPrismatic library](#cuprismatic)  
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Installing CPU-only PyPrismatic with Pip](#installing-with-pip)  
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Installing GPU PyPrismatic with Pip](#installing-with-pip-cuda) 
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Installing GPU PyPrismatic with Pip](#installing-with-pip-cuda)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	- [Installing with setup.py](#installing-with-setup)  
 	- [Python: Testing PyPrismatic](#testing-pyprismatic) 
 
@@ -12,6 +13,7 @@ Table of Contents
 
 *Links to binary installers should go here in the future*
 
+<a name="from-source"></a>
 ## Building *Prismatic* from the source code
 
 *Prismatic* is built on top of [CMake](https://cmake.org/), a cross-platform compilation utility that 
@@ -154,7 +156,7 @@ The following options are available with `prismatic`, each documented as **_long
 * --slice-thickness (-s) thickness : thickness of each slice of projected potential (in Angstroms)
 * --help(-h) : print information about the available options
 * --pixel-size (-p) pixel_size : size of simulation pixel size
-* --detector-angle-step (-d) step_size : angular step size for detector integration bins
+* --detector-angle-step (-d) step_size : angular step size for detector integration bins (in mrad)
 * --cell-dimension (-c) x y z : size of sample in x, y, z directions (in Angstroms)
 * --tile-uc (-t) x y z : tile the unit cell x, y, z number of times in x, y, z directions, respectively
 * --algorithm (-a) p/m : the simulation algorithm to use, either (p)rism or (m)ultislice
@@ -169,7 +171,7 @@ The following options are available with `prismatic`, each documented as **_long
 * --random-seed (-rs) step_size : random number seed
 * --probe-xtilt (-tx) value : probe X tilt
 * --probe-ytilt (-ty) value : probe X tilt
-* --probe-defocus (-df) value : probe defocus
+* --probe-defocus (-df) value : probe defocus (in Angstroms)
 * --probe-semiangle (-sa) value : maximum probe semiangle
 * --scan-window-x (-wx) min max : size of the window to scan the probe in X (in fractional coordinates between 0 and 1)
 * --scan-window-y (-wy) min max : size of the window to scan the probe in Y (in fractional coordinates between 0 and 1)
@@ -184,7 +186,18 @@ The following options are available with `prismatic`, each documented as **_long
 `PyPrismatic` is a Python package for invoking the C++/CUDA code in `Prismatic`. It can be installed easily with `pip` provided the following dependencies are installed:  
 	1. [Boost](http://www.boost.org/)  
 	2. [FFTW](www.fftw.org)  
-	3. [The CUDA Toolkit](https://developer.nvidia.com/cuda-downloads) (This is only necessary if you wish to use the GPU code. You will also need an NVIDIA GPU with compute capability 2.0 or greater and will add the `--enable-gpu` to the installation command. More details can be found below)  
+	3. *(Optional)*[The CUDA Toolkit](https://developer.nvidia.com/cuda-downloads)  
+	4. *(Optional)*[The cuPrismatic library](#cuprismatic)
+
+*#3 and #4 are only necessary if you wish to use the GPU code. You will also need an NVIDIA GPU with compute capability 2.0 or greater and will add the `--enable-gpu` to the installation command. More details can be found below*  
+
+<a name="cuprismatic"></a>
+
+### Building the cuPrismatic library
+
+One of the great features about CMake is that it can easily tolerate the complicated task of compiling a single program with multiple compilers, which is necessary when mixing CUDA and Qt (discussed more [here](http://prism-em.com/source-code/#combining)).  For a CPU-only version of `PyPrismatic`, the necessary C++ source code can be distributed with the Python package, and `setuptools` can easily compile the necessary C++ extension module. Unfortunately, to my knowledge `setuptools` does not play nicely with `nvcc`, which makes distributing a Python package that utilizes custom GPU code more challenging. My solution was to compile the CUDA code into a a single shared library called `cuPrismatic`, which can then be linked against in the Python package as if it were any other C++ library. There is no "new" code in `cuPrismatic`, it simply serves as an intermediate step to help Python out by bundling the GPU code together into something it can work with. As an aside, this type of step is all CMake is doing under-the-hood to make CUDA and Qt play nicely in the first place -- it's just compiling the various formats of source code into a commonly understood form.
+
+With that being said, in order to install the GPU-enabled version of `PyPrismatic`, you must first build `cuPrismatic`. To do so, you will need to [get the source code](#get-source-code), set the `PRISMATIC_ENABLE_PYTHON=1` variable in CMake, then configure and compile the project. More detail on this process of using CMake is [described above](#from-source). Once the library is installed, then proceed below.
 
 <a name="environmental-setup"></a>
 
@@ -243,7 +256,7 @@ pip install pyprismatic --global-option=build_ext --global-option="-I/usr/local/
 
 ### Installing with setup.py
 
-To install the python package from the source code with `setup.py`, first [get the source code](#get-source-code). Then navigate to the top directory (the one with `setup.py`) and invoke either
+To install the python package from the source code with `setup.py`, first [get the source code](#get-source-code). Then navigate to the top directory (the one with `setup.py`) and invoke either (*you should change the actual names of the paths to match your machine, this is just an example*)
 
 ~~~
 python3 setup.py build_ext --include-dirs=/usr/local/boost_1_60_0 install

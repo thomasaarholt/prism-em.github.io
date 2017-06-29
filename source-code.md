@@ -1,4 +1,4 @@
-#*Prismatic* Source Code Walkthrough
+# Prismatic Source Code Walkthrough
 Just because a project is open source doesn't mean that it is immediately obvious how all of its moving parts fit together.  I've spent a lot of time thinking about *Prismatic* and how to design it from a software engineering perspective, and I'm fairly satisfied with the result. This document is meant to be a sort of tour through the source code of *Prismatic* in a much more casual environment than a formal academic paper. This is not a tutorial for how to use the code (that is [here](www.example.com)), but rather an explanation of the code itself. Thus it is more focused towards developers and less so to most users. For those of you who haven't frantically closed the browser at this point, I hope that you find it useful either as a GPU programming example, or as a guide to become a future developer of *Prismatic* itself.
 
 ## Table of Contents  
@@ -1813,7 +1813,7 @@ You made it through! There are multiple variations of each of these functions, b
 
 The graphical user interface, `prismatic-gui`, is programmed with [Qt5](https://www.qt.io/), which is a cross-platform framework for programming GUIs. Qt is extremely rich, but it is also rather complicated and has a fairly steep learning curve if you want to understand how everything works together. I think the most important concept in Qt is the system of [signals and slots](http://doc.qt.io/qt-5/signalsandslots.html). Once you understand how signals and slots work with an event loop, GUI programming is simplified greatly, at least conceptually.  
 
-GUI programming is pretty verbose, and so I'm not going to dump a bunch of code into this document, but I will make a few comments about the general process for building a n application like `prismatic-gui`. All of the GUI code is contained with `Qt/` within the `Prismatic` package.
+GUI programming is pretty verbose, and so I'm not going to dump a bunch of code into this document, but I will make a few comments about the general process for building an application like `prismatic-gui`. All of the GUI code is contained with `Qt/` within the `Prismatic` package.
 
 * The layout of the GUI was entirely done with Qt Designer. Some will argue that it is better to manually program the widgets, but I found Qt Designer to be totally sufficient for my purposes. I made extensive use of horizontal/vertical layouts to make things align and resize properly.
 * Like the CLI, the GUI is used to create a `Metadata` object that is used to run the simulation. Custom slots were used to connect GUI widgets with the appropriate `Metadata` parameters. There is some parameter validation. So when a user changes a parameter, a signal is emitted that is connected to a slot that performs a parameter validation and, if this passes, then sets the appropriate `Metadata` parameter. 

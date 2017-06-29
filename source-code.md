@@ -5,6 +5,13 @@ Just because a project is open source doesn't mean that it is immediately obviou
 -  [A note on macros](#a-note-on-macros)  
 -  [Work Dispatcher](#work-dispatcher)  
 -  [Multidimensional Arrays](#multidim-arrays)  
+-  [Metadata](#metadata)  
+-  [Command Line Interface](#command-line-interface)  
+-  [Configuration](#configuration)  
+-  [PRISM](#prism)  
+-  [Calculating Projected Potentials](#calculating-projected-potentials)  
+-  [Prismatic GUI](#gui)
+-  [Combining CUDA and Qt with CMake](#combining)
 
 ### A note on macros
 
@@ -89,7 +96,7 @@ namespace Prismatic {
 
 The constructor just initializes the relevant fields with the input parameters. The `getWork` function locks the mutex with a `std::lock_guard` in [RAII](https://en.wikipedia.org/wiki/Resource_acquisition_is_initialization) style such that it is guaranteed to be unlocked if anything bad happens. Everything after the creation of the `lock_guard` is synchronized, and the `WorkDispatcher` then tries to set `job_start` and `job_stop` to a range of `num_requested` jobs if possible, and fewer if necessary. It's really that simple.
 
-<a name="multidim-array"></a>
+<a name="multidim-arrays"></a>
 
 ### Multidimensional Arrays in *Prismatic* 
 
@@ -1800,6 +1807,16 @@ formatOutput_GPU_integrate(pars, psi_intensity_ds, alphaInd_d, output_ph,
 ~~~
 
 You made it through! There are multiple variations of each of these functions, but if you understand what is happening in the streaming codes with batch FFTs then all of the other versions should also make sense.
+
+<a name="gui"></a>
+## Prismatic GUI  
+
+The graphical user interface, `prismatic-gui`, is programmed with [Qt5](https://www.qt.io/), which is a cross-platform framework for programming GUIs. Qt is extremely rich, but it is also rather complicated and has a fairly steep learning curve if you want to understand how everything works together. I think the most important concept in Qt is the system of [signals and slots](http://doc.qt.io/qt-5/signalsandslots.html). Once you understand how signals and slots work with an event loop, GUI programming is simplified greatly, at least conceptually.  
+
+GUI programming is pretty verbose, and so I'm not going to dump a bunch of code into this document, but I will make a few comments about the general process for building a n application like `prismatic-gui`. All of the GUI code is contained with `Qt/` within the `Prismatic` package.
+
+    * The layout of the GUI was entirely done with Qt Designer. Some will argue that it is better to manually program the widgets, but I found Qt Designer to be totally sufficient for my purposes. I made extensive use of horizontal/vertical layouts to make things align and resize properly.
+    * 
 
 <a name="combining"></a>
 ## Combining CUDA and Qt with CMake

@@ -1,7 +1,7 @@
-# Installing *Prismatic*
+# Installing `Prismatic`
 Table of Contents  
 	- [Dependencies](#dependencies)  
-	- [Building *Prismatic* from the source code](#from-source)  
+	- [Building `Prismatic` from the source code](#from-source)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Setting environmental variables](#environmental-setup)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Linux](#environmental-setup-linux)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Mac OS X](#environmental-setup-mac)  
@@ -33,7 +33,7 @@ The following dependencies are needed by `Prismatic`:
 
 * [CMake](https://cmake.org/) (*For compiling the source code*)  
 * [Boost](www.boost.org)  
-* [FFTW](www.fftw.org)  
+* [FFTW](www.fftw.org) (`Prismatic` uses single precision by default)  
 
 *Optional*
 
@@ -41,14 +41,14 @@ The following dependencies are needed by `Prismatic`:
 * Python 3, a good choice is [the Anaconda distribution](https://www.continuum.io/downloads)(*For the python package*, `PyPrismatic`)  
 * [Qt 5](https://www.qt.io/) (*For building the GUI*)  
 
-*Prismatic* was developed using CUDA 8.0, but likely works with older versions as well and we welcome feedback from any user who attempts to do so (CUDA 7.0, 7.5 also have been reported to work).
+`Prismatic` was developed using CUDA 8.0, but likely works with older versions as well and we welcome feedback from any user who attempts to do so (CUDA 7.0, 7.5 also have been reported to work).
 *Note: Even if you download a binary version of the GPU codes, you will still need to have the CUDA toolkit installed so that the `cuFFT` libraries can be found at runtime.*
 
 
 <a name="from-source"></a>
-## Building *Prismatic* from the source code
+## Building `Prismatic` from the source code
 
-*Prismatic* is built using [CMake](https://cmake.org/), a cross-platform compilation utility that 
+`Prismatic` is built using [CMake](https://cmake.org/), a cross-platform compilation utility that 
 allows a single source tree to be compiled into a variety of formats including UNIX Makefiles, 
 Microsoft Visual Studio projects, Mac OS XCode projects, etc.
 
@@ -56,7 +56,7 @@ Microsoft Visual Studio projects, Mac OS XCode projects, etc.
 <a name="get-source-code"></a>
 ### Getting the source code 
 
-Once the [dependencies](#dependencies) are installed get the *Prismatic* source either from [compressed source files](https://github.com/prism-em/prismatic/archive/master.zip) or directly 
+Once the [dependencies](#dependencies) are installed get the `Prismatic` source either from [compressed source files](https://github.com/prism-em/prismatic/archive/master.zip) or directly 
 from [Github](https://github.com/prism-em/prismatic) using `git clone`. Next, follow the instructions appropriate for your operating system.
 
 <a name="environmental-setup"></a>
@@ -127,7 +127,7 @@ Depending how your system is configured and what portions of `Prismatic` you are
 <a name="compiling-linux"></a>
 ### Compiling with CMake from the command line on Ubuntu Linux
 
-To build *Prismatic* from the command line with CMake, open a terminal and navigate to the top of the source directory 
+To build `Prismatic` from the command line with CMake, open a terminal and navigate to the top of the source directory 
 
 ```
 cd /path/to/Prismatic/
@@ -135,8 +135,8 @@ cd /path/to/Prismatic/
 
 Conventional CMake practice is to use out-of-source builds, which means we will compile the source code into
 a separate directory. This has a number of advantages including providing the flexibility to build multiple
-version of *Prismatic* (such as compiling with/without GPU support), and allowing for easier cleanup. First, 
-make a build directory (the name doesn't matter) at the top of the *Prismatic* source tree.
+version of `Prismatic` (such as compiling with/without GPU support), and allowing for easier cleanup. First, 
+make a build directory (the name doesn't matter) at the top of the `Prismatic` source tree.
 
 ```
 mkdir build
@@ -148,9 +148,9 @@ Then invoke CMake
 cmake ../
 ```
 
-This will generate a Makefile  project with the necessary dependencies and paths to compile *Prismatic*. The default
+This will generate a Makefile  project with the necessary dependencies and paths to compile `Prismatic`. The default
 behavior is to build only the CLI without GPU support. These options can be enabled as described in later sections.
-Finally, compile and install *Prismatic* with:
+Finally, compile and install `Prismatic` with:
 
 ```
 make
@@ -171,7 +171,7 @@ make install
 
 which may require `sudo` privileges. This will place the files in `/usr/local/bin`. 
 
-CMake will attempt to locate the various dependencies needed by *Prismatic* (see the section on [setting up your environment](#environmental-setup)), but if it cannot then it will produce an error and set the variable to NOTFOUND. For example, if the `Boost_INCLUDE_DIR` (the location of the Boost libraries), is not found, it will be set to `Boost_INCLUDE_DIR-NOTFOUND`. You will need to manually set the path to boost (see [below](#cmake-options) for how to set options), and then rerun `cmake`.
+CMake will attempt to locate the various dependencies needed by `Prismatic` (see the section on [setting up your environment](#environmental-setup)), but if it cannot then it will produce an error and set the variable to NOTFOUND. For example, if the `Boost_INCLUDE_DIR` (the location of the Boost libraries), is not found, it will be set to `Boost_INCLUDE_DIR-NOTFOUND`. You will need to manually set the path to boost (see [below](#cmake-options) for how to set options), and then rerun `cmake`.
 
 
 <a name="mac"></a>
@@ -187,7 +187,7 @@ CMake will attempt to locate the various dependencies needed by *Prismatic* (see
 
 *If you prefer a graphical approach, you can use the `cmake-gui` and follow analagous steps as [in Windows](#compiling-win)*
 
-To build *Prismatic* from the command line with CMake, open a terminal and navigate to the top of the source directory 
+To build `Prismatic` from the command line with CMake, open a terminal and navigate to the top of the source directory 
 
 ```
 cd /path/to/Prismatic/
@@ -195,8 +195,8 @@ cd /path/to/Prismatic/
 
 Conventional CMake practice is to use out-of-source builds, which means we will compile the source code into
 a separate directory. This has a number of advantages including providing the flexibility to build multiple
-version of *Prismatic* (such as compiling with/without GPU support), and allowing for easier cleanup. First, 
-make a build directory (the name doesn't matter) at the top of the *Prismatic* source tree.
+version of `Prismatic` (such as compiling with/without GPU support), and allowing for easier cleanup. First, 
+make a build directory (the name doesn't matter) at the top of the `Prismatic` source tree.
 
 ```
 mkdir build
@@ -208,9 +208,9 @@ Then invoke CMake
 cmake ../
 ```
 
-This will generate a Makefile  project with the necessary dependencies and paths to compile *Prismatic*. The default
+This will generate a Makefile  project with the necessary dependencies and paths to compile `Prismatic`. The default
 behavior is to build only the CLI without GPU support. These options can be enabled as described in later sections.
-Finally, compile and install *Prismatic* with:
+Finally, compile and install `Prismatic` with:
 
 ```
 make
@@ -231,7 +231,7 @@ make install
 
 which may require `sudo` privileges. This will place the files in `/usr/local/bin`. 
 
-CMake will attempt to locate the various dependencies needed by *Prismatic* (see the section on [setting up your environment](#environmental-setup)), but if it cannot then it will produce an error and set the variable to NOTFOUND. For example, if the `Boost_INCLUDE_DIR` (the location of the Boost libraries), is not found, it will be set to `Boost_INCLUDE_DIR-NOTFOUND`. You will need to manually set the path to boost (see [below](#cmake-options) for how to set options), and then rerun `cmake`.
+CMake will attempt to locate the various dependencies needed by `Prismatic` (see the section on [setting up your environment](#environmental-setup)), but if it cannot then it will produce an error and set the variable to NOTFOUND. For example, if the `Boost_INCLUDE_DIR` (the location of the Boost libraries), is not found, it will be set to `Boost_INCLUDE_DIR-NOTFOUND`. You will need to manually set the path to boost (see [below](#cmake-options) for how to set options), and then rerun `cmake`.
 
 
 <a name="win"></a>
@@ -245,7 +245,7 @@ CMake will attempt to locate the various dependencies needed by *Prismatic* (see
 <a name="compiling-win"></a>
 ### Compiling with CMake's GUI on Windows
 
-To build *Prismatic* on Windows with the `CMake` GUI, first open `CMake` and set the location of the source code to the top level directory of `Prismatic` (this is the directory  containing CMakeLists.txt). Next, choose the location to build the binaries. It is recommended to create a separate folder, perhaps called "build", for this purpose. Click `Configure`, and choose the C++ compiler you would like to use. I have successfully tested Microsoft Visual Studio 2015 (64-bit) and would recommend this version if possible, particularly if you are compiling with GPU-support due to the fact that both NVIDIA and Microsoft are proprietary vendors, there is often some conflict between the newest versions of `nvcc` and MSVS. 
+To build `Prismatic` on Windows with the `CMake` GUI, first open `CMake` and set the location of the source code to the top level directory of `Prismatic` (this is the directory  containing CMakeLists.txt). Next, choose the location to build the binaries. It is recommended to create a separate folder, perhaps called "build", for this purpose. Click `Configure`, and choose the C++ compiler you would like to use. I have successfully tested Microsoft Visual Studio 2015 (64-bit) and would recommend this version if possible, particularly if you are compiling with GPU-support due to the fact that both NVIDIA and Microsoft are proprietary vendors, there is often some conflict between the newest versions of `nvcc` and MSVS. 
 
 Based on the [option settings](cmake-options), `CMake` will then attempt to find the necessary dependencies. If you [have fully setup your environment](#environmental-setup-win), then configuration should succeed. If it fails, then variables it cannot satisfy will be set to NOTFOUND. For example, if the `Boost_INCLUDE_DIR` (the location of the Boost libraries), is not found, it will be set to `Boost_INCLUDE_DIR-NOTFOUND`. You will need to manually set the path to boost (see [below](#cmake-options) for how to set options), and then rerun `Configure`.
 
@@ -259,7 +259,7 @@ Once configuration is complete, click `Generate` and a MSVS .sln file will be cr
 *Required*
 
 * [Boost](http://www.boost.org/)  
-* [FFTW](www.fftw.org)    
+* [FFTW](www.fftw.org) (`Prismatic` uses single precision by default)    
 
 *Optional*
 * [The CUDA Toolkit](https://developer.nvidia.com/cuda-downloads) (*For GPU support*)    
@@ -347,7 +347,7 @@ pr.demo()
 <a name ="setting-cmake-options"></a>
 ## Setting CMake options
 
-All aspects of how *Prismatic* is compiled, such as whether or not to include GUI or GPU support, are controlled through CMake variables.
+All aspects of how `Prismatic` is compiled, such as whether or not to include GUI or GPU support, are controlled through CMake variables.
 There are at least four different ways to adjust these:
 
 If you are using the CMake GUI, then options are turned on/off with check boxes
@@ -369,7 +369,7 @@ before the changes will actually take effect
 
 *Currently, this double precision setting is not supported by `PyPrismatic`*
 
-The default behavior for *Prismatic* is to use single precision (type float). You can use double precision instead by setting `PRISMATIC_ENABLE_DOUBLE_PRECISION=1`. Note that as of this writing double precision operations are ~4x slower on the GPU, and by every test I have done the precision difference is entirely unnoticeable. However, I leave it as an option . If you find a case where using double precision is impactful, I would be very interested to hear about it.
+The default behavior for `Prismatic` is to use single precision (type float). You can use double precision instead by setting `PRISMATIC_ENABLE_DOUBLE_PRECISION=1`. Note that as of this writing double precision operations are ~4x slower on the GPU, and by every test I have done the precision difference is entirely unnoticeable. However, I leave it as an option . If you find a case where using double precision is impactful, I would be very interested to hear about it.
 
 
 <a name ="cmake-options"></a>
@@ -385,9 +385,9 @@ Here's a list of the various custom options you can set and CMake and what they 
 
 
 <a name ="cli-options"></a>
-## Using *Prismatic* from the command line
+## Using `Prismatic` from the command line
 
-*Prismatic* contains a command line tool, `prismatic`, that can be used to run simulations from within a terminal, bash script, etc. Building it requires the CMake variable `PRISM_ENABLE_CLI=1` at compilation time, which is the default behavior.
+`Prismatic` contains a command line tool, `prismatic`, that can be used to run simulations from within a terminal, bash script, etc. Building it requires the CMake variable `PRISM_ENABLE_CLI=1` at compilation time, which is the default behavior.
 
 The following options are available with `prismatic`, each documented as **_long form_** **_(short form)_** *parameters* : description
 

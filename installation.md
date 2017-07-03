@@ -1,6 +1,6 @@
 # Installing *Prismatic*
 Table of Contents  
-	- [Dependencies](#dependencies) 
+	- [Dependencies](#dependencies)  
 	- [Building *Prismatic* from the source code](#from-source)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Setting environmental variables](#environmental-setup)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Linux](#environmental-setup-linux)  
@@ -9,7 +9,7 @@ Table of Contents
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Linux](#linux)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Building with CMake from the command line](#compiling-linux)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Mac OS X](#mac)  
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Binary Installers](#binary-installers-mac) 
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Binary Installers](#binary-installers-mac)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Building with CMake from the command line](#compiling-mac)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Windows](#windows)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Binary Installers](#binary-installers-win)  
@@ -18,7 +18,7 @@ Table of Contents
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Building the cuPrismatic library](#cuprismatic)  
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Installing PyPrismatic with Pip](#installing-with-pip-cuda)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Installing with setup.py](#installing-with-setup)  
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Python: Testing PyPrismatic](#testing-pyprismatic) 
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Python: Testing PyPrismatic](#testing-pyprismatic)  
 	- [Setting CMake Options](#setting-cmake-options)  
 	- [List of Prismatic CMake options](#cmake-options)
 

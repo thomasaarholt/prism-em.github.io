@@ -1,7 +1,6 @@
 # Installing *Prismatic*
 Table of Contents  
 	- [Dependencies](#dependencies) 
-	- [Python package dependencies](#python-dependencies)  
 	- [Building *Prismatic* from the source code](#from-source)  
 	- [Setting environmental variables](#environmental-setup)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Linux](#environmental-setup-linux)  
@@ -46,19 +45,6 @@ The following dependencies are needed by `Prismatic`:
 *Prismatic* was developed using CUDA 8.0, but likely works with older versions as well and we welcome feedback from any user who attempts to do so (CUDA 7.0, 7.5 also have been reported to work).
 *Note: Even if you download a binary version of the GPU codes, you will still need to have the CUDA toolkit installed so that the `cuFFT` libraries can be found at runtime.*
 
-<a name="python-dependencies"></a>
-#### Python package dependencies
-
-The follow dependencies are needed by `PyPrismatic`
-
-*Required*
-
-* [Boost](http://www.boost.org/)  
-* [FFTW](www.fftw.org)    
-
-*Optional*
-* [The CUDA Toolkit](https://developer.nvidia.com/cuda-downloads) (*For GPU support*)    
-* [The cuPrismatic library](#cuprismatic) (*For GPU support*)  
 
 <a name="from-source"></a>
 ## Building *Prismatic* from the source code
@@ -200,8 +186,17 @@ CMake will attempt to locate the various dependencies needed by *Prismatic* (see
 ## Python: Installing PyPrismatic
 `PyPrismatic` is a Python package for invoking the C++/CUDA code in `Prismatic`. It can be installed easily with `pip` provided the following dependencies are installed:  
 
+*Required*
 
-*#3 and #4 are only necessary if you wish to use the GPU code. You will also need an NVIDIA GPU with compute capability 2.0 or greater and will add the `--enable-gpu` to the installation command. More details can be found below*  
+* [Boost](http://www.boost.org/)  
+* [FFTW](www.fftw.org)    
+
+*Optional*
+* [The CUDA Toolkit](https://developer.nvidia.com/cuda-downloads) (*For GPU support*)    
+* [The cuPrismatic library](#cuprismatic) (*For GPU support*)  
+
+
+*The optional dependencies are only necessary if you wish to use the GPU code. You will also need an NVIDIA GPU with compute capability 3.0 or greater and will add the `--enable-gpu` to the installation command. More details can be found below*  
 
 <a name="cuprismatic"></a>
 

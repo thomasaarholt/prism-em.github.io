@@ -6,14 +6,14 @@ Table of Contents
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Linux](#environmental-setup-linux)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Mac OS X](#environmental-setup-mac)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Windows](#environmental-setup-win)  
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Compiling on Linux](#linux)  
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Building with CMake from the command line](#compiling-linux)  
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Compiling on Mac OS X](#mac)  
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Binary Installers](#binary-installers-mac)  
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Building with CMake from the command line](#compiling-mac)  
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Compiling on Windows](#windows)  
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Binary Installers](#binary-installers-win)  
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Building with CMake from the command line](#compiling-win)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Installing on Linux](#linux)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Compiling with CMake from the command line](#compiling-linux)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Installing on Mac OS X](#mac)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Binary Installers (Mac OS X)](#binary-installers-mac)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Compiling with CMake from the command line](#compiling-mac)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Installing on Windows](#windows)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Binary Installers (Windows)](#binary-installers-win)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Compiling with CMake from the command line](#compiling-win)  
 	- [Python: Installing PyPrismatic](#python-installing-pyprismatic)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Building the cuPrismatic library](#cuprismatic)  
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Installing PyPrismatic with Pip](#installing-with-pip-cuda)  
@@ -120,9 +120,11 @@ These environmental variables can be set graphically through system settings. Th
 
 Depending how your system is configured and what portions of `Prismatic` you are building you may need to add additional paths. For example, if you are building the GUI, you will also need to provide the paths to Qt5 headers and libraries. See the [dependencies](#dependencies) for details about what is required.
 
+<a name="linux"></a>
+## Installing on Linux  
 
 <a name="compiling-linux"></a>
-## Building with CMake from the command line on Ubuntu Linux
+### Compiling with CMake from the command line on Ubuntu Linux
 
 To build *Prismatic* from the command line with CMake, open a terminal and navigate to the top of the source directory 
 
@@ -171,8 +173,16 @@ which may require `sudo` privileges. This will place the files in `/usr/local/bi
 CMake will attempt to locate the various dependencies needed by *Prismatic* (see the section on [setting up your environment](#environmental-setup)), but if it cannot then it will produce an error and set the variable to NOTFOUND. For example, if the `Boost_INCLUDE_DIR` (the location of the Boost libraries), is not found, it will be set to `Boost_INCLUDE_DIR-NOTFOUND`. You will need to manually set the path to boost (see [below](#cmake-options) for how to set options), and then rerun `cmake`.
 
 
+<a name="mac"></a>
+## Installing on Mac OS X  
+
+<a name="binary-installers-mac"></a>
+### Binary Installers (Mac OS X) 
+
+*Links to binary installers should go here in the future*
+
 <a name="compiling-mac"></a>
-## Building with CMake from the command line on OS X
+### Compiling with CMake from the command line on OS X
 
 *If you prefer a graphical approach, you can use the `cmake-gui` and follow analagous steps as [in Windows](#compiling-win)*
 
@@ -223,8 +233,16 @@ which may require `sudo` privileges. This will place the files in `/usr/local/bi
 CMake will attempt to locate the various dependencies needed by *Prismatic* (see the section on [setting up your environment](#environmental-setup)), but if it cannot then it will produce an error and set the variable to NOTFOUND. For example, if the `Boost_INCLUDE_DIR` (the location of the Boost libraries), is not found, it will be set to `Boost_INCLUDE_DIR-NOTFOUND`. You will need to manually set the path to boost (see [below](#cmake-options) for how to set options), and then rerun `cmake`.
 
 
+<a name="win"></a>
+## Installing on Windows  
+
+<a name="binary-installers-mac"></a>
+### Binary Installers (Mac OS X) 
+
+*Links to binary installers should go here in the future*
+
 <a name="compiling-win"></a>
-## Building with CMake's GUI on Windows
+### Compiling with CMake's GUI on Windows
 
 To build *Prismatic* on Windows with the `CMake` GUI, first open `CMake` and set the location of the source code to the top level directory of `Prismatic` (this is the directory  containing CMakeLists.txt). Next, choose the location to build the binaries. It is recommended to create a separate folder, perhaps called "build", for this purpose. Click `Configure`, and choose the C++ compiler you would like to use. I have successfully tested Microsoft Visual Studio 2015 (64-bit) and would recommend this version if possible, particularly if you are compiling with GPU-support due to the fact that both NVIDIA and Microsoft are proprietary vendors, there is often some conflict between the newest versions of `nvcc` and MSVS. 
 

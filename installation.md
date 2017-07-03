@@ -1,40 +1,60 @@
 # Installing *Prismatic*
 Table of Contents  
 	- [Binary Installers](#binary-installers)  
-	- [Compiling from Source](#getting-the-source-code)  
+	- [Dependencies](#dependencies)
+	- [Compiling from Source](#getting-the-source-code)
 	- [Python: Installing PyPrismatic](#python-installing-pyprismatic)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Building the cuPrismatic library](#cuprismatic)  
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Installing CPU-only PyPrismatic with Pip](#installing-with-pip)  
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Installing GPU PyPrismatic with Pip](#installing-with-pip-cuda)  
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Installing PyPrismatic with Pip](#installing-with-pip-cuda)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	- [Installing with setup.py](#installing-with-setup)  
 	- [Python: Testing PyPrismatic](#testing-pyprismatic) 
 
 ## Binary Installers
 
-*Links to binary installers should go here in the future*
+*Links to binary installers of the GUI should go here in the future*
+
+If you are using CPU-only mode, the appropriate binary should be all that you need to run the GUI. 
+
+For enabling GUI support, you will still need to install [the CUDA toolkit](https://developer.nvidia.com/cuda-toolkit) and setup your environmental/path variables so that the GPU libraries (i.e. cuFFT) can be found when you run the binary. For example, on Linux the cuFFT libraries will have names like `libcufft.so.#.#` where "#" will be different depending on the version. To enable `prismatic-gui` to find these libraries at runtime, add the pathname containing the libraries to `LD_LIBRARY_PATH` with the following command 
+
+~~~
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/path/to/libraries"
+~~~
+
+where you should replace `/path/to/libraries` with the actual location (for me they are under `usr/local/cuda-8.0/lib64`)
+
+This process is detailed [in the CUDA installation procedures](http://developer.download.nvidia.com/compute/cuda/7.5/Prod/docs/sidebar/CUDA_Installation_Guide_Linux.pdf), and you can find similar instructions for other operating systems.
+
+## Dependencies
+
+The following dependencies are needed by `Prismatic`:
+
+>Required
+*[CMake](https://cmake.org/)(*For compiling the source code*)
+*[Boost](www.boost.org)
+*[FFTW](www.fftw.org)
+
+>Optional
+*[CUDA Toolkit](https://developer.nvidia.com/cuda-toolkit)(*For GPU support*)
+*Python 3, a good choice is [the Anaconda distribution](https://www.continuum.io/downloads)[*For the python package, `PyPrismatic`*]
+*[Qt 5](https://www.qt.io/)(*For building the GUI*)
+
+*Prismatic* was developed using CUDA 8.0, but likely works with older versions as well and we welcome feedback from any user who attempts to do so (CUDA 7.0, 7.5 also have been reported to work).
+*Note: Even if you download a binary version of the GPU codes, you will still need to have the CUDA toolkit installed so that the `cuFFT` libraries can be found at runtime.*
 
 <a name="from-source"></a>
 ## Building *Prismatic* from the source code
 
-*Prismatic* is built on top of [CMake](https://cmake.org/), a cross-platform compilation utility that 
+*Prismatic* is built using [CMake](https://cmake.org/), a cross-platform compilation utility that 
 allows a single source tree to be compiled into a variety of formats including UNIX Makefiles, 
 Microsoft Visual Studio projects, Mac OS XCode projects, etc.
 
-### External dependencies
-
-To install *Prismatic*, you must first install [Cmake](https://cmake.org/install/) and [FFTW](http://www.fftw.org/fftw2_doc/fftw_6.html). 
-
-To accelerate *Prismatic* with CUDA GPUs, you must also install [the CUDA toolkit](https://developer.nvidia.com/cuda-toolkit) and have a CUDA enabled GPU of compute capability 2.0 or higher.
-*Prismatic* was developed using CUDA 8.0, but likely works with older versions as well and we welcome feedback from any user who attempts to do so (CUDA 7.0, 7.5 also have been reported to work).
-*Note: Even if you download a binary version of the GPU codes, you will still need to have the CUDA toolkit installed so that the `cuFFT` libraries can be found at runtime.*
-
-If you are building the GUI from source, you will also need [Qt5](https://www.qt.io).
 
 <a name="get-source-code"></a>
 ### Getting the source code 
 
-Once the dependencies are installed get the *Prismatic* source either from [compressed source files](www.example.com) or directly 
-from [Github](www.example.com) using `git clone`
+Once the [dependencies](#dependencies)] are installed get the *Prismatic* source either from [compressed source files](https://github.com/prism-em/prismatic/archive/master.zip) or directly 
+from [Github](https://github.com/prism-em/prismatic) using `git clone`
 
 ## Building with CMake from the command line
 
@@ -109,6 +129,8 @@ before the changes will actually take effect
 These are some various quirks you may want to be aware of, depending on your OS
 
 #### Windows
+
+* I had no issues compiling `Prismatic` using Microsoft Visual Studio 2015 (Community Edition). I had some issues with Visual Studio 2017, but at the time it had *just* been released. These issues may have been fixed, but I would recommend using Visual Studio 2015 if possible.
 
 * When installing FFTW, be sure to create the .lib files as described [in the FFTW documentation.](http://www.fftw.org/install/windows.html). You will then set `FFTW_INCLUDE_DIR` to the directory containing "fftw3.h", and `FFTW_LIBRARY` to the path to "libfftw3f-3.lib". The "f" after fftw3 indicates single-precision, which is the default in *Prismatic*. If you are compiling with `PRISMATIC_ENABLE_DOUBLE_PRECISION=1` then this will be ""libfftw3-3.lib" instead.
 
@@ -194,6 +216,8 @@ The following options are available with `prismatic`, each documented as **_long
 <a name="cuprismatic"></a>
 
 ### Building the cuPrismatic library
+
+*This step is only required for GPU support in PyPrismatic*
 
 One of the great features about CMake is that it can easily tolerate the complicated task of compiling a single program with multiple compilers, which is necessary when mixing CUDA and Qt (discussed more [here](http://prism-em.com/source-code/#combining)).  For a CPU-only version of `PyPrismatic`, the necessary C++ source code can be distributed with the Python package, and `setuptools` can easily compile the necessary C++ extension module. Unfortunately, to my knowledge `setuptools` does not play nicely with `nvcc`, which makes distributing a Python package that utilizes custom GPU code more challenging. My solution was to compile the CUDA code into a a single shared library called `cuPrismatic`, which can then be linked against in the Python package as if it were any other C++ library. There is no "new" code in `cuPrismatic`, it simply serves as an intermediate step to help Python out by bundling the GPU code together into something it can work with. As an aside, this type of step is all CMake is doing under-the-hood to make CUDA and Qt play nicely in the first place -- it's just compiling the various formats of source code into a commonly understood form.
 

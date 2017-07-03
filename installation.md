@@ -75,7 +75,7 @@ Once the [dependencies](#dependencies) are installed get the *Prismatic* source 
 from [Github](https://github.com/prism-em/prismatic) using `git clone`. Next, follow the instructions appropriate for your operating system.
 
 <a name="environmental-setup"></a>
-# Environmental setup
+## Environmental setup
 
 `CMake` and/or `setuptools` needs to know where to find the [dependencies](#dependencies) in order to build `Prismatic` and `PyPrismatic`, respectively. In my opinion the easiest way to do this is by setting environmental variables. You can also manually provide paths to compilation commands, but if you take the time to setup your environment then everything should be automatically found. Follow the appropriate instructions below for your operating system.
 

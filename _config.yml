@@ -24,8 +24,8 @@ description: Documentation, tutorials, and source code for the software package 
 # List of links in the navigation bar
 navbar-links: 
   Downloads:
-    - Source Code: "http://example.com"
-    - Installers: "http://www.example.com"
+    - Source Code: "http://github.com/prism-em/prismatic"
+    - Installers: "http://github.com/prism-em/prismatic"
   Installation: "installation"
   Tutorials:
     - Tutorial: "tutorial"

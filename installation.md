@@ -364,6 +364,9 @@ will be read for the `CMakeCache.txt` file, so options can be changed here direc
 before the changes will actually take effect
 
 ### Enabling Double Precision
+
+*Currently, this double precision setting is not supported by `PyPrismatic`*
+
 The default behavior for *Prismatic* is to use single precision (type float). You can use double precision instead by setting `PRISMATIC_ENABLE_DOUBLE_PRECISION=1`. Note that as of this writing double precision operations are ~4x slower on the GPU, and by every test I have done the precision difference is entirely unnoticeable. However, I leave it as an option . If you find a case where using double precision is impactful, I would be very interested to hear about it.
 
 

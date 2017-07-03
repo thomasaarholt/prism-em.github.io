@@ -2,18 +2,18 @@
 Table of Contents  
 	- [Dependencies](#dependencies) 
 	- [Building *Prismatic* from the source code](#from-source)  
-	- [Setting environmental variables](#environmental-setup)  
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Linux](#environmental-setup-linux)  
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Mac OS X](#environmental-setup-mac)  
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Windows](#environmental-setup-win)  
-	- [Linux](#linux)  
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Compiling](#compiling-linux)  
-	- [Mac OS X](#mac)  
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Binary Installers](#binary-installers-mac) 
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Compiling](#compiling-mac)  
-	- [Windows](#windows)  
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Binary Installers](#binary-installers-win)  
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Compiling](#compiling-win)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Setting environmental variables](#environmental-setup)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Linux](#environmental-setup-linux)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Mac OS X](#environmental-setup-mac)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Windows](#environmental-setup-win)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Linux](#linux)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Building with CMake from the command line](#compiling-linux)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Mac OS X](#mac)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Binary Installers](#binary-installers-mac) 
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Building with CMake from the command line](#compiling-mac)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Windows](#windows)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Binary Installers](#binary-installers-win)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Building with CMake from the command line](#compiling-win)  
 	- [Python: Installing PyPrismatic](#python-installing-pyprismatic)
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Building the cuPrismatic library](#cuprismatic)  
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Installing PyPrismatic with Pip](#installing-with-pip-cuda)  
@@ -119,15 +119,6 @@ These are the relevant environmental variables on Windows
 These environmental variables can be set graphically through system settings. The specfic details of how to this will vary depending on which version of Windows you are using, but a quick Google search should be able to provide you step-by-step instructions. For example, on Windows 10, typing "variable" into the search feature on the taskbar reveals "Edit the system environmental variables".
 
 Depending how your system is configured and what portions of `Prismatic` you are building you may need to add additional paths. For example, if you are building the GUI, you will also need to provide the paths to Qt5 headers and libraries. See the [dependencies](#dependencies) for details about what is required.
-
-
-
-
-
-
-
-
-
 
 
 <a name="compiling-linux"></a>

@@ -1,9 +1,14 @@
 # Prismatic Tutorial (Under Construction)   
-*This tutorial will be available in the very near future*
+*This tutorial is a work in progress and will be finished in the very near future*
 
 ## Table of Contents  
+- [Examples](#examples)
 - [PyPrismatic: Using Prismatic through Python](#pyprismatic)  
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Metadata Parameters](#metadata)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Metadata Parameters](#metadata)
+
+## Examples
+
+Within the source code of `Prismatic` is an "examples" folder that contains some example scripts of how one might run simulations using *Prismatic*. There is a mixture of Python examples use `PyPrismatic` and bash shell scripts using `prismatic`. Both tools are accessing the exact same underlying code -- they just provide different entry points. Use whatever you feel most comfortable with.
 
 <a name="pyprismatic"></a>
 

@@ -21,6 +21,7 @@ Table of Contents
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Python: Testing PyPrismatic](#testing-pyprismatic)  
 	- [Setting CMake Options](#setting-cmake-options)  
 	- [List of Prismatic CMake options](#cmake-options)
+	- [Command line options](#cli-options) 
 
 
 
@@ -331,6 +332,15 @@ One of the great features about CMake is that it can easily tolerate the complic
 
 With that being said, in order to install the GPU-enabled version of `PyPrismatic`, you must first build `cuPrismatic`. To do so, you will need to [get the source code](#get-source-code), set the `PRISMATIC_ENABLE_PYTHON=1` variable in CMake, then configure and compile the project. More detail on this process of using CMake is [described above](#from-source). Once the library is installed, then proceed below.
 
+<a name="testing-pyprismatic"></a>
+### Testing PyPrismatic
+
+You can test your installation of `PyPrismatic` with the following commands from within `python3`
+
+~~~ python
+import pyprismatic as pr
+pr.demo()
+~~~
 
 <a name ="setting-cmake-options"></a>
 ## Setting CMake options
@@ -353,7 +363,7 @@ will be read for the `CMakeCache.txt` file, so options can be changed here direc
 **_Note_**: Any time you change CMake options for a particular project you must regenerate the build files and recompile
 before the changes will actually take effect
 
-## Enabling Double Precision
+### Enabling Double Precision
 The default behavior for *Prismatic* is to use single precision (type float). You can use double precision instead by setting `PRISMATIC_ENABLE_DOUBLE_PRECISION=1`. Note that as of this writing double precision operations are ~4x slower on the GPU, and by every test I have done the precision difference is entirely unnoticeable. However, I leave it as an option . If you find a case where using double precision is impactful, I would be very interested to hear about it.
 
 ## Using *Prismatic* from the command line
@@ -361,7 +371,7 @@ The default behavior for *Prismatic* is to use single precision (type float). Yo
 *Prismatic* contains a command line tool, `prismatic`, that can be used to run simulations from within a terminal, bash script, etc. Building it requires the CMake variable `PRISM_ENABLE_CLI=1` at compilation time, which is the default behavior.
 
 <a name ="cmake-options"></a>
-### List of Prismatic CMake options
+## List of Prismatic CMake options
 
 Here's a list of the various custom options you can set and CMake and what they represent
 
@@ -369,6 +379,10 @@ Here's a list of the various custom options you can set and CMake and what they 
 * `PRISMATIC_ENABLE_GPU` - Enable GPU supprt. Requires locating CUDA headers/libraries
 * `PRISMATIC_ENABLE_GUI` - Build the GUI, `prismatic-gui`. Requires locating Qt5 headers/libraries.
 * `PRISMATIC_ENABLE_PYTHON_GPU` - Build the `cuPrismatic` shared library, which is used by the GPU version
+* `PRISMATIC_ENABLE_DOUBLE_PRECISION` - Use type `double` for float precision. This requires locating the double precision `FFTW` libraries.
+
+
+<a name ="cli-options"></a>
 
 ### CLI Options
 The following options are available with `prismatic`, each documented as **_long form_** **_(short form)_** *parameters* : description
@@ -414,12 +428,3 @@ The following options are available with `prismatic`, each documented as **_long
 
 
 
-<a name="testing-pyprismatic"></a>
-### Testing PyPrismatic
-
-You can test your installation of `PyPrismatic` with the following commands from within `python3`
-
-~~~ python
-import pyprismatic as pr
-pr.demo()
-~~~

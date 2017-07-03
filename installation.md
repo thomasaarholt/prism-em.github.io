@@ -353,35 +353,6 @@ will be read for the `CMakeCache.txt` file, so options can be changed here direc
 **_Note_**: Any time you change CMake options for a particular project you must regenerate the build files and recompile
 before the changes will actually take effect
 
-## Operating System Specific Comments
-These are some various quirks you may want to be aware of, depending on your OS
-
-#### Windows
-
-* I had no issues compiling `Prismatic` using Microsoft Visual Studio 2015 (Community Edition). I had some issues with Visual Studio 2017, but at the time it had *just* been released. These issues may have been fixed, but I would recommend using Visual Studio 2015 if possible.
-
-* When installing FFTW, be sure to create the .lib files as described [in the FFTW documentation.](http://www.fftw.org/install/windows.html). You will then set `FFTW_INCLUDE_DIR` to the directory containing "fftw3.h", and `FFTW_LIBRARY` to the path to "libfftw3f-3.lib". The "f" after fftw3 indicates single-precision, which is the default in *Prismatic*. If you are compiling with `PRISMATIC_ENABLE_DOUBLE_PRECISION=1` then this will be ""libfftw3-3.lib" instead.
-
-## Enabling GPU support
-
-To enable GPU support, set the CMake variable `PRISMATIC_ENABLE_GPU=1`. You must have the CUDA toolkit installed and the 
-appropriate paths setup as described [in the CUDA documentation](http://docs.nvidia.com/cuda/cuda-installation-guide-linux/#post-installation-actions) so that CMake
-may find `nvcc` and the necessary libraries to build/run *Prismatic*. 
-
-## Enabling the GUI
-
-To build the GUI from source, you must install [Qt5](https://www.qt.io) and set the CMake variable `PRISMATIC_ENABLE_GUI=1`.
-I find that CMake sometimes has trouble automatically finding Qt5, and at configuration time may complain about 
-being unable to find packages such as `Qt5Widgets`. An easy solution is to follow CMake's suggestion and set
-`CMAKE_PREFIX_PATH=/path/to/Qt5` where `/path/to/Qt5` should be replaced with the path on your machine. For example,
-on my Macbook with Qt5 installed through Homebrew I might invoke
-
-```
-cmake ../ -DPRISM_ENABLE_GUI=1 -DCMAKE_PREFIX_PATH=/usr/local/Cellar/qt5/5.8.0_1
-make -j 8
-make install
-```
-
 ## Enabling Double Precision
 The default behavior for *Prismatic* is to use single precision (type float). You can use double precision instead by setting `PRISMATIC_ENABLE_DOUBLE_PRECISION=1`. Note that as of this writing double precision operations are ~4x slower on the GPU, and by every test I have done the precision difference is entirely unnoticeable. However, I leave it as an option . If you find a case where using double precision is impactful, I would be very interested to hear about it.
 
@@ -392,7 +363,12 @@ The default behavior for *Prismatic* is to use single precision (type float). Yo
 <a name ="cmake-options"></a>
 ### List of Prismatic CMake options
 
-Here's a list of the various options you can set and CMake and what they represent
+Here's a list of the various custom options you can set and CMake and what they represent
+
+* `PRISMATIC_ENABLE_CLI` - Build the command line interface `prismatic`"
+* `PRISMATIC_ENABLE_GPU` - Enable GPU supprt. Requires locating CUDA headers/libraries
+* `PRISMATIC_ENABLE_GUI` - Build the GUI, `prismatic-gui`. Requires locating Qt5 headers/libraries.
+* `PRISMATIC_ENABLE_PYTHON_GPU` - Build the `cuPrismatic` shared library, which is used by the GPU version
 
 ### CLI Options
 The following options are available with `prismatic`, each documented as **_long form_** **_(short form)_** *parameters* : description

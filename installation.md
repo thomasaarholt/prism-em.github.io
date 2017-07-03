@@ -4,7 +4,7 @@ Table of Contents
 	- [Python package dependencies](#python-dependencies)  
 	- [Building *Prismatic* from the source code](#from-source)  
 	- [Setting environmental variables](#environmental-setup)  
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -  (Linux)](#environmental-setup-linux)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -  [Linux](#environmental-setup-linux)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Setting environmental variables (Mac OS X)](#environmental-setup-mac)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Setting environmental variables (Windows)](#environmental-setup-win)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Setting environmental variables](#environmental-setup-linux)  

@@ -3,7 +3,10 @@ Table of Contents
 	- [Dependencies](#dependencies) 
 	- [Python package dependencies](#python-dependencies)  
 	- [Building *Prismatic* from the source code](#from-source)  
-	- [Linux](#linux)  
+	- [Setting environmental variables](#environmental-setup)
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -  (Linux)](#environmental-setup-linux)
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Setting environmental variables (Mac OS X)](#environmental-setup-mac)
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Setting environmental variables (Windows)](#environmental-setup-win)
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Setting environmental variables](#environmental-setup-linux)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Compiling](#compiling-linux)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Python: Installing PyPrismatic](#python-installing-pyprismatic-linux)  
@@ -18,7 +21,8 @@ Table of Contents
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Building the cuPrismatic library](#cuprismatic)  
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Installing PyPrismatic with Pip](#installing-with-pip-cuda)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	- [Installing with setup.py](#installing-with-setup)  
-	- [Setting CMake Options](#cmake-options)
+	- [Setting CMake Options](#setting-cmake-options)  
+	- [List of Prismatic CMake options](#cmake-options)
 	- [Python: Testing PyPrismatic](#testing-pyprismatic) 
 
 
@@ -70,13 +74,16 @@ Microsoft Visual Studio projects, Mac OS XCode projects, etc.
 Once the [dependencies](#dependencies) are installed get the *Prismatic* source either from [compressed source files](https://github.com/prism-em/prismatic/archive/master.zip) or directly 
 from [Github](https://github.com/prism-em/prismatic) using `git clone`. Next, follow the instructions appropriate for your operating system.
 
-## Linux
-
 <a name="environmental-setup"></a>
+# Environmental setup
 
-## Setting environmental variables
+`CMake` and/or `setuptools` needs to know where to find the [dependencies](#dependencies) in order to build `Prismatic` and `PyPrismatic`, respectively. In my opinion the easiest way to do this is by setting environmental variables. You can also manually provide paths to compilation commands, but if you take the time to setup your environment then everything should be automatically found. Follow the appropriate instructions below for your operating system.
 
-`CMake` and/or `setuptools` needs to know where to find the [dependencies](#dependencies) in order to build `Prismatic` and `PyPrismatic`, respectively. In my opinion the easiest way to do this is by setting environmental variables, but you can also manually provide paths to compilation commands. These are the relevant environmental variables
+<a name="environmental-setup-linux"></a>
+
+#### Linux
+
+These are the relevant environmental variables on Linux
 
 * `CPLUS_INCLUDE_PATH` - default search location for C++ header files  
 * `LIBRARY_PATH` - default search location for C/C++ libraries  
@@ -92,6 +99,52 @@ export LIBRARY_PATH=/usr/local/cuda-8.0/lib64:$LIBRARY_PATH
 You can make these changes persistent by adding the same lines to your `~/.bashrc` file so that they are executed at startup every time you open a terminal. 
 
 Depending how your system is configured and what portions of `Prismatic` you are building you may need to add additional paths. For example, if you are building the GUI, you will also need to provide the paths to Qt5 headers and libraries. See the [dependencies](#dependencies) for details about what is required.
+
+
+<a name="environmental-setup-mac"></a>
+
+#### Mac OS X
+
+These are the relevant environmental variables on Mac OS X
+
+* `CPLUS_INCLUDE_PATH` - default search location for C++ header files  
+* `LIBRARY_PATH` - default search location for C/C++ libraries  
+* `DYLD_LIBRARY_PATH` - default search location for shared libraries to be loaded at runtime 
+
+These variables can be set from the terminal with the `export` command. For example, to prepend an example header search path for boost "/usr/local/boost_1_60_0", header search for CUDA located at "/usr/local/cuda-8.0/include", and CUDA library path at "/usr/local/cuda-8.0/lib64" one could invoke
+
+~~~
+export CPLUS_INCLUDE_PATH=/usr/local/boost_1_60_0:/usr/local/cuda-8.0/include:$CPLUS_INCLUDE_PATH
+export LIBRARY_PATH=/usr/local/cuda-8.0/lib64:$LIBRARY_PATH
+~~~
+
+You can make these changes persistent by adding the same lines to your `~/.bash_profile` file so that they are executed at startup every time you open a terminal. 
+
+Depending how your system is configured and what portions of `Prismatic` you are building you may need to add additional paths. For example, if you are building the GUI, you will also need to provide the paths to Qt5 headers and libraries. See the [dependencies](#dependencies) for details about what is required.
+
+<a name="environmental-setup-win"></a>
+
+#### Windows
+
+These are the relevant environmental variables on Windows
+
+* `PATH` - default search location for executables (.exe.) and shared libraries (.dll)
+* `INCLUDE` - default search location for C++ headers  
+* `LIB` - default search location for C++ libraries
+
+These environmental variables can be set graphically through system settings. The specfic details of how to this will vary depending on which version of Windows you are using, but a quick Google search should be able to provide you step-by-step instructions. For example, on Windows 10, typing "variable" into the search feature on the taskbar reveals "Edit the system environmental variables".
+
+Depending how your system is configured and what portions of `Prismatic` you are building you may need to add additional paths. For example, if you are building the GUI, you will also need to provide the paths to Qt5 headers and libraries. See the [dependencies](#dependencies) for details about what is required.
+
+
+
+
+
+
+
+
+
+
 
 <a name="compiling-linux"></a>
 ## Building with CMake from the command line
@@ -211,7 +264,7 @@ If you have [setup your environmental variables](#environmental-setup), you can 
 
 
 
-<a name ="cmake-options"></a>
+<a name ="setting-cmake-options"></a>
 ## Setting CMake options
 
 All aspects of how *Prismatic* is compiled, such as whether or not to include GUI or GPU support, are controlled through CMake variables.
@@ -268,7 +321,12 @@ The default behavior for *Prismatic* is to use single precision (type float). Yo
 
 *Prismatic* contains a command line tool, `prismatic`, that can be used to run simulations from within a terminal, bash script, etc. Building it requires the CMake variable `PRISM_ENABLE_CLI=1` at compilation time, which is the default behavior.
 
-### Options
+<a name ="cmake-options"></a>
+### List of Prismatic CMake options
+
+Here's a list of the various options you can set and CMake and what they represent
+
+### CLI Options
 The following options are available with `prismatic`, each documented as **_long form_** **_(short form)_** *parameters* : description
 
 * --input-file (-i) filename : the filename containing the atomic coordinates, which should be a plain text file with comma-separated values in the format x, y, z, Z 

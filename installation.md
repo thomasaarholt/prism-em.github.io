@@ -33,11 +33,13 @@ This process is detailed [in the CUDA installation procedures](http://developer.
 The following dependencies are needed by `Prismatic`:
 
 *Required*  
+
 *[CMake](https://cmake.org/)(*For compiling the source code*)  
 *[Boost](www.boost.org)  
 *[FFTW](www.fftw.org)  
 
 *Optional*  
+
 *[CUDA Toolkit](https://developer.nvidia.com/cuda-toolkit)(*For GPU support*)  
 *Python 3, a good choice is [the Anaconda distribution](https://www.continuum.io/downloads)(*For the python package, `PyPrismatic`*)  
 *[Qt 5](https://www.qt.io/)(*For building the GUI*)  

@@ -34,15 +34,15 @@ The following dependencies are needed by `Prismatic`:
 
 *Required*  
 
-*[CMake](https://cmake.org/)(*For compiling the source code*)  
-*[Boost](www.boost.org)  
-*[FFTW](www.fftw.org)  
+* [CMake](https://cmake.org/)(*For compiling the source code*)  
+* [Boost](www.boost.org)  
+* [FFTW](www.fftw.org)  
 
 *Optional*  
 
-*[CUDA Toolkit](https://developer.nvidia.com/cuda-toolkit)(*For GPU support*)  
-*Python 3, a good choice is [the Anaconda distribution](https://www.continuum.io/downloads)(*For the python package, `PyPrismatic`*)  
-*[Qt 5](https://www.qt.io/)(*For building the GUI*)  
+* [CUDA Toolkit](https://developer.nvidia.com/cuda-toolkit)(*For GPU support*)  
+* Python 3, a good choice is [the Anaconda distribution](https://www.continuum.io/downloads)(*For the python package, `PyPrismatic`*)  
+* [Qt 5](https://www.qt.io/)(*For building the GUI*)  
 
 *Prismatic* was developed using CUDA 8.0, but likely works with older versions as well and we welcome feedback from any user who attempts to do so (CUDA 7.0, 7.5 also have been reported to work).
 *Note: Even if you download a binary version of the GPU codes, you will still need to have the CUDA toolkit installed so that the `cuFFT` libraries can be found at runtime.*

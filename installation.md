@@ -342,6 +342,8 @@ import pyprismatic as pr
 pr.demo()
 ~~~
 
+*Note: If you receive an error like `ImportError: cannot import name core` but the installation process appeared to work, make sure to change directories out of the top level of the source code and try again. This occurs because the PyPrismatic package was built and installed globally, but if you are currently in the top level directory that contains the source code folder pyprismatic then python will attempt to use that incorrectly as the package.*
+
 <a name ="setting-cmake-options"></a>
 ## Setting CMake options
 

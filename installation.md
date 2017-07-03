@@ -8,21 +8,19 @@ Table of Contents
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Windows](#environmental-setup-win)  
 	- [Linux](#linux)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Compiling](#compiling-linux)  
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Python: Installing PyPrismatic](#python-installing-pyprismatic-linux)  
 	- [Mac OS X](#mac)  
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Binary Installers](#binary-installers-mac)  
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Setting environmental variables](#environmental-setup-mac)  
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Python: Installing PyPrismatic](#python-installing-pyprismatic-mac)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Binary Installers](#binary-installers-mac) 
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Compiling](#compiling-mac)  
 	- [Windows](#windows)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Binary Installers](#binary-installers-win)  
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Setting environmental variables](#environmental-setup-win)  
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Python: Installing PyPrismatic](#python-installing-pyprismatic-win)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Compiling](#compiling-win)  
+	- [Python: Installing PyPrismatic](#python-installing-pyprismatic)
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Building the cuPrismatic library](#cuprismatic)  
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Installing PyPrismatic with Pip](#installing-with-pip-cuda)  
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	- [Installing with setup.py](#installing-with-setup)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Installing with setup.py](#installing-with-setup)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Python: Testing PyPrismatic](#testing-pyprismatic) 
 	- [Setting CMake Options](#setting-cmake-options)  
 	- [List of Prismatic CMake options](#cmake-options)
-	- [Python: Testing PyPrismatic](#testing-pyprismatic) 
 
 
 
@@ -182,7 +180,7 @@ which may require `sudo` privileges. This will place the files in `/usr/local/bi
 CMake will attempt to locate the various dependencies needed by *Prismatic* (see the section on [setting up your environment](#environmental-setup)), but if it cannot then it will produce an error and set the variable to NOTFOUND. For example, if the `Boost_INCLUDE_DIR` (the location of the Boost libraries), is not found, it will be set to `Boost_INCLUDE_DIR-NOTFOUND`. You will need to manually set the path to boost (see [below](#cmake-options) for how to set options), and then rerun `cmake`.
 
 
-<a name="python-installing-pyprismatic-linux"></a>
+<a name="python-installing-pyprismatic"></a>
 ## Python: Installing PyPrismatic
 `PyPrismatic` is a Python package for invoking the C++/CUDA code in `Prismatic`. It can be installed easily with `pip` provided the following dependencies are installed:  
 

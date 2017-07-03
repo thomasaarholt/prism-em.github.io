@@ -122,7 +122,7 @@ Depending how your system is configured and what portions of `Prismatic` you are
 
 
 <a name="compiling-linux"></a>
-## Building with CMake from the command line (recommended) 
+## Building with CMake from the command line on Ubuntu Linux
 
 To build *Prismatic* from the command line with CMake, open a terminal and navigate to the top of the source directory 
 
@@ -172,7 +172,9 @@ CMake will attempt to locate the various dependencies needed by *Prismatic* (see
 
 
 <a name="compiling-mac"></a>
-## Building with CMake from the command line (recommended) 
+## Building with CMake from the command line on OS X
+
+*If you prefer a graphical approach, you can use the `cmake-gui` and follow analagous steps as [in Windows](#compiling-win)*
 
 To build *Prismatic* from the command line with CMake, open a terminal and navigate to the top of the source directory 
 
@@ -222,7 +224,7 @@ CMake will attempt to locate the various dependencies needed by *Prismatic* (see
 
 
 <a name="compiling-win"></a>
-## Building with CMake's GUI (recommended) 
+## Building with CMake's GUI on Windows
 
 To build *Prismatic* on Windows with the `CMake` GUI, first open `CMake` and set the location of the source code to the top level directory of `Prismatic` (this is the directory  containing CMakeLists.txt). Next, choose the location to build the binaries. It is recommended to create a separate folder, perhaps called "build", for this purpose. Click `Configure`, and choose the C++ compiler you would like to use. I have successfully tested Microsoft Visual Studio 2015 (64-bit) and would recommend this version if possible, particularly if you are compiling with GPU-support due to the fact that both NVIDIA and Microsoft are proprietary vendors, there is often some conflict between the newest versions of `nvcc` and MSVS. 
 

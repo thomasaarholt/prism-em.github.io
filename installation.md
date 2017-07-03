@@ -366,9 +366,6 @@ before the changes will actually take effect
 ### Enabling Double Precision
 The default behavior for *Prismatic* is to use single precision (type float). You can use double precision instead by setting `PRISMATIC_ENABLE_DOUBLE_PRECISION=1`. Note that as of this writing double precision operations are ~4x slower on the GPU, and by every test I have done the precision difference is entirely unnoticeable. However, I leave it as an option . If you find a case where using double precision is impactful, I would be very interested to hear about it.
 
-## Using *Prismatic* from the command line
-
-*Prismatic* contains a command line tool, `prismatic`, that can be used to run simulations from within a terminal, bash script, etc. Building it requires the CMake variable `PRISM_ENABLE_CLI=1` at compilation time, which is the default behavior.
 
 <a name ="cmake-options"></a>
 ## List of Prismatic CMake options
@@ -383,8 +380,10 @@ Here's a list of the various custom options you can set and CMake and what they 
 
 
 <a name ="cli-options"></a>
+## Using *Prismatic* from the command line
 
-### CLI Options
+*Prismatic* contains a command line tool, `prismatic`, that can be used to run simulations from within a terminal, bash script, etc. Building it requires the CMake variable `PRISM_ENABLE_CLI=1` at compilation time, which is the default behavior.
+
 The following options are available with `prismatic`, each documented as **_long form_** **_(short form)_** *parameters* : description
 
 * --input-file (-i) filename : the filename containing the atomic coordinates, which should be a plain text file with comma-separated values in the format x, y, z, Z 
@@ -425,6 +424,3 @@ The following options are available with `prismatic`, each documented as **_long
 * --save-2D-output (-2D) ang_min ang_max : save the 2D STEM image integrated between ang_min and ang_max (in mrads)
 * --save-3D-output (-3D) bool=true : Also save the 3D output at the detector for each probe (3D output mode)
 * --save-4D-output (-4D) bool=false : Also save the 4D output at the detector for each probe (4D output mode)
-
-
-

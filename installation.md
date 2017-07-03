@@ -1,13 +1,16 @@
 # Installing *Prismatic*
 Table of Contents  
 	- [Binary Installers](#binary-installers)  
-	- [Dependencies](#dependencies)
-	- [Compiling from Source](#getting-the-source-code)
+	- [Dependencies](#dependencies)  
+	- [Setting environmental variables](#environmental-setup)  
+	- [Compiling from Source](#getting-the-source-code)  
 	- [Python: Installing PyPrismatic](#python-installing-pyprismatic)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Building the cuPrismatic library](#cuprismatic)  
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Installing PyPrismatic with Pip](#installing-with-pip-cuda)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	- [Installing with setup.py](#installing-with-setup)  
 	- [Python: Testing PyPrismatic](#testing-pyprismatic) 
+
+
 
 ## Binary Installers
 
@@ -29,18 +32,43 @@ This process is detailed [in the CUDA installation procedures](http://developer.
 
 The following dependencies are needed by `Prismatic`:
 
->Required
-*[CMake](https://cmake.org/)(*For compiling the source code*)
-*[Boost](www.boost.org)
-*[FFTW](www.fftw.org)
+*Required*  
+*[CMake](https://cmake.org/)(*For compiling the source code*)  
+*[Boost](www.boost.org)  
+*[FFTW](www.fftw.org)  
 
->Optional
-*[CUDA Toolkit](https://developer.nvidia.com/cuda-toolkit)(*For GPU support*)
-*Python 3, a good choice is [the Anaconda distribution](https://www.continuum.io/downloads)[*For the python package, `PyPrismatic`*]
-*[Qt 5](https://www.qt.io/)(*For building the GUI*)
+*Optional*  
+*[CUDA Toolkit](https://developer.nvidia.com/cuda-toolkit)(*For GPU support*)  
+*Python 3, a good choice is [the Anaconda distribution](https://www.continuum.io/downloads)(*For the python package, `PyPrismatic`*)  
+*[Qt 5](https://www.qt.io/)(*For building the GUI*)  
 
 *Prismatic* was developed using CUDA 8.0, but likely works with older versions as well and we welcome feedback from any user who attempts to do so (CUDA 7.0, 7.5 also have been reported to work).
 *Note: Even if you download a binary version of the GPU codes, you will still need to have the CUDA toolkit installed so that the `cuFFT` libraries can be found at runtime.*
+
+
+<a name="environmental-setup"></a>
+
+## Setting environmental variables
+
+Python's `setuptools` needs to know where to find the above dependencies in order to build `PyPrismatic`. In my opinion the easiest way to do this on Linux/Mac is by setting the environmental variables `CPLUS_INCLUDE_PATH` and `LIBRARY_PATH` or on Windows by setting the `PATH` variable. `setuptools` needs to be able to find `Boost` and `FFTW` headers in the include path and the `FFTW` libraries of the appropriate precision (single by default). GPU-support requires the addition of CUDA includes and libraries to these variables. For example, I might invoke the following for CPU-only mode
+
+~~~
+export CPLUS_INCLUDE_PATH=/usr/local/boost_1_60_0:$CPLUS_INCLUDE_PATH
+~~~
+
+or alternatively with CUDA included for GPU mode:
+
+~~~
+export CPLUS_INCLUDE_PATH=/usr/local/boost_1_60_0:/usr/local/cuda-8.0/include:$CPLUS_INCLUDE_PATH
+export LIBRARY_PATH=/usr/local/cuda-8.0/lib64:$LIBRARY_PATH
+~~~
+
+These variables are default places the C++ compiler will look to find necessary code, and these commands are just adding relevant directories the beginning of the search path.
+
+On Windows, you can set the `PATH` variable graphically through editing environmental variables in system settings. The specific details of how to do so will vary depending which version of Windows you have, but a quick Google search should solve the issue if you are unable to figure out how.
+
+Once you have configured the environmental variables, continue the installation with either `pip` (recommended) or using the `setup.py` script as described below.
+
 
 <a name="from-source"></a>
 ## Building *Prismatic* from the source code
@@ -53,7 +81,7 @@ Microsoft Visual Studio projects, Mac OS XCode projects, etc.
 <a name="get-source-code"></a>
 ### Getting the source code 
 
-Once the [dependencies](#dependencies)] are installed get the *Prismatic* source either from [compressed source files](https://github.com/prism-em/prismatic/archive/master.zip) or directly 
+Once the [dependencies](#dependencies) are installed get the *Prismatic* source either from [compressed source files](https://github.com/prism-em/prismatic/archive/master.zip) or directly 
 from [Github](https://github.com/prism-em/prismatic) using `git clone`
 
 ## Building with CMake from the command line
@@ -223,28 +251,6 @@ One of the great features about CMake is that it can easily tolerate the complic
 
 With that being said, in order to install the GPU-enabled version of `PyPrismatic`, you must first build `cuPrismatic`. To do so, you will need to [get the source code](#get-source-code), set the `PRISMATIC_ENABLE_PYTHON=1` variable in CMake, then configure and compile the project. More detail on this process of using CMake is [described above](#from-source). Once the library is installed, then proceed below.
 
-<a name="environmental-setup"></a>
-
-### Setting environmental variables
-
-Python's `setuptools` needs to know where to find the above dependencies in order to build `PyPrismatic`. In my opinion the easiest way to do this (on Linux/Mac) is by setting the environmental variables `CPLUS_INCLUDE_PATH` and `LIBRARY_PATH`. For example, I might invoke the following for CPU-only mode
-
-~~~
-export CPLUS_INCLUDE_PATH=/usr/local/boost_1_60_0:$CPLUS_INCLUDE_PATH
-~~~
-
-or alternatively with CUDA included for GPU mode:
-
-~~~
-export CPLUS_INCLUDE_PATH=/usr/local/boost_1_60_0:/usr/local/cuda-8.0/include:$CPLUS_INCLUDE_PATH
-export LIBRARY_PATH=/usr/local/cuda-8.0/lib64:$LIBRARY_PATH
-~~~
-
-These variables are default places the C++ compiler will look to find necessary code, and these commands are just adding relevant directories the beginning of the search path.
-
-According to [here](https://msdn.microsoft.com/en-us/library/f2ccy3wt.aspx), the Windows equivalent variables appear to be `INCLUDE` and `LIBPATH`. The actual pathnames will likely be different on your machine than mine, so replace them accordingly.
-
-Once you have configured the environmental variables, continue the installation with either `pip` (recommended) or using the `setup.py` script as described below.
 
 
 <a name="installing-with-pip-cuda"></a>

@@ -1,32 +1,27 @@
 # Installing *Prismatic*
 Table of Contents  
-	- [Binary Installers](#binary-installers)  
-	- [Dependencies](#dependencies)  
-	- [Setting environmental variables](#environmental-setup)  
-	- [Compiling from Source](#getting-the-source-code)  
-	- [Python: Installing PyPrismatic](#python-installing-pyprismatic)  
+	- [Dependencies](#dependencies) 
+	- [Python package dependencies](#python-dependencies)  
+	- [Building *Prismatic* from the source code](#from-source)  
+	- [Linux](#linux)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Setting environmental variables](#environmental-setup-linux)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Compiling](#compiling-linux) 
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Python: Installing PyPrismatic](#python-installing-pyprismatic-linux)
+	- [Mac OS X](#mac)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Binary Installers](#binary-installers-mac)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Setting environmental variables](#environmental-setup-mac)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Python: Installing PyPrismatic](#python-installing-pyprismatic-mac)
+	- [Windows](#windows)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Binary Installers](#binary-installers-win)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Setting environmental variables](#environmental-setup-win)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Python: Installing PyPrismatic](#python-installing-pyprismatic-win)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Building the cuPrismatic library](#cuprismatic)  
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Installing PyPrismatic with Pip](#installing-with-pip-cuda)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	- [Installing with setup.py](#installing-with-setup)  
+	- [Setting CMake Options](#cmake-options)
 	- [Python: Testing PyPrismatic](#testing-pyprismatic) 
 
 
-
-## Binary Installers
-
-*Links to binary installers of the GUI should go here in the future*
-
-If you are using CPU-only mode, the appropriate binary should be all that you need to run the GUI. 
-
-For enabling GUI support, you will still need to install [the CUDA toolkit](https://developer.nvidia.com/cuda-toolkit) and setup your environmental/path variables so that the GPU libraries (i.e. cuFFT) can be found when you run the binary. For example, on Linux the cuFFT libraries will have names like `libcufft.so.#.#` where "#" will be different depending on the version. To enable `prismatic-gui` to find these libraries at runtime, add the pathname containing the libraries to `LD_LIBRARY_PATH` with the following command 
-
-~~~
-export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/path/to/libraries"
-~~~
-
-where you should replace `/path/to/libraries` with the actual location (for me they are under `usr/local/cuda-8.0/lib64`)
-
-This process is detailed [in the CUDA installation procedures](http://developer.download.nvidia.com/compute/cuda/7.5/Prod/docs/sidebar/CUDA_Installation_Guide_Linux.pdf), and you can find similar instructions for other operating systems.
 
 ## Dependencies
 
@@ -34,43 +29,32 @@ The following dependencies are needed by `Prismatic`:
 
 *Required*  
 
-* [CMake](https://cmake.org/)(*For compiling the source code*)  
+* [CMake](https://cmake.org/) (*For compiling the source code*)  
 * [Boost](www.boost.org)  
 * [FFTW](www.fftw.org)  
 
 *Optional*  
 
-* [CUDA Toolkit](https://developer.nvidia.com/cuda-toolkit)(*For GPU support*)  
-* Python 3, a good choice is [the Anaconda distribution](https://www.continuum.io/downloads)(*For the python package, `PyPrismatic`*)  
-* [Qt 5](https://www.qt.io/)(*For building the GUI*)  
+* [CUDA Toolkit](https://developer.nvidia.com/cuda-toolkit) (*For GPU support*)  
+* Python 3, a good choice is [the Anaconda distribution](https://www.continuum.io/downloads)(*For the python package*, `PyPrismatic`)  
+* [Qt 5](https://www.qt.io/) (*For building the GUI*)  
 
 *Prismatic* was developed using CUDA 8.0, but likely works with older versions as well and we welcome feedback from any user who attempts to do so (CUDA 7.0, 7.5 also have been reported to work).
 *Note: Even if you download a binary version of the GPU codes, you will still need to have the CUDA toolkit installed so that the `cuFFT` libraries can be found at runtime.*
 
+<a name="python-dependencies"></a>
+## Python package dependencies
 
-<a name="environmental-setup"></a>
+The follow dependencies are needed by `PyPrismatic`
 
-## Setting environmental variables
+*Required*  
 
-Python's `setuptools` needs to know where to find the above dependencies in order to build `PyPrismatic`. In my opinion the easiest way to do this on Linux/Mac is by setting the environmental variables `CPLUS_INCLUDE_PATH` and `LIBRARY_PATH` or on Windows by setting the `PATH` variable. `setuptools` needs to be able to find `Boost` and `FFTW` headers in the include path and the `FFTW` libraries of the appropriate precision (single by default). GPU-support requires the addition of CUDA includes and libraries to these variables. For example, I might invoke the following for CPU-only mode
+* [Boost](http://www.boost.org/)  
+* [FFTW](www.fftw.org)    
 
-~~~
-export CPLUS_INCLUDE_PATH=/usr/local/boost_1_60_0:$CPLUS_INCLUDE_PATH
-~~~
-
-or alternatively with CUDA included for GPU mode:
-
-~~~
-export CPLUS_INCLUDE_PATH=/usr/local/boost_1_60_0:/usr/local/cuda-8.0/include:$CPLUS_INCLUDE_PATH
-export LIBRARY_PATH=/usr/local/cuda-8.0/lib64:$LIBRARY_PATH
-~~~
-
-These variables are default places the C++ compiler will look to find necessary code, and these commands are just adding relevant directories the beginning of the search path.
-
-On Windows, you can set the `PATH` variable graphically through editing environmental variables in system settings. The specific details of how to do so will vary depending which version of Windows you have, but a quick Google search should solve the issue if you are unable to figure out how.
-
-Once you have configured the environmental variables, continue the installation with either `pip` (recommended) or using the `setup.py` script as described below.
-
+*Optional*  
+* [The CUDA Toolkit](https://developer.nvidia.com/cuda-downloads) (*For GPU support*)    
+* [The cuPrismatic library](#cuprismatic) (*For GPU support*)  
 
 <a name="from-source"></a>
 ## Building *Prismatic* from the source code
@@ -84,8 +68,32 @@ Microsoft Visual Studio projects, Mac OS XCode projects, etc.
 ### Getting the source code 
 
 Once the [dependencies](#dependencies) are installed get the *Prismatic* source either from [compressed source files](https://github.com/prism-em/prismatic/archive/master.zip) or directly 
-from [Github](https://github.com/prism-em/prismatic) using `git clone`
+from [Github](https://github.com/prism-em/prismatic) using `git clone`. Next, follow the instructions appropriate for your operating system.
 
+## Linux
+
+<a name="environmental-setup"></a>
+
+## Setting environmental variables
+
+`CMake` and/or `setuptools` needs to know where to find the [dependencies](#dependencies) in order to build `Prismatic` and `PyPrismatic`, respectively. In my opinion the easiest way to do this is by setting environmental variables, but you can also manually provide paths to compilation commands. These are the relevant environmental variables
+
+* `CPLUS_INCLUDE_PATH` - default search location for C++ header files  
+* `LIBRARY_PATH` - default search location for C/C++ libraries  
+* `LD_LIBRARY_PATH` - default search location for shared libraries to be loaded at runtime 
+
+These variables can be set from the terminal with the `export` command. For example, to prepend an example header search path for boost "/usr/local/boost_1_60_0", header search for CUDA located at "/usr/local/cuda-8.0/include", and CUDA library path at "/usr/local/cuda-8.0/lib64" one could invoke
+
+~~~
+export CPLUS_INCLUDE_PATH=/usr/local/boost_1_60_0:/usr/local/cuda-8.0/include:$CPLUS_INCLUDE_PATH
+export LIBRARY_PATH=/usr/local/cuda-8.0/lib64:$LIBRARY_PATH
+~~~
+
+You can make these changes persistent by adding the same lines to your `~/.bashrc` file so that they are executed at startup every time you open a terminal. 
+
+Depending how your system is configured and what portions of `Prismatic` you are building you may need to add additional paths. For example, if you are building the GUI, you will also need to provide the paths to Qt5 headers and libraries. See the [dependencies](#dependencies) for details about what is required.
+
+<a name="compiling-linux"></a>
 ## Building with CMake from the command line
 
 To build *Prismatic* from the command line with CMake, open a terminal and navigate to the top of the source directory 
@@ -109,7 +117,7 @@ Then invoke CMake
 cmake ../
 ```
 
-This will generate a Makefile/Visual Studio Project/Xcode project with the necessary dependencies and paths to compile *Prismatic*. The default
+This will generate a Makefile  project with the necessary dependencies and paths to compile *Prismatic*. The default
 behavior is to build only the CLI without GPU support. These options can be enabled as described in later sections.
 Finally, compile and install *Prismatic* with:
 
@@ -130,12 +138,81 @@ install them, invoke
 make install
 ```
 
-which may require `sudo` privileges. This will place the files in `/usr/local/bin` on Unix systems. 
+which may require `sudo` privileges. This will place the files in `/usr/local/bin`. 
 
-CMake will attempt to locate the various dependencies needed by *Prismatic*, but if it cannot then it will produce an error and set the variable to NOTFOUND. For example, if the `Boost_INCLUDE_DIR` (the location of the Boost libraries), is not found, it will be set to `Boost_INCLUDE_DIR-NOTFOUND`. You will need to manually set the path to boost (see below for how to set options), and then rerun `cmake`.
+CMake will attempt to locate the various dependencies needed by *Prismatic* (see the section on [setting up your environment](#environmental-setup)), but if it cannot then it will produce an error and set the variable to NOTFOUND. For example, if the `Boost_INCLUDE_DIR` (the location of the Boost libraries), is not found, it will be set to `Boost_INCLUDE_DIR-NOTFOUND`. You will need to manually set the path to boost (see [below](#cmake-options) for how to set options), and then rerun `cmake`.
 
 
-### Setting CMake options
+<a name="python-installing-pyprismatic-linux"></a>
+## Python: Installing PyPrismatic
+`PyPrismatic` is a Python package for invoking the C++/CUDA code in `Prismatic`. It can be installed easily with `pip` provided the following dependencies are installed:  
+
+
+*#3 and #4 are only necessary if you wish to use the GPU code. You will also need an NVIDIA GPU with compute capability 2.0 or greater and will add the `--enable-gpu` to the installation command. More details can be found below*  
+
+<a name="cuprismatic"></a>
+
+### Building the cuPrismatic library
+
+*This step is only required for GPU support in PyPrismatic*
+
+One of the great features about CMake is that it can easily tolerate the complicated task of compiling a single program with multiple compilers, which is necessary when mixing CUDA and Qt (discussed more [here](http://prism-em.com/source-code/#combining)).  For a CPU-only version of `PyPrismatic`, the necessary C++ source code can be distributed with the Python package, and `setuptools` can easily compile the necessary C++ extension module. Unfortunately, to my knowledge `setuptools` does not play nicely with `nvcc`, which makes distributing a Python package that utilizes custom GPU code more challenging. My solution was to compile the CUDA code into a a single shared library called `cuPrismatic`, which can then be linked against in the Python package as if it were any other C++ library. There is no "new" code in `cuPrismatic`, it simply serves as an intermediate step to help Python out by bundling the GPU code together into something it can work with. As an aside, this type of step is all CMake is doing under-the-hood to make CUDA and Qt play nicely in the first place -- it's just compiling the various formats of source code into a commonly understood form.
+
+With that being said, in order to install the GPU-enabled version of `PyPrismatic`, you must first build `cuPrismatic`. To do so, you will need to [get the source code](#get-source-code), set the `PRISMATIC_ENABLE_PYTHON=1` variable in CMake, then configure and compile the project. More detail on this process of using CMake is [described above](#from-source). Once the library is installed, then proceed below.
+
+
+
+<a name="installing-with-pip-cuda"></a>
+### Installing PyPrismatic with Pip
+
+If you have installed the above dependencies and [setup your environmental variables](#environmental-setup), `PyPrismatic` can be installed easily with `pip` using either 
+
+~~~
+pip install pyprismatic
+~~~
+
+for CPU-only mode or for GPU mode:
+
+~~~
+pip install pyprismatic --install-option="--enable-gpu"
+~~~
+
+
+Alternatively, you can tell `pip` where the dependencies are using `--global-option` like so (*you should change the actual names of the paths to match your machine, this is just an example*):
+
+~~~
+pip install pyprismatic --global-option=build_ext --global-option="-I/usr/local/boost_1_60_0"
+~~~
+
+for CPU-only mode or for GPU mode:
+
+~~~
+pip install pyprismatic --global-option=build_ext --global-option="-I/usr/local/boost_1_60_0:/usr/local/cuda-8.0/include" --global-option="-L/usr/local/cuda-8.0/lib64" --install-option="--enable-gpu"
+~~~
+
+
+<a name="installing-with-setup"></a>
+
+### Installing with setup.py
+
+To install the python package from the source code with `setup.py`, first [get the source code](#get-source-code). Then navigate to the top directory (the one with `setup.py`) and invoke either (*you should change the actual names of the paths to match your machine, this is just an example*)
+
+~~~
+python3 setup.py build_ext --include-dirs=/usr/local/boost_1_60_0 install
+~~~
+
+to compile in CPU-only mode, or the following to compile the GPU version
+
+~~~
+python3 setup.py build_ext --include-dirs=/usr/local/boost_1_60_0:/usr/local/cuda-8.0/include --library-dirs=/usr/local/cuda-8.0/lib64 install --enable-gpu
+~~~
+
+If you have [setup your environmental variables](#environmental-setup), you can ignore the extra arguments and just use `python3 setup.py install` or `python3 setup.py install --enable-gpu` 
+
+
+
+<a name ="cmake-options"></a>
+## Setting CMake options
 
 All aspects of how *Prismatic* is compiled, such as whether or not to include GUI or GPU support, are controlled through CMake variables.
 There are at least four different ways to adjust these:
@@ -233,74 +310,7 @@ The following options are available with `prismatic`, each documented as **_long
 * --save-3D-output (-3D) bool=true : Also save the 3D output at the detector for each probe (3D output mode)
 * --save-4D-output (-4D) bool=false : Also save the 4D output at the detector for each probe (4D output mode)
 
-<a name="python-installing-pyprismatic"></a>
-## Python: Installing PyPrismatic
-`PyPrismatic` is a Python package for invoking the C++/CUDA code in `Prismatic`. It can be installed easily with `pip` provided the following dependencies are installed:  
-	1. [Boost](http://www.boost.org/)  
-	2. [FFTW](www.fftw.org)  
-	3. *(Optional)*[The CUDA Toolkit](https://developer.nvidia.com/cuda-downloads)  
-	4. *(Optional)*[The cuPrismatic library](#cuprismatic)
 
-*#3 and #4 are only necessary if you wish to use the GPU code. You will also need an NVIDIA GPU with compute capability 2.0 or greater and will add the `--enable-gpu` to the installation command. More details can be found below*  
-
-<a name="cuprismatic"></a>
-
-### Building the cuPrismatic library
-
-*This step is only required for GPU support in PyPrismatic*
-
-One of the great features about CMake is that it can easily tolerate the complicated task of compiling a single program with multiple compilers, which is necessary when mixing CUDA and Qt (discussed more [here](http://prism-em.com/source-code/#combining)).  For a CPU-only version of `PyPrismatic`, the necessary C++ source code can be distributed with the Python package, and `setuptools` can easily compile the necessary C++ extension module. Unfortunately, to my knowledge `setuptools` does not play nicely with `nvcc`, which makes distributing a Python package that utilizes custom GPU code more challenging. My solution was to compile the CUDA code into a a single shared library called `cuPrismatic`, which can then be linked against in the Python package as if it were any other C++ library. There is no "new" code in `cuPrismatic`, it simply serves as an intermediate step to help Python out by bundling the GPU code together into something it can work with. As an aside, this type of step is all CMake is doing under-the-hood to make CUDA and Qt play nicely in the first place -- it's just compiling the various formats of source code into a commonly understood form.
-
-With that being said, in order to install the GPU-enabled version of `PyPrismatic`, you must first build `cuPrismatic`. To do so, you will need to [get the source code](#get-source-code), set the `PRISMATIC_ENABLE_PYTHON=1` variable in CMake, then configure and compile the project. More detail on this process of using CMake is [described above](#from-source). Once the library is installed, then proceed below.
-
-
-
-<a name="installing-with-pip-cuda"></a>
-### Installing PyPrismatic with Pip
-
-If you have installed the above dependencies and [setup your environmental variables](#environmental-setup), `PyPrismatic` can be installed easily with `pip` using either 
-
-~~~
-pip install pyprismatic
-~~~
-
-for CPU-only mode or for GPU mode:
-
-~~~
-pip install pyprismatic --install-option="--enable-gpu"
-~~~
-
-
-Alternatively, you can tell `pip` where the dependencies are using `--global-option` like so (*you should change the actual names of the paths to match your machine, this is just an example*):
-
-~~~
-pip install pyprismatic --global-option=build_ext --global-option="-I/usr/local/boost_1_60_0"
-~~~
-
-for CPU-only mode or for GPU mode:
-
-~~~
-pip install pyprismatic --global-option=build_ext --global-option="-I/usr/local/boost_1_60_0:/usr/local/cuda-8.0/include" --global-option="-L/usr/local/cuda-8.0/lib64" --install-option="--enable-gpu"
-~~~
-
-
-<a name="installing-with-setup"></a>
-
-### Installing with setup.py
-
-To install the python package from the source code with `setup.py`, first [get the source code](#get-source-code). Then navigate to the top directory (the one with `setup.py`) and invoke either (*you should change the actual names of the paths to match your machine, this is just an example*)
-
-~~~
-python3 setup.py build_ext --include-dirs=/usr/local/boost_1_60_0 install
-~~~
-
-to compile in CPU-only mode, or the following to compile the GPU version
-
-~~~
-python3 setup.py build_ext --include-dirs=/usr/local/boost_1_60_0:/usr/local/cuda-8.0/include --library-dirs=/usr/local/cuda-8.0/lib64 install --enable-gpu
-~~~
-
-If you have [setup your environmental variables](#environmental-setup), you can ignore the extra arguments and just use `python3 setup.py install` or `python3 setup.py install --enable-gpu` 
 
 <a name="testing-pyprismatic"></a>
 ### Testing PyPrismatic

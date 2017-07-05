@@ -4,15 +4,26 @@
 
 ## Table of Contents  
 - [Examples](#examples)
+- [Prismatic GUI simulation of decahedral nanoparticle](#tutorialdeca)
 - [PyPrismatic: Using Prismatic through Python](#pyprismatic)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Metadata Parameters](#metadata)
+
+
 
 ## Examples
 
 Within the source code of `Prismatic` is an "examples" folder that contains some example scripts of how one might run simulations using *Prismatic*. There is a mixture of Python examples use `PyPrismatic` and bash shell scripts using `prismatic`. Both tools are accessing the exact same underlying code -- they just provide different entry points. Use whatever you feel most comfortable with.
 
-<a name="pyprismatic"></a>
 
+
+<a name="tutorialdeca"></a>
+## Prismatic GUI simulation of decahedral nanoparticle
+
+Placeholder
+
+
+
+<a name="pyprismatic"></a>
 ## PyPrismatic: Using Prismatic through Python  
 
 *Instructions for installing `PyPrismatic` may be found [here](www.prism-em.com/installation/)*
@@ -25,8 +36,10 @@ meta = pr.Metadata(filenameAtoms="myInput.XYZ", E0=100e3)
 meta.tileX = meta.tileY = meta.tileZ = 3
 meta.go()
 ~~~
-<a name="metadata"></a>
 
+
+
+<a name="metadata"></a>
 ## List of Metadata parameters
 
 **interpolationFactorX** : PRISM interpolation factor in x-direction  

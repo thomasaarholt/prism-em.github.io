@@ -388,7 +388,7 @@ The default behavior for `Prismatic` is to use single precision (type float). Yo
 
 Here's a list of the various custom options you can set and `CMake` and what they represent
 
-* ``Prismatic`_ENABLE_CLI` - Build the command line interface `Prismatic`"
+* ``Prismatic`_ENABLE_CLI` - Build the command line interface `prismatic`"
 * ``Prismatic`_ENABLE_GPU` - Enable GPU supprt. Requires locating CUDA headers/libraries
 * ``Prismatic`_ENABLE_GUI` - Build the GUI, ``Prismatic`-gui`. Requires locating Qt5 headers/libraries.
 * ``Prismatic`_ENABLE_PYTHON_GPU` - Build the ``cuPrismatic`` shared library, which is used by the GPU version
@@ -398,7 +398,7 @@ Here's a list of the various custom options you can set and `CMake` and what the
 <a name ="cli-options"></a>
 ## Using `Prismatic` from the command line
 
-`Prismatic` contains a command line tool, `Prismatic`, that can be used to run simulations from within a terminal, bash script, etc. Building it requires the `CMake` variable `PRISM_ENABLE_CLI=1` at compilation time, which is the default behavior.
+`Prismatic` contains a command line tool, `prismatic`, that can be used to run simulations from within a terminal, bash script, etc. Building it requires the `CMake` variable `PRISM_ENABLE_CLI=1` at compilation time, which is the default behavior.
 
 The following options are available with `prismatic` (you can also print available options with `prismatic --help`), each documented as **_long form_** **_(short form)_** *parameters* : description
 

@@ -254,7 +254,7 @@ To build `Prismatic` on Windows with the `CMake` GUI, first open `CMake` and set
 
 Based on the [option settings](`CMake`-options), `CMake` will then attempt to find the necessary dependencies. If you [have fully setup your environment](#environmental-setup-win), then configuration should succeed. If it fails, then variables it cannot satisfy will be set to NOTFOUND. For example, if the `Boost_INCLUDE_DIR` (the location of the Boost libraries), is not found, it will be set to `Boost_INCLUDE_DIR-NOTFOUND`. You will need to manually set the path to boost (see [below](#`CMake`-options) for how to set options), and then rerun `Configure`.
 
-Once configuration is complete, click `Generate` and a MSVS .sln file will be created. Open this file, set the build mode to "Release", and then run "Build All" to compile the code. You can then find the executable `prismatic-gui.exe` inside of the "Release" folder within the build directory you selected in the `CMake` GUI.
+Once configuration is complete, click `Generate` and a MSVS .sln file will be created. Open this file, set the build mode to "Release", and then run "Build Solution" to compile the code. You can then find the executable `prismatic-gui.exe` inside of the "Release" folder within the build directory you selected in the `CMake` GUI.
 
 
 <a name="python-installing-`PyPrismatic`"></a>

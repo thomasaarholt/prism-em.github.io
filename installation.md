@@ -14,11 +14,11 @@ Table of Contents
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Installing on Windows](#windows-install)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Binary Installers (Windows)](#binary-installers-win)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Compiling with `CMake` from the command line](#compiling-win)  
-	- [Python: Installing `PyPrismatic`](#python-installing-pyprismatic)  
+	- [Python: Installing `PyPrismatic`](#python-installing-`PyPrismatic`)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Building the cuPrismatic library](#cuprismatic)  
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Installing PyPrismatic with Pip](#installing-with-pip-cuda)  
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Installing `PyPrismatic` with Pip](#installing-with-pip-cuda)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Installing with setup.py](#installing-with-setup)  
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Python: Testing PyPrismatic](#testing-pyprismatic)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Python: Testing `PyPrismatic`](#testing-`PyPrismatic`)  
 	- [Setting `CMake` Options](#setting-`CMake`-options)  
 	- [List of Prismatic `CMake` options](#`CMake`-options)  
 	- [Command line options](#cli-options) 
@@ -252,8 +252,8 @@ Based on the [option settings](`CMake`-options), `CMake` will then attempt to fi
 Once configuration is complete, click `Generate` and a MSVS .sln file will be created. Open this file, set the build mode to "Release", and then run "Build All" to compile the code. You can then find the compiled binaries inside of "Release" within the build directory you selected in the `CMake` GUI.
 
 
-<a name="python-installing-pyprismatic"></a>
-## Python: Installing PyPrismatic
+<a name="python-installing-`PyPrismatic`"></a>
+## Python: Installing `PyPrismatic`
 `PyPrismatic` is a Python package for invoking the C++/CUDA code in `Prismatic`. It can be installed easily with `pip` provided the following dependencies are installed:  
 
 *Required*
@@ -271,31 +271,31 @@ Once configuration is complete, click `Generate` and a MSVS .sln file will be cr
 
 
 <a name="installing-with-pip-cuda"></a>
-### Installing PyPrismatic with Pip
+### Installing `PyPrismatic` with Pip
 
 If you have installed the above dependencies and [setup your environmental variables](#environmental-setup), `PyPrismatic` can be installed easily with `pip` using either 
 
 ~~~
-pip install pyprismatic
+pip install `PyPrismatic`
 ~~~
 
 for CPU-only mode or for GPU mode:
 
 ~~~
-pip install pyprismatic --install-option="--enable-gpu"
+pip install `PyPrismatic` --install-option="--enable-gpu"
 ~~~
 
 
 Alternatively, you can tell `pip` where the dependencies are using `--global-option` like so (*you should change the actual names of the paths to match your machine, this is just an example*):
 
 ~~~
-pip install pyprismatic --global-option=build_ext --global-option="-I/usr/local/boost_1_60_0"
+pip install `PyPrismatic` --global-option=build_ext --global-option="-I/usr/local/boost_1_60_0"
 ~~~
 
 for CPU-only mode or for GPU mode:
 
 ~~~
-pip install pyprismatic --global-option=build_ext --global-option="-I/usr/local/boost_1_60_0:/usr/local/cuda-8.0/include" --global-option="-L/usr/local/cuda-8.0/lib64" --install-option="--enable-gpu"
+pip install `PyPrismatic` --global-option=build_ext --global-option="-I/usr/local/boost_1_60_0:/usr/local/cuda-8.0/include" --global-option="-L/usr/local/cuda-8.0/lib64" --install-option="--enable-gpu"
 ~~~
 
 *On Windows, a list containing multiple path names must be separated by `;` instead of `:`*
@@ -332,23 +332,23 @@ If you have [setup your environmental variables](#environmental-setup), you can 
 
 ### Building the cuPrismatic library
 
-*This step is only required for GPU support in PyPrismatic*
+*This step is only required for GPU support in `PyPrismatic`*
 
 One of the great features about `CMake` is that it can easily tolerate the complicated task of compiling a single program with multiple compilers, which is necessary when mixing CUDA and Qt (discussed more [here](http://prism-em.com/source-code/#combining)).  For a CPU-only version of `PyPrismatic`, the necessary C++ source code can be distributed with the Python package, and `setuptools` can easily compile the necessary C++ extension module. Unfortunately, to my knowledge `setuptools` does not play nicely with `nvcc`, which makes distributing a Python package that utilizes custom GPU code more challenging. My solution was to compile the CUDA code into a a single shared library called `cuPrismatic`, which can then be linked against in the Python package as if it were any other C++ library. There is no "new" code in `cuPrismatic`, it simply serves as an intermediate step to help Python out by bundling the GPU code together into something it can work with. As an aside, this type of step is all `CMake` is doing under-the-hood to make CUDA and Qt play nicely in the first place -- it's just compiling the various formats of source code into a commonly understood form.
 
 With that being said, in order to install the GPU-enabled version of `PyPrismatic`, you must first build `cuPrismatic`. To do so, you will need to [get the source code](#get-source-code), set the `PRISMATIC_ENABLE_PYTHON=1` variable in `CMake`, then configure and compile the project. More detail on this process of using `CMake` is [described above](#from-source). Once the library is installed, then proceed below.
 
-<a name="testing-pyprismatic"></a>
-### Testing PyPrismatic
+<a name="testing-`PyPrismatic`"></a>
+### Testing `PyPrismatic`
 
 You can test your installation of `PyPrismatic` with the following commands from within `python3`
 
 ~~~ python
-import pyprismatic as pr
+import `PyPrismatic` as pr
 pr.demo()
 ~~~
 
-*Note: If you receive an error like `ImportError: cannot import name core` but the installation process appeared to work, make sure to change directories out of the top level of the source code and try again. This occurs because the PyPrismatic package was built and installed globally, but if you are currently in the top level directory that contains the source code folder pyprismatic then python will attempt to use that incorrectly as the package.*
+*Note: If you receive an error like `ImportError: cannot import name core` but the installation process appeared to work, make sure to change directories out of the top level of the source code and try again. This occurs because the `PyPrismatic` package was built and installed globally, but if you are currently in the top level directory that contains the source code folder `PyPrismatic` then python will attempt to use that incorrectly as the package.*
 
 <a name ="setting-`CMake`-options"></a>
 ## Setting `CMake` options

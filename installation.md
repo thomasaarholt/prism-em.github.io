@@ -400,7 +400,7 @@ Here's a list of the various custom options you can set and `CMake` and what the
 
 `Prismatic` contains a command line tool, `Prismatic`, that can be used to run simulations from within a terminal, bash script, etc. Building it requires the `CMake` variable `PRISM_ENABLE_CLI=1` at compilation time, which is the default behavior.
 
-The following options are available with `Prismatic`, each documented as **_long form_** **_(short form)_** *parameters* : description
+The following options are available with `prismatic` (you can also print available options with `prismatic --help`), each documented as **_long form_** **_(short form)_** *parameters* : description
 
 * --input-file (-i) filename : the filename containing the atomic coordinates, which should be a plain text file with comma-separated values in the format x, y, z, Z 
 * --output-file(-o) filename : output filename

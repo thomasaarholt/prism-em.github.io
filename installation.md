@@ -15,13 +15,13 @@ Table of Contents
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Compiling with `CMake` from the command line](#compiling-mac)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Installing on Windows](#windows-install)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Compiling with `CMake` from the command line](#compiling-win)  
-	- [Python: Installing `PyPrismatic`](#python-installing-`PyPrismatic`)  
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Building the `cuPrismatic` library](#`cuPrismatic`)  
+	- [Python: Installing `PyPrismatic`](#python-installing-PyPrismatic)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Building the `cuPrismatic` library](#cuPrismatic)  
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Installing `PyPrismatic`` with Pip](#installing-with-pip-cuda)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Installing with setup.py](#installing-with-setup)  
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Python: Testing `PyPrismatic``](#testing-`PyPrismatic``)  
-	- [Setting `CMake` Options](#setting-`CMake`-options)  
-	- [List of `Prismatic` `CMake` options](#`CMake`-options)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Python: Testing `PyPrismatic``](#testing-PyPrismatic)  
+	- [Setting `CMake` Options](#setting-cmake-options)  
+	- [List of `Prismatic` `CMake` options](#make-options)  
 	- [Command line options](#cli-options) 
 
 
@@ -32,9 +32,9 @@ The following dependencies are needed by `Prismatic`:
 
 *Required*
 
-* [`CMake`](https://`CMake`.org/) (*For compiling the source code*)  
-* [Boost](http://www.boost.org)  
-* [FFTW](http://www.fftw.org) (compiled with `--enable-float`, `--enable-shared`, and `--enable-threads`)  
+* [`CMake`](https://CMake.org/) (*For compiling the source code*)  
+* [`Boost`](http://www.boost.org)  
+* [`FFTW`](http://www.fftw.org) (compiled with `--enable-float`, `--enable-shared`, and `--enable-threads`)  
 
 *Optional*
 

@@ -1,5 +1,6 @@
-# Installing `Prismatic`
-Table of Contents  
+# Installing `Prismatic`  
+
+Table of Contents    
 	- [Dependencies](#dependencies)  
 	- [Installers](#installers)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Mac OS X](#binary-installers-mac)  
@@ -184,7 +185,7 @@ make install
 
 which may require `sudo` privileges. This will place the files in `/usr/local/bin`. 
 
-`CMake` will attempt to locate the various dependencies needed by `Prismatic` (see the section on [setting up your environment](#environmental-setup)), but if it cannot then it will produce an error and set the variable to NOTFOUND. For example, if the `Boost_INCLUDE_DIR` (the location of the Boost libraries), is not found, it will be set to `Boost_INCLUDE_DIR-NOTFOUND`. You will need to manually set the path to boost (see [below](#`CMake`-options) for how to set options), and then rerun `CMake`.
+`CMake` will attempt to locate the various dependencies needed by `Prismatic` (see the section on [setting up your environment](#environmental-setup)), but if it cannot then it will produce an error and set the variable to NOTFOUND. For example, if the `Boost_INCLUDE_DIR` (the location of the Boost libraries), is not found, it will be set to `Boost_INCLUDE_DIR-NOTFOUND`. You will need to manually set the path to boost (see [below](#cmake-options) for how to set options), and then rerun `CMake`.
 
 
 <a name="mac-install"></a>
@@ -240,7 +241,7 @@ make install
 
 which may require `sudo` privileges. This will place the files in `/usr/local/bin`. 
 
-`CMake` will attempt to locate the various dependencies needed by `Prismatic` (see the section on [setting up your environment](#environmental-setup)), but if it cannot then it will produce an error and set the variable to NOTFOUND. For example, if the `Boost_INCLUDE_DIR` (the location of the Boost libraries), is not found, it will be set to `Boost_INCLUDE_DIR-NOTFOUND`. You will need to manually set the path to boost (see [below](#`CMake`-options) for how to set options), and then rerun `CMake`.
+`CMake` will attempt to locate the various dependencies needed by `Prismatic` (see the section on [setting up your environment](#environmental-setup)), but if it cannot then it will produce an error and set the variable to NOTFOUND. For example, if the `Boost_INCLUDE_DIR` (the location of the Boost libraries), is not found, it will be set to `Boost_INCLUDE_DIR-NOTFOUND`. You will need to manually set the path to boost (see [below](#cmake-options) for how to set options), and then rerun `CMake`.
 
 
 <a name="win-install"></a>
@@ -252,7 +253,7 @@ which may require `sudo` privileges. This will place the files in `/usr/local/bi
 
 To build `Prismatic` on Windows with the `CMake` GUI, first open `CMake` and set the location of the source code to the top level directory of `Prismatic` (this is the directory  containing `CMake`Lists.txt). Next, choose the location to build the binaries. It is recommended to create a separate folder, perhaps called "build", for this purpose. Click `Configure`, and choose the C++ compiler you would like to use. I have successfully tested Microsoft Visual Studio 2015 (64-bit) and would recommend this version if possible, particularly if you are compiling with GPU-support due to the fact that both NVIDIA and Microsoft are proprietary vendors, there is often some conflict between the newest versions of `nvcc` and MSVS. 
 
-Based on the [option settings](`CMake`-options), `CMake` will then attempt to find the necessary dependencies. If you [have fully setup your environment](#environmental-setup-win), then configuration should succeed. If it fails, then variables it cannot satisfy will be set to NOTFOUND. For example, if the `Boost_INCLUDE_DIR` (the location of the Boost libraries), is not found, it will be set to `Boost_INCLUDE_DIR-NOTFOUND`. You will need to manually set the path to boost (see [below](#`CMake`-options) for how to set options), and then rerun `Configure`.
+Based on the [option settings](cmake-options), `CMake` will then attempt to find the necessary dependencies. If you [have fully setup your environment](#environmental-setup-win), then configuration should succeed. If it fails, then variables it cannot satisfy will be set to NOTFOUND. For example, if the `Boost_INCLUDE_DIR` (the location of the Boost libraries), is not found, it will be set to `Boost_INCLUDE_DIR-NOTFOUND`. You will need to manually set the path to boost (see [below](#cmake-options) for how to set options), and then rerun `Configure`. Sometimes it is not necessary to specify a value for every "NOTFOUND" variable if there are multiple ones from the same dependency as CMake may be able to find them relative to one of the variables you do specify. For example, if you specify the path to one of the Qt libraries and reconfigure the other ones will likely be found automatically. Other `CMake` variables, like `FFTW_MPI_LIBRARY`, are not used by `Prismatic` and if they can be left "NOTFOUND". In my opinion the easiest thing to do is to specify the value of whatever variables are causing error messages one-by-one until configuration succeeds.
 
 Once configuration is complete, click `Generate` and a MSVS .sln file will be created. Open this file, set the build mode to "Release", and then run "Build Solution" to compile the code. You can then find the executable `prismatic-gui.exe` inside of the "Release" folder within the build directory you selected in the `CMake` GUI.
 
@@ -355,7 +356,7 @@ pr.demo()
 
 *Note: If you receive an error like `ImportError: cannot import name core` but the installation process appeared to work, make sure to change directories out of the top level of the source code and try again. This occurs because the `PyPrismatic` package was built and installed globally, but if you are currently in the top level directory that contains the source code folder `PyPrismatic` then python will attempt to use that incorrectly as the package.*
 
-<a name ="setting-`CMake`-options"></a>
+<a name ="setting-cmake-options"></a>
 ## Setting `CMake` options
 
 All aspects of how `Prismatic` is compiled, such as whether or not to include GUI or GPU support, are controlled through `CMake` variables.
@@ -367,11 +368,12 @@ and paths are set by clicking browse and navigating to the file/folder of intere
 If you are using the command line tool, `CMake`, then options are set with the `-D` (Define) flag. For example, 
 to set `My_Variable` to 0 one would add `-DMY_VARIABLE=0` to the call to `CMake` (see the sections on enabling GUI or GPU support for more examples).
 
-There is also the hybrid "command-line GUI" option, `c`CMake``, which provides an interactive way to adjust `CMake` options from the command line.
+There is also the hybrid "command-line GUI" option, `ccmake`, which provides an interactive way to adjust `CMake` options from the command line.
 
-Finally, you can also directly edit a file called ``CMake`Cache.txt`. The first time you run `CMake` for a given project
+Finally, you can also directly edit a file called "CMakeCache.txt". The first time you run `CMake` for a given project
 this special file will be created containing all of the option settings. Whenever you generate a project or Makefile, the options
-will be read for the ``CMake`Cache.txt` file, so options can be changed here directly.
+will be read for the "CMakeCache.txt" file, so options can be changed here directly.
+
 
 **_Note_**: Any time you change `CMake` options for a particular project you must regenerate the build files and recompile
 before the changes will actually take effect
@@ -383,7 +385,7 @@ before the changes will actually take effect
 The default behavior for `Prismatic` is to use single precision (type float). You can use double precision instead by setting ``Prismatic`_ENABLE_DOUBLE_PRECISION=1`. Note that as of this writing double precision operations are ~4x slower on the GPU, and by every test I have done the precision difference is entirely unnoticeable. However, I leave it as an option . If you find a case where using double precision is impactful, I would be very interested to hear about it.
 
 
-<a name ="`CMake`-options"></a>
+<a name ="cmake-options"></a>
 ## List of `Prismatic` `CMake` options
 
 Here's a list of the various custom options you can set and `CMake` and what they represent

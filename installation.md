@@ -1,6 +1,9 @@
 # Installing `Prismatic`
 Table of Contents  
 	- [Dependencies](#dependencies)  
+	- [Installers](#installers)
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Binary Installers (Mac OS X)](#binary-installers-mac) 
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Binary Installers (Windows)](#binary-installers-win)  
 	- [Building `Prismatic` from the source code](#from-source)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Setting environmental variables](#environmental-setup)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Linux](#environmental-setup-linux)  
@@ -9,10 +12,8 @@ Table of Contents
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Installing on Linux](#linux-install)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Compiling with `CMake` from the command line](#compiling-linux)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Installing on Mac OS X](#mac-install)  
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Binary Installers (Mac OS X)](#binary-installers-mac)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Compiling with `CMake` from the command line](#compiling-mac)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Installing on Windows](#windows-install)  
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Binary Installers (Windows)](#binary-installers-win)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Compiling with `CMake` from the command line](#compiling-win)  
 	- [Python: Installing `Py`Prismatic``](#python-installing-`Py`Prismatic``)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Building the cu`Prismatic` library](#cu`Prismatic`)  
@@ -44,6 +45,18 @@ The following dependencies are needed by `Prismatic`:
 `Prismatic` was developed using CUDA 8.0, but likely works with older versions as well and we welcome feedback from any user who attempts to do so (CUDA 7.0, 7.5 also have been reported to work).
 *Note: Even if you download a binary version of the GPU codes, you will still need to have the CUDA toolkit installed so that the `cuFFT` libraries can be found at runtime.*
 
+
+## Installers
+<a name="binary-installers-mac"></a>
+### Binary Installers (Mac OS X) 
+
+
+<a name="binary-installers-win"></a>
+### Binary Installers (Windows) 
+
+*Links to binary installers should go here in the future*
+
+*Links to binary installers should go here in the future*
 
 <a name="from-source"></a>
 ## Building `Prismatic` from the source code
@@ -177,10 +190,6 @@ which may require `sudo` privileges. This will place the files in `/usr/local/bi
 <a name="mac-install"></a>
 ## Installing on Mac OS X  
 
-<a name="binary-installers-mac"></a>
-### Binary Installers (Mac OS X) 
-
-*Links to binary installers should go here in the future*
 
 <a name="compiling-mac"></a>
 ### Compiling with `CMake` from the command line on OS X
@@ -237,10 +246,6 @@ which may require `sudo` privileges. This will place the files in `/usr/local/bi
 <a name="win-install"></a>
 ## Installing on Windows  
 
-<a name="binary-installers-win"></a>
-### Binary Installers (Windows) 
-
-*Links to binary installers should go here in the future*
 
 <a name="compiling-win"></a>
 ### Compiling with `CMake`'s GUI on Windows

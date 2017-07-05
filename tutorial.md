@@ -1,4 +1,5 @@
 # Prismatic Tutorial (Under Construction)   
+---
 *This tutorial is a work in progress and will be finished in the very near future*
 
 ## Table of Contents  

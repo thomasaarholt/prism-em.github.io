@@ -1,6 +1,7 @@
 # Installing `Prismatic`  
 
-Table of Contents    
+Table of Contents   
+ 
 	- [Dependencies](#dependencies)  
 	- [Installers](#installers)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Mac OS X](#binary-installers-mac)  

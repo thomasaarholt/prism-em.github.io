@@ -6,12 +6,12 @@ Table of Contents
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Linux](#environmental-setup-linux)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Mac OS X](#environmental-setup-mac)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Windows](#environmental-setup-win)  
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Installing on Linux](#linux)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Installing on Linux](#linux-install  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Compiling with CMake from the command line](#compiling-linux)  
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Installing on Mac OS X](#mac)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Installing on Mac OS X](#mac-install)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Binary Installers (Mac OS X)](#binary-installers-mac)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Compiling with CMake from the command line](#compiling-mac)  
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Installing on Windows](#windows)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Installing on Windows](#windows-install)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Binary Installers (Windows)](#binary-installers-win)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Compiling with CMake from the command line](#compiling-win)  
 	- [Python: Installing PyPrismatic](#python-installing-pyprismatic)  
@@ -20,7 +20,7 @@ Table of Contents
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Installing with setup.py](#installing-with-setup)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Python: Testing PyPrismatic](#testing-pyprismatic)  
 	- [Setting CMake Options](#setting-cmake-options)  
-	- [List of Prismatic CMake options](#cmake-options)
+	- [List of Prismatic CMake options](#cmake-options)  
 	- [Command line options](#cli-options) 
 
 
@@ -121,7 +121,7 @@ These environmental variables can be set graphically through system settings. Th
 
 Depending how your system is configured and what portions of `Prismatic` you are building you may need to add additional paths. For example, if you are building the GUI, you will also need to provide the paths to Qt5 headers and libraries. See the [dependencies](#dependencies) for details about what is required.
 
-<a name="linux"></a>
+<a name="linux-install"></a>
 ## Installing on Linux  
 
 <a name="compiling-linux"></a>
@@ -174,7 +174,7 @@ which may require `sudo` privileges. This will place the files in `/usr/local/bi
 CMake will attempt to locate the various dependencies needed by `Prismatic` (see the section on [setting up your environment](#environmental-setup)), but if it cannot then it will produce an error and set the variable to NOTFOUND. For example, if the `Boost_INCLUDE_DIR` (the location of the Boost libraries), is not found, it will be set to `Boost_INCLUDE_DIR-NOTFOUND`. You will need to manually set the path to boost (see [below](#cmake-options) for how to set options), and then rerun `cmake`.
 
 
-<a name="mac"></a>
+<a name="mac-install"></a>
 ## Installing on Mac OS X  
 
 <a name="binary-installers-mac"></a>
@@ -234,11 +234,11 @@ which may require `sudo` privileges. This will place the files in `/usr/local/bi
 CMake will attempt to locate the various dependencies needed by `Prismatic` (see the section on [setting up your environment](#environmental-setup)), but if it cannot then it will produce an error and set the variable to NOTFOUND. For example, if the `Boost_INCLUDE_DIR` (the location of the Boost libraries), is not found, it will be set to `Boost_INCLUDE_DIR-NOTFOUND`. You will need to manually set the path to boost (see [below](#cmake-options) for how to set options), and then rerun `cmake`.
 
 
-<a name="win"></a>
+<a name="win-install"></a>
 ## Installing on Windows  
 
-<a name="binary-installers-mac"></a>
-### Binary Installers (Mac OS X) 
+<a name="binary-installers-win"></a>
+### Binary Installers (Windows) 
 
 *Links to binary installers should go here in the future*
 

@@ -32,8 +32,8 @@ The following dependencies are needed by `Prismatic`:
 *Required*
 
 * [CMake](https://cmake.org/) (*For compiling the source code*)  
-* [Boost](www.boost.org)  
-* [FFTW](www.fftw.org) (compiled with `--enable-float`, `--enable-shared`, and `--enable-threads`)  
+* [Boost](http://www.boost.org)  
+* [FFTW](http://www.fftw.org) (compiled with `--enable-float`, `--enable-shared`, and `--enable-threads`)  
 
 *Optional*
 
@@ -259,7 +259,7 @@ Once configuration is complete, click `Generate` and a MSVS .sln file will be cr
 *Required*
 
 * [Boost](http://www.boost.org/)  
-* [FFTW](www.fftw.org) (compiled with `--enable-float`, `--enable-shared`, and `--enable-threads`)    
+* [FFTW](http://www.fftw.org) (compiled with `--enable-float`, `--enable-shared`, and `--enable-threads`)    
 
 *Optional*
 * [The CUDA Toolkit](https://developer.nvidia.com/cuda-downloads) (*For GPU support*)    

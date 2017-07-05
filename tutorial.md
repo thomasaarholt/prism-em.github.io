@@ -4,7 +4,7 @@
 
 ## Table of Contents  
 - [Examples](#examples)
-- [Prismatic GUI simulation of algorithm paper decahedral nanoparticle](#tutorialdeca)
+- [Prismatic GUI simulation of decahedral nanoparticle](#tutorialdeca)
 - [PyPrismatic: Using Prismatic through Python](#pyprismatic)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Metadata Parameters](#metadata)
 
@@ -17,7 +17,7 @@ Within the source code of `Prismatic` is an "examples" folder that contains some
 
 
 <a name="tutorialdeca"></a>
-## Prismatic GUI simulation of algorithm paper decahedral nanoparticle
+## Prismatic GUI simulation of decahedral nanoparticle
 
 Placeholder
 

@@ -1,7 +1,7 @@
 # Installing `Prismatic`
 Table of Contents  
 	- [Dependencies](#dependencies)  
-	- [Installers](#installers)
+	- [Installers](#installers)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Mac OS X](#binary-installers-mac)  
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Windows](#binary-installers-win)  
 	- [Building `Prismatic` from the source code](#from-source)  

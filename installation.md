@@ -2,8 +2,8 @@
 Table of Contents  
 	- [Dependencies](#dependencies)  
 	- [Installers](#installers)
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Binary Installers (Mac OS X)](#binary-installers-mac) 
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Binary Installers (Windows)](#binary-installers-win)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Mac OS X](#binary-installers-mac)  
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Windows](#binary-installers-win)  
 	- [Building `Prismatic` from the source code](#from-source)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Setting environmental variables](#environmental-setup)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Linux](#environmental-setup-linux)  

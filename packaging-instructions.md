@@ -47,3 +47,5 @@ Configure/compile with `PRISMATIC_ENABLE_GUI=1` with CMake + Visual Studio (I us
 
 Colin indicated that it may also be necessary to include the plugins/platforms/ folder from within Qt 5. I did not need this folder when compiling and running on machines all using Windows 10, but maybe this folder is necessary when distributing to older versions, so I include it to be safe.
 
+To add the icon to the executable, open the solution in Visual Studio. Open the resources view `view -> Other Windows -> Resources View`, right click `prismatic-gui` and select `Add -> import`, choose the ".ico" file, and recompile. The ".ico" file was generated from a .png image using the online resource [convertIcon!](www.converticon.com)
+

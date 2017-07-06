@@ -4,7 +4,7 @@
 
 ## Table of Contents  
 - [Examples](#examples)
-- [Prismatic GUI simulation of decahedral nanoparticle](#tutorialdeca)
+- [Prismatic GUI simulation of decahedral NP](#tutorialdeca)
 - [PyPrismatic: Using Prismatic through Python](#pyprismatic)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Metadata Parameters](#metadata)
 
@@ -16,17 +16,61 @@ Within the source code of `Prismatic` is an "examples" folder that contains some
 
 
 
-<a name="tutorialdeca"></a>
-## Prismatic GUI simulation of decahedral nanoparticle
 
-Placeholder
+
+<a name="tutorialdeca"></a>
+## Prismatic GUI simulation of decahedral NP
+
+In this example we will walk you through the entire procedure for generating a STEM simulation of a decahedral nanoparticle. This simulation should match the result shown in the PRISM algorithm paper: [DOI:10.1186/s40679-017-0046-1](http://dx.doi.org/10.1186/s40679-017-0046-1), specifically Figures 3, 4 and 5. Below is an overview of the sample we will construct, and an example of image simulations generated from both the multislice method, and the PRISM algorithm with varying degrees of accuracy.
+
+
+
+| ![animated decahedral nanoparticle](img/decaRotate01.gif) | ![example STEM image simulations](img/deca_sim_01_overview.png) | 
+|:---:|:---:|
+| Atomic model of a decahedral nanoparticle resting upon an amorphous carbon substrate. | STEM annular bright field and annular dark field image simulations taken from Figure 4 of the [PRISM algorithm paper](http://dx.doi.org/10.1186/s40679-017-0046-1). |
+
+
+The steps we will follow for this tutorial are:
+
+1. Download atomic coordinate files.
+2. Construct unified atomic model in Matlab.
+3. Export coordinates in .xyz format for `Prismatic`.
+4. Set up simulation parameters.
+5. Test PRISM vs Multislice accuracy.
+6. Run PRISM simulation, save output as .mrc.
+7. Generate final image outputs.
+
+### 1 - Download atomic coordinate files.
+
+To simulate a realistic nanoparticle sample, we require two sets of atomic coordinates. The first is obviously the nanoparticle itself. We have chosen to simulate a defected nanoparticle, as this is a more realistic sample with more interesting features than the ideal nanoparticles often used in atomic model simulations.
+
+
+
+
+### 2. Construct unified atomic model in Matlab.
+[In Progress]
+
+### 3. Export coordinates in .xyz format for `Prismatic`.
+[In Progress]
+
+### 4. Set up simulation parameters.
+[In Progress]
+
+### 5. Test PRISM vs Multislice accuracy.
+[In Progress]
+
+### 6. Run PRISM simulation, save output as .mrc.
+[In Progress]
+
+### 7. Generate final image outputs.
+[In Progress]
 
 
 
 <a name="pyprismatic"></a>
 ## PyPrismatic: Using Prismatic through Python  
 
-*Instructions for installing `PyPrismatic` may be found [here](www.prism-em.com/installation/)*
+*Instructions for installing `PyPrismatic` may be found at [here](www.prism-em.com/installation/)*
 
 To run a simulation with `PyPrismatic`, you simple create a `Metadata` object, adjust the parameters, and then execute the calculation with the `go` method. A list of adjustable parameters is [below](#metadata). These parameters can either be set with keyword arguments when constructing the `Metadata` object, or directly with the `.` operator. A simple example script utilizing both methods of setting parameters follows where the hypothetical input atomic coordinate information exists in the file "myInput.XYZ", the electron energy is set to 100 keV, and a 3x3x3 unit cell tiling is desired. The remaining parameters will be set to the default values (the `toString()` method can be used to print out all of the current settings).
 

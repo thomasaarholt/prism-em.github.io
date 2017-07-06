@@ -55,22 +55,32 @@ We now have all of the atomic coordinates required to build our simulation "scen
 
 
 
-### 2. Construct unified atomic model in Matlab.
+### 2 - Construct unified atomic model in Matlab.
+
+This section can be completed using any interactive programming language. I will describe the procedure using Matlab code as an example, which can be easily adapted to the language of your choice. First, import the data into Matlab (right click on the .csv files and select "Import Data," naming the two arrays something suitable).  Next, we perform a few simple steps:
+
+* Tilt nanoparticle to desired orientation.
+* Tile 5x5x5nm amorphous carbon cube 4 times to form a 10x10x5 nm substrate.
+* Position nanoparticle in center of cell, just above / slightly inside the substrate.
+* Delete substrate atoms too close to / overlapping nanoparticle atoms.
+
+For the first step, I've chosen to rotate the nanoparticle by 30 degrees around the x-axis, placing the 2 defected sectors onto a "low index" zone axis (atomic columns far apart) and the other 3 sectors onto a "high index" zone axis (atomic columns closer together).
+
+
+
+### 3 - Export coordinates in .xyz format for `Prismatic`.
 [In Progress]
 
-### 3. Export coordinates in .xyz format for `Prismatic`.
+### 4 - Set up simulation parameters.
 [In Progress]
 
-### 4. Set up simulation parameters.
+### 5 - Test PRISM vs Multislice accuracy.
 [In Progress]
 
-### 5. Test PRISM vs Multislice accuracy.
+### 6 - Run PRISM simulation, save output as .mrc.
 [In Progress]
 
-### 6. Run PRISM simulation, save output as .mrc.
-[In Progress]
-
-### 7. Generate final image outputs.
+### 7 - Generate final image outputs.
 [In Progress]
 
 

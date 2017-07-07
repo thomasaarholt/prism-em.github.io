@@ -14,7 +14,7 @@ Table of Contents
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Compiling with `CMake` from the command line](#compiling-linux)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Installing on Mac OS X](#mac-install)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Compiling with `CMake` from the command line](#compiling-mac)  
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Installing on Windows](#windows-install)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Installing on Windows](#win-install)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Compiling with `CMake` from the command line](#compiling-win)  
 	- [Python: Installing `PyPrismatic`](#python-installing-PyPrismatic)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Building the `cuPrismatic` library](#cuPrismatic)  
@@ -255,7 +255,7 @@ To build `Prismatic` on Windows with the `CMake` GUI, first open `CMake` and set
 
 Based on the [option settings](cmake-options), `CMake` will then attempt to find the necessary dependencies. If you [have fully setup your environment](#environmental-setup-win), then configuration should succeed. If it fails, then variables it cannot satisfy will be set to NOTFOUND. For example, if the `Boost_INCLUDE_DIR` (the location of the Boost libraries), is not found, it will be set to `Boost_INCLUDE_DIR-NOTFOUND`. You will need to manually set the path to boost (see [below](#cmake-options) for how to set options), and then rerun `Configure`. Sometimes it is not necessary to specify a value for every "NOTFOUND" variable if there are multiple ones from the same dependency as CMake may be able to find them relative to one of the variables you do specify. For example, if you specify the path to one of the Qt libraries and reconfigure the other ones will likely be found automatically. Other `CMake` variables, like `FFTW_MPI_LIBRARY`, are not used by `Prismatic` and if they can be left "NOTFOUND". In my opinion the easiest thing to do is to specify the value of whatever variables are causing error messages one-by-one until configuration succeeds.
 
-Once configuration is complete, click `Generate` and a MSVS .sln file will be created. Open this file, set the build mode to "Release", and then run "Build Solution" to compile the code. You can then find the executable `prismatic-gui.exe` inside of the "Release" folder within the build directory you selected in the `CMake` GUI.
+Once configuration is complete, click `Generate` and a MSVS .sln file will be created. Open this file, set the build mode to "Release" (*make sure you done forget this! If the build mode is not Release when you build `cuPrismatic.dll` then bad things will happen later down the road*), and then run "Build Solution" to compile the code. You may find that the build process randomly fails and then works after trying a second (or third, or fourth) time. You can then find the executable `prismatic-gui.exe` inside of the "Release" folder within the build directory you selected in the `CMake` GUI.
 
 
 <a name="python-installing-`PyPrismatic`"></a>

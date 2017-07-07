@@ -340,9 +340,9 @@ If you have [setup your environmental variables](#environmental-setup), you can 
 
 *This step is only required for GPU support in `PyPrismatic`*
 
-One of the great features about `CMake` is that it can easily tolerate the complicated task of compiling a single program with multiple compilers, which is necessary when mixing CUDA and Qt (discussed more [here](http://prism-em.com/source-code/#combining)).  For a CPU-only version of `PyPrismatic`, the necessary C++ source code can be distributed with the Python package, and `setuptools` can easily compile the necessary C++ extension module. Unfortunately, to my knowledge `setuptools` does not play nicely with `nvcc`, which makes distributing a Python package that utilizes custom GPU code more challenging. My solution was to compile the CUDA code into a a single shared library called ``cuPrismatic``, which can then be linked against in the Python package as if it were any other C++ library. There is no "new" code in ``cuPrismatic``, it simply serves as an intermediate step to help Python out by bundling the GPU code together into something it can work with. As an aside, this type of step is all `CMake` is doing under-the-hood to make CUDA and Qt play nicely in the first place -- it's just compiling the various formats of source code into a commonly understood form.
+One of the great features about `CMake` is that it can easily tolerate the complicated task of compiling a single program with multiple compilers, which is necessary when mixing CUDA and Qt (discussed more [here](http://prism-em.com/source-code/#combining)).  For a CPU-only version of `PyPrismatic`, the necessary C++ source code can be distributed with the Python package, and `setuptools` can easily compile the necessary C++ extension module. Unfortunately, to my knowledge `setuptools` does not play nicely with `nvcc`, which makes distributing a Python package that utilizes custom GPU code more challenging. My solution was to compile the CUDA code into a a single shared library called `cuPrismatic`, which can then be linked against in the Python package as if it were any other C++ library. There is no "new" code in `cuPrismatic`, it simply serves as an intermediate step to help Python out by bundling the GPU code together into something it can work with. As an aside, this type of step is all `CMake` is doing under-the-hood to make CUDA and Qt play nicely in the first place -- it's just compiling the various formats of source code into a commonly understood form.
 
-With that being said, in order to install the GPU-enabled version of `PyPrismatic`, you must first build ``cuPrismatic``. To do so, you will need to [get the source code](#get-source-code), set the ``Prismatic`_ENABLE_PYTHON=1` variable in `CMake`, then configure and compile the project. More detail on this process of using `CMake` is [described above](#from-source). Once the library is installed, then proceed below.
+With that being said, in order to install the GPU-enabled version of `PyPrismatic`, you must first build `cuPrismatic`. To do so, you will need to [get the source code](#get-source-code), set the ``Prismatic`_ENABLE_PYTHON=1` variable in `CMake`, then configure and compile the project. More detail on this process of using `CMake` is [described above](#from-source). Once the library is installed, then proceed below.
 
 <a name="testing-`PyPrismatic`"></a>
 ### Testing `PyPrismatic`
@@ -390,11 +390,11 @@ The default behavior for `Prismatic` is to use single precision (type float). Yo
 
 Here's a list of the various custom options you can set and `CMake` and what they represent
 
-* ``Prismatic`_ENABLE_CLI` - Build the command line interface `prismatic`"
-* ``Prismatic`_ENABLE_GPU` - Enable GPU supprt. Requires locating CUDA headers/libraries
-* ``Prismatic`_ENABLE_GUI` - Build the GUI, ``Prismatic`-gui`. Requires locating Qt5 headers/libraries.
-* ``Prismatic`_ENABLE_PYTHON_GPU` - Build the ``cuPrismatic`` shared library, which is used by the GPU version
-* ``Prismatic`_ENABLE_DOUBLE_PRECISION` - Use type `double` for float precision. This requires locating the double precision `FFTW` libraries.
+* `Prismatic_ENABLE_CLI` - Build the command line interface `prismatic`"
+* `Prismatic_ENABLE_GPU` - Enable GPU supprt. Requires locating CUDA headers/libraries
+* `Prismatic_ENABLE_GUI` - Build the GUI, `Prismatic-gui`. Requires locating Qt5 headers/libraries. A good way to do this is by setting `CMAKE_PREFIX_PATH` to point to the root of your Qt installation. For example, with Qt5 installed on a Mac through Homebrew one might add `-DCMAKE_PREFIX_PATH=/usr/local/Cellar/qt/5.9.0/` to the call to `cmake`
+* `Prismatic_ENABLE_PYTHON_GPU` - Build the `cuPrismatic` shared library, which is used by the GPU version
+* `Prismatic_ENABLE_DOUBLE_PRECISION` - Use type `double` for float precision. This requires locating the double precision `FFTW` libraries.
 
 
 <a name ="cli-options"></a>

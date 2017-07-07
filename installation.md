@@ -392,7 +392,7 @@ Here's a list of the various custom options you can set and `CMake` and what the
 
 * `Prismatic_ENABLE_CLI` - Build the command line interface `prismatic`"
 * `Prismatic_ENABLE_GPU` - Enable GPU supprt. Requires locating CUDA headers/libraries
-* `Prismatic_ENABLE_GUI` - Build the GUI, `Prismatic-gui`. Requires locating Qt5 headers/libraries. A good way to do this is by setting `CMAKE_PREFIX_PATH` to point to the root of your Qt installation. For example, with Qt5 installed on a Mac through Homebrew one might add `-DCMAKE_PREFIX_PATH=/usr/local/Cellar/qt/5.9.0/` to the call to `cmake`
+* `Prismatic_ENABLE_GUI` - Build the GUI, `prismatic-gui`. Requires locating Qt5 headers/libraries. A good way to do this is by setting `CMAKE_PREFIX_PATH` to point to the root of your Qt installation. For example, with Qt5 installed on a Mac through Homebrew one might add `-DCMAKE_PREFIX_PATH=/usr/local/Cellar/qt/5.9.0/` to the call to `cmake`
 * `Prismatic_ENABLE_PYTHON_GPU` - Build the `cuPrismatic` shared library, which is used by the GPU version
 * `Prismatic_ENABLE_DOUBLE_PRECISION` - Use type `double` for float precision. This requires locating the double precision `FFTW` libraries.
 

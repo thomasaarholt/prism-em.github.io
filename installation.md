@@ -16,8 +16,8 @@ Table of Contents
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Compiling with `CMake` from the command line](#compiling-mac)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Installing on Windows](#win-install)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Compiling with `CMake` from the command line](#compiling-win)  
-	- [Python: Installing `PyPrismatic`](#python-installing-PyPrismatic)  
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Building the `cuPrismatic` library](#cuPrismatic)  
+	- [Python: Installing `PyPrismatic`](#python-installing-pyprismatic)  
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Building the `cuPrismatic` library](#cuprismatic)  
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Installing `PyPrismatic` with Pip](#installing-with-pip-cuda)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Installing with setup.py](#installing-with-setup)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Python: Testing `PyPrismatic`](#testing-PyPrismatic)  
@@ -258,7 +258,7 @@ Based on the [option settings](cmake-options), `CMake` will then attempt to find
 Once configuration is complete, click `Generate` and a MSVS .sln file will be created. Open this file, set the build mode to "Release" (*make sure you done forget this! If the build mode is not Release when you build `cuPrismatic.dll` then bad things will happen later down the road*), and then run "Build Solution" to compile the code. You may find that the build process randomly fails and then works after trying a second (or third, or fourth) time. You can then find the executable `prismatic-gui.exe` inside of the "Release" folder within the build directory you selected in the `CMake` GUI.
 
 
-<a name="python-installing-`PyPrismatic`"></a>
+<a name="python-installing-pyprismatic"></a>
 ## Python: Installing `PyPrismatic`
 `PyPrismatic` is a Python package for invoking the C++/CUDA code in `Prismatic`. It can be installed easily with `pip` provided the following dependencies are installed:  
 
@@ -334,7 +334,7 @@ python3 setup.py build_ext --include-dirs=/usr/local/boost_1_60_0:/usr/local/cud
 If you have [setup your environmental variables](#environmental-setup), you can ignore the extra arguments and just use `python3 setup.py install` or `python3 setup.py install --enable-gpu` 
 
 
-<a name="`cuPrismatic`"></a>
+<a name="cuprismatic"></a>
 
 ### Building the `cuPrismatic` library
 

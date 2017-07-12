@@ -78,7 +78,7 @@ atomsSub = [ ...
 
 Next, I've chosen to rotate the nanoparticle by 30 degrees around the x-axis, placing the 2 defected sectors onto a "low index" zone axis (atomic columns far apart) and the other 3 sectors onto a "high index" zone axis (atomic columns closer together).  I typically use "z-x-z" rotation for my three Euler angles, for example in the code below:
 
-```
+```matlab
 xyzNP = xyzNP(:,1:3);  % Remove any additional columns in the NP array
 for a0 = 1:3
     xyzNP(:,a0) = xyzNP(:,a0) - mean(xyzNP(:,a0));  % Center on (0,0,0)

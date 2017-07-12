@@ -59,12 +59,47 @@ We now have all of the atomic coordinates required to build our simulation "scen
 
 This section can be completed using any interactive programming language. I will describe the procedure using Matlab code as an example, which can be easily adapted to the language of your choice. First, import the data into Matlab (right click on the .csv files and select "Import Data," naming the two arrays something suitable).  Next, we perform a few simple steps:
 
-* Tilt nanoparticle to desired orientation.
 * Tile 5x5x5nm amorphous carbon cube 4 times to form a 10x10x5 nm substrate.
+* Tilt nanoparticle to desired orientation.
 * Position nanoparticle in center of cell, just above / slightly inside the substrate.
 * Delete substrate atoms too close to / overlapping nanoparticle atoms.
 
-For the first step, I've chosen to rotate the nanoparticle by 30 degrees around the x-axis, placing the 2 defected sectors onto a "low index" zone axis (atomic columns far apart) and the other 3 sectors onto a "high index" zone axis (atomic columns closer together).
+First, let's tile the subtrace block 2x2 times to make it large enough to hold the nanoparticle, without periodic wrap-around artifacts.  We will also permute the dimensions of 3 out of 4 blocks to prevent tiling artifacts.  The boundaries will not be perfectly physical, but this error will be small.  Assuming we import the xyz coordinates of the substrate block as "xyzSub" we can use the below code to tilt the subtrate (and cell boundaries) by 2x2x1:
+
+```matlab
+cellSub = [50 50 50];       % Original substrate cell size
+cellDim = [2*cellSub(1:2) cellSub(3)];
+atomsSub = [ ...
+    xyzSub(:,[1 2 3])+repmat([0          0          0],[size(xyzSub,1) 1]);
+    xyzSub(:,[2 1 3])+repmat([cellSub(1) 0          0],[size(xyzSub,1) 1]);
+    xyzSub(:,[3 1 2])+repmat([0          cellSub(2) 0],[size(xyzSub,1) 1]);
+    xyzSub(:,[2 1 3])+repmat([cellSub(1:2)          0],[size(xyzSub,1) 1])];
+```
+
+Next, I've chosen to rotate the nanoparticle by 30 degrees around the x-axis, placing the 2 defected sectors onto a "low index" zone axis (atomic columns far apart) and the other 3 sectors onto a "high index" zone axis (atomic columns closer together).  I typically use "z-x-z" rotation for my three Euler angles, for example in the code below:
+
+```
+xyzNP = xyzNP(:,1:3);  % Remove any additional columns in the NP array
+for a0 = 1:3
+    xyzNP(:,a0) = xyzNP(:,a0) - mean(xyzNP(:,a0));  % Center on (0,0,0)
+end
+% Rotate and translate NP
+m = [cos(theta(1)) -sin(theta(1)) 0;
+    sin(theta(1)) cos(theta(1)) 0;
+    0 0 1];
+xyzNP = (m'*xyzNP')';
+m = [1 0 0;
+    0 cos(theta(2)) -sin(theta(2));
+    0 sin(theta(2)) cos(theta(2))];
+xyzNP = (m'*xyzNP')';
+m = [cos(theta(3)) -sin(theta(3)) 0;
+    sin(theta(3)) cos(theta(3)) 0;
+    0 0 1];
+xyzNP = (m'*xyzNP')';
+for a0 = 1:3
+    xyzNP(:,a0) = xyzNP(:,a0) + shiftNP(a0);
+end
+```
 
 
 

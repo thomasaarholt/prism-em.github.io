@@ -282,26 +282,26 @@ Once configuration is complete, click `Generate` and a MSVS .sln file will be cr
 If you have installed the above dependencies and [setup your environmental variables](#environmental-setup), `PyPrismatic` can be installed easily with `pip` using either 
 
 ~~~
-pip install `PyPrismatic`
+pip install pyprismatic
 ~~~
 
 for CPU-only mode or for GPU mode:
 
 ~~~
-pip install `PyPrismatic` --install-option="--enable-gpu"
+pip install pyprismatic --install-option="--enable-gpu"
 ~~~
 
 
 Alternatively, you can tell `pip` where the dependencies are using `--global-option` like so (*you should change the actual names of the paths to match your machine, this is just an example*):
 
 ~~~
-pip install `PyPrismatic` --global-option=build_ext --global-option="-I/usr/local/boost_1_60_0"
+pip install pyprismatic --global-option=build_ext --global-option="-I/usr/local/boost_1_60_0"
 ~~~
 
 for CPU-only mode or for GPU mode:
 
 ~~~
-pip install `PyPrismatic` --global-option=build_ext --global-option="-I/usr/local/boost_1_60_0:/usr/local/cuda-8.0/include" --global-option="-L/usr/local/cuda-8.0/lib64" --install-option="--enable-gpu"
+pip install pyprismatic --global-option=build_ext --global-option="-I/usr/local/boost_1_60_0:/usr/local/cuda-8.0/include" --global-option="-L/usr/local/cuda-8.0/lib64" --install-option="--enable-gpu"
 ~~~
 
 *On Windows, a list containing multiple path names must be separated by `;` instead of `:`*

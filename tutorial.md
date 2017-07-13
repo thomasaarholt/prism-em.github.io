@@ -144,7 +144,7 @@ You can find the above code (with some included plotting code) at [this link](da
 
 where the coordinates (x,y,z) are cartesian values in Angstroms, the occupancy is a number from 0 to 1 representing how frequently that site contains an atom, and the final value is the root-mean-square (RMS) thermal vibration coefficient, also in Angstroms.  The vibration of most atoms at room temperature follows a Gaussian distribution with a standard deviation of 0.05-0.1 Angstroms.  So, for the simulation file described above, the first several lines will look like:
 
-```xyz
+```csv
 Atomic coordinates for decahedral nanoparticle on amorphous carbon
    100.00000  100.00000  80.000000
 6  30.728000  40.226000  3.720700  1  0.080000

@@ -648,7 +648,7 @@ pre {
 
 pre code {
   
-  white-space: pre;
+  white-space: nowrap;
 } 
 
 

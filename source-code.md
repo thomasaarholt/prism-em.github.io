@@ -18,7 +18,7 @@ Just because a project is open source doesn't mean that it is immediately obviou
 The default floating-point precision used by *Prismatic* is `float` (single-precision) as this consumes less memory than double and on GPUs single-precision operations are faster than double. However, it is also possible to compile *Prismatic* for double precision. Many API calls in the cuFFT and FFTW libraries (as well as others) are different when invoking double or single-precision code. To make both precisions usable in `Prismatic`, there are a number of macro definitions set in "defines.h". 
 
 ~~~ c++
-#ifdef PRISMATIC_ENABLE_DOUBLE_PRECISION  
+#ifdef PRISMATIC_ENABLE_DOUBLE_PRECISION
     typedef double PRISMATIC_FLOAT_PRECISION;
 #define PRISM_FFTW_PLAN fftw_plan
 #define PRISM_FFTW_PLAN_DFT_2D fftw_plan_dft_2d

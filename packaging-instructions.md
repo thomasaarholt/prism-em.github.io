@@ -8,12 +8,13 @@ These are the steps necessary to create Prismatic packages from the source code
 
 From an existing version of the prismatic-gui.app bundle, simply copy the latest `prismatic-gui` into Contents/MacOS
 
-Should you need to remake the bundle, it should contain the following directory structure
-Contents/
-&nbsp;&nbsp;&nbsp;&nbsp;Info.plist
-&nbsp;&nbsp;&nbsp;&nbsp;MacOS/
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;prismatic-gui
-&nbsp;&nbsp;&nbsp;&nbsp;Resources/
+Should you need to remake the bundle, it should contain the following directory structure  
+
+Contents/  
+&nbsp;&nbsp;&nbsp;&nbsp;Info.plist  
+&nbsp;&nbsp;&nbsp;&nbsp;MacOS/  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;prismatic-gui  
+&nbsp;&nbsp;&nbsp;&nbsp;Resources/  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;prismatic-gui.icns
 
 Where prismatic-gui.icns was made following [this blog post](https://blog.macsales.com/28492-create-your-own-custom-icons-in-10-7-5-or-later) using Inkscape to generate the images and `iconutil` to convert the iconset to a .icns.  

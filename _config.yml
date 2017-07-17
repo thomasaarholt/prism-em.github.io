@@ -26,6 +26,7 @@ navbar-links:
   Downloads:
     - Source Code: "http://github.com/prism-em/prismatic"
     - Installers: "http://github.com/prism-em/prismatic"
+    - genfire: "gf"
   Installation: "installation"
   Tutorials:
     - Tutorial: "tutorial"

@@ -11,11 +11,7 @@ These are the steps necessary to create Prismatic packages from the source code
 
 Deploying on Mac requires a statically built version of the Qt libraries with `./configure -static` (see [here](http://doc.qt.io/qt-5/osx-deployment.html)). You will then build `prismatic-gui` through the Qt project `Qt/prismatic-gui.app` by invoking `qmake` (from the statically build version of Qt5). For example on my system I would invoke `/Users/ajpryor/Qt5/qtbase/bin/qmake` followed by `make -j8`, which results in `prismatic-gui.app` within the `Qt` folder. You can check that the binary is statically linked with `otool -L prismatic.gui.app/Contents/MacOS/prismatic-gui`. If the output from this command does not contain any Qt libraries, then you have successfully statically linked them.
 
-The resulting bundle should contain everything you need to distribute, but should you need to build it by hand for any reason you can use the following procedure.
-
-#### Building Mac OS X bundle manually
-
-From an existing version of the prismatic-gui.app bundle, simply copy the latest `prismatic-gui` into Contents/MacOS
+From an existing version of the prismatic-gui.app bundle, simply copy the latest `prismatic-gui` into Contents/MacOS and the rest of the bundle configuration (such as the icons) should be taken care of
 
 Should you need to remake the bundle, it should contain the following directory structure  
 

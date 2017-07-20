@@ -439,6 +439,7 @@ The following options are available with `prismatic` (you can also print availab
 * --scan-window-y (-wy) min max : size of the window to scan the probe in Y (in fractional coordinates between 0 and 1)
 * --num-FP (-F) value : number of frozen phonon configurations to calculate
 * --thermal-effects (-te) bool : whether or not to include Debye-Waller factors (thermal effects)
+* --occupancy (-oc) bool : whether or not to consider occupancy values for likelihood of atoms existing at each site
 * --save-2D-output (-2D) ang_min ang_max : save the 2D STEM image integrated between ang_min and ang_max (in mrads)
 * --save-3D-output (-3D) bool=true : Also save the 3D output at the detector for each probe (3D output mode)
 * --save-4D-output (-4D) bool=false : Also save the 4D output at the detector for each probe (4D output mode)

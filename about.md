@@ -10,7 +10,7 @@ Input files containing the atomic coordinates should be in the following XYZ for
 
 * 1 comment line
 * 1 line with the 3 unit cell dimensions a,b,c (in Angstroms)
-* *N* lines of the form Z, x, y, z, occ, thermal_sigma where Z is the atomic number, x, y, and z are the coordinates of the atom within the unit cell (in Angstroms), occ is the occupancy number (almost always 1, and currently not used in *Prismatic*), and thermal_sigma is the standard deviation of random thermal motion (Debye-Waller effect).
+* *N* lines of the form `Z`, `x`, `y`, `z`, `occ`, `thermal_sigma` where `Z` is the atomic number, `x`, `y`, and `z` are the coordinates of the atom within the unit cell in Angstroms, `occ` is the occupancy number (value between 0 and 1 that specifies the likelihood that an atom exists at that site), and `thermal_sigma` is the standard deviation of random thermal motion in Angstroms (Debye-Waller effect).
 * -1 to indicate end of file
 
 Here is a sample file, "SI100.XYZ"

@@ -70,7 +70,7 @@ Microsoft Visual Studio projects, Mac OS XCode projects, etc.
 <a name="get-source-code"></a>
 ### Getting the source code 
 
-Once the [dependencies](#dependencies) are installed get the `Prismatic` source either from [compressed source files](https://github.com/prism-em/`Prismatic`/archive/master.zip) or directly 
+Once the [dependencies](#dependencies) are installed get the `Prismatic` source either from [compressed source files](https://github.com/prism-em/prismatic/archive/master.zip) or directly 
 from [Github](https://github.com/prism-em/`Prismatic`) using `git clone`. Next, follow the instructions appropriate for your operating system.
 
 <a name="environmental-setup"></a>

@@ -51,17 +51,16 @@ The following dependencies are needed by `Prismatic`:
 <a name="binary-installers-mac"></a>
 ### Binary Installers (Mac OS X) 
 
+[Prismatic-OSX-v1.0.dmg](https://github.com/prism-em/prismatic-binaries/raw/master/Mac/Prismatic-OSX-v1.0.dmg.zip)
 
 <a name="binary-installers-win"></a>
 ### Binary Installers (Windows) 
 
-*Links to binary installers should go here in the future*
-
+[Prismatic-v1.0.msi.zip](https://github.com/prism-em/prismatic-binaries/raw/master/Windows/Prismatic-v1.0.msi.zip)
 
 <a name="from-source"></a>
 ## Building `Prismatic` from the source code
 
-[Prismatic-OSX-v1.0.dmg](https://github.com/prism-em/prismatic-binaries/raw/master/Mac/Prismatic-OSX-v1.0.dmg.zip)
 
 `Prismatic` is built using [`CMake`](https://`CMake`.org/), a cross-platform compilation utility that 
 allows a single source tree to be compiled into a variety of formats including UNIX Makefiles, 

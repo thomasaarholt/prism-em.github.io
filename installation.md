@@ -58,7 +58,6 @@ Download Mac installers [here](http://prism-em.com/installers/)
 
 Download Windows installers [here](http://prism-em.com/installers/)
 
-[Prismatic-v1.0.msi.zip](https://github.com/prism-em/prismatic-binaries/raw/master/Windows/Prismatic-v1.0.msi.zip)
 
 <a name="from-source"></a>
 ## Building `Prismatic` from the source code

@@ -23,7 +23,6 @@ Table of Contents
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Python: Testing `PyPrismatic`](#testing-PyPrismatic)  
 	- [Setting `CMake` Options](#setting-cmake-options)  
 	- [List of `Prismatic` `CMake` options](#make-options)  
-	- [Command line options](#cli-options) 
 
 
 
@@ -397,50 +396,3 @@ Here's a list of the various custom options you can set and `CMake` and what the
 * `Prismatic_ENABLE_PYTHON_GPU` - Build the `cuPrismatic` shared library, which is used by the GPU version
 * `Prismatic_ENABLE_DOUBLE_PRECISION` - Use type `double` for float precision. This requires locating the double precision `FFTW` libraries.
 
-
-<a name ="cli-options"></a>
-## Using `Prismatic` from the command line
-
-`Prismatic` contains a command line tool, `prismatic`, that can be used to run simulations from within a terminal, bash script, etc. Building it requires the `CMake` variable `PRISM_ENABLE_CLI=1` at compilation time, which is the default behavior.
-
-The following options are available with `prismatic` (you can also print available options with `prismatic --help`), each documented as **_long form_** **_(short form)_** *parameters* : description
-
-* --input-file (-i) filename : the filename containing the atomic coordinates, which should be a plain text file with comma-separated values in the format x, y, z, Z 
-* --output-file(-o) filename : output filename
-* --interp-factor (-f) number : PRISM interpolation factor, used for both X and Y
-* --interp-factor-x (-fx) number : PRISM interpolation factor in X
-* --interp-factor-y (-fy) number : PRISM interpolation factor in Y
-* --num-threads (-j) value : number of CPU threads to use
-* --num-streams (-S) value : number of CUDA streams to create per GPU
-* --num-gpus (-g) value : number of GPUs to use. A runtime check is performed to check how many are actually available, and the minimum of these two numbers is used.
-* --batch-size (-b) value : number of probes/beams to propagate simultaneously for both CPU and GPU workers.
-* --batch-size-cpu (-bc) value : number of probes/beams to propagate simultaneously for CPU workers.
-* --batch-size-gpu (-bg) value : number of probes/beams to propagate simultaneously for GPU workers.
-* --slice-thickness (-s) thickness : thickness of each slice of projected potential (in Angstroms)
-* --help(-h) : print information about the available options
-* --pixel-size (-p) pixel_size : size of simulation pixel size
-* --detector-angle-step (-d) step_size : angular step size for detector integration bins (in mrad)
-* --cell-dimension (-c) x y z : size of sample in x, y, z directions (in Angstroms)
-* --tile-uc (-t) x y z : tile the unit cell x, y, z number of times in x, y, z directions, respectively
-* --algorithm (-a) p/m : the simulation algorithm to use, either (p)rism or (m)ultislice
-* --energy (-E) value : the energy of the electron beam (in keV)
-* --alpha-max (-A) angle : the maximum probe angle to consider (in mrad)
-* --potential-bound (-P) value : the maximum radius from the center of each atom to compute the potental (in Angstroms)
-* --also-do-cpu-work (-C) bool=true : boolean value used to determine whether or not to also create CPU workers in addition to GPU ones
-* --streaming-mode 0/1 : boolean value to force code to use (true) or not use (false) streaming versions of GPU codes. The default behavior is to estimate the needed memory from input parameters and choose automatically.
-* --probe-step (-r) step_size : step size of the probe for both X and Y directions (in Angstroms)
-* --probe-step-x (-rx) step_size : step size of the probe in X direction (in Angstroms)
-* --probe-step-y (-ry) step_size : step size of the probe in Y direction (in Angstroms)
-* --random-seed (-rs) step_size : random number seed
-* --probe-xtilt (-tx) value : probe X tilt
-* --probe-ytilt (-ty) value : probe X tilt
-* --probe-defocus (-df) value : probe defocus (in Angstroms)
-* --probe-semiangle (-sa) value : maximum probe semiangle
-* --scan-window-x (-wx) min max : size of the window to scan the probe in X (in fractional coordinates between 0 and 1)
-* --scan-window-y (-wy) min max : size of the window to scan the probe in Y (in fractional coordinates between 0 and 1)
-* --num-FP (-F) value : number of frozen phonon configurations to calculate
-* --thermal-effects (-te) bool : whether or not to include Debye-Waller factors (thermal effects)
-* --occupancy (-oc) bool : whether or not to consider occupancy values for likelihood of atoms existing at each site
-* --save-2D-output (-2D) ang_min ang_max : save the 2D STEM image integrated between ang_min and ang_max (in mrads)
-* --save-3D-output (-3D) bool=true : Also save the 3D output at the detector for each probe (3D output mode)
-* --save-4D-output (-4D) bool=false : Also save the 4D output at the detector for each probe (4D output mode)

@@ -366,7 +366,7 @@ If you are using the `CMake` GUI, then options are turned on/off with check boxe
 and paths are set by clicking browse and navigating to the file/folder of interest.   
 
 If you are using the command line tool, `CMake`, then options are set with the `-D` (Define) flag. For example, 
-to set `My_Variable` to 0 one would add `-DMY_VARIABLE=0` to the call to `CMake` (see the sections on enabling GUI or GPU support for more examples).
+to set `MY_VARIABLE` to 0 one would add `-DMY_VARIABLE=0` to the call to `CMake` (see the sections on enabling GUI or GPU support for more examples).
 
 There is also the hybrid "command-line GUI" option, `ccmake`, which provides an interactive way to adjust `CMake` options from the command line.
 
@@ -382,7 +382,7 @@ before the changes will actually take effect
 
 *Currently, this double precision setting is not supported by `PyPrismatic`*
 
-The default behavior for `Prismatic` is to use single precision (type float). You can use double precision instead by setting ``Prismatic`_ENABLE_DOUBLE_PRECISION=1`. Note that as of this writing double precision operations are ~4x slower on the GPU, and by every test I have done the precision difference is entirely unnoticeable. However, I leave it as an option . If you find a case where using double precision is impactful, I would be very interested to hear about it.
+The default behavior for `Prismatic` is to use single precision (type float). You can use double precision instead by setting `PRISMATIC_ENABLE_DOUBLE_PRECISION=1`. Note that as of this writing double precision operations are ~4x slower on the GPU, and by every test I have done the precision difference is entirely unnoticeable. However, I leave it as an option. If you find a case where using double precision is impactful, I would be very interested to hear about it.
 
 
 <a name ="cmake-options"></a>

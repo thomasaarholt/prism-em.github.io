@@ -5,7 +5,7 @@ Table of Contents
   - [File Formats](#file-formats)  
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Input](#input)  
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Output](#output)  
-  - [GPU Compute Cabability](#gpu-compute-cabability)
+  - [GPU Compute Capability](#gpu-compute-capability)
   - [Command Line Options](#cli-options)
   - [List of `PyPrismatic` Metadata parameters](#pyprismatic-metadata)
 

@@ -156,10 +156,10 @@ make a build directory (the name doesn't matter) at the top of the `Prismatic` s
 mkdir build
 cd build
 ```
-Then invoke `CMake`
+Then invoke `cmake`
 
 ```
-`CMake` ../
+cmake ../
 ```
 
 This will generate a Makefile  project with the necessary dependencies and paths to compile `Prismatic`. The default

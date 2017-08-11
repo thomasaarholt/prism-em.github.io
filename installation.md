@@ -144,7 +144,7 @@ Depending how your system is configured and what portions of `Prismatic` you are
 To build `Prismatic` from the command line with `CMake`, open a terminal and navigate to the top of the source directory 
 
 ```
-cd /path/to/`Prismatic`/
+cd /path/to/prismatic/
 ```
 
 Conventional `CMake` practice is to use out-of-source builds, which means we will compile the source code into

@@ -200,7 +200,7 @@ which may require `sudo` privileges. This will place the files in `/usr/local/bi
 To build `Prismatic` from the command line with `CMake`, open a terminal and navigate to the top of the source directory 
 
 ```
-cd /path/to/`Prismatic`/
+cd /path/to/prismatic/
 ```
 
 Conventional `CMake` practice is to use out-of-source builds, which means we will compile the source code into
@@ -212,10 +212,10 @@ make a build directory (the name doesn't matter) at the top of the `Prismatic` s
 mkdir build
 cd build
 ```
-Then invoke `CMake`
+Then invoke `cmake`
 
 ```
-`CMake` ../
+cmake ../
 ```
 
 This will generate a Makefile  project with the necessary dependencies and paths to compile `Prismatic`. The default

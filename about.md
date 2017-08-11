@@ -5,10 +5,12 @@ Table of Contents
   - [File Formats](#file-formats)  
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Input](#input)  
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Output](#output)  
+  - [GPU Compute Cabability](#gpu-compute-cabability)
   - [Command Line Options](#cli-options)
   - [List of `PyPrismatic` Metadata parameters](#pyprismatic-metadata)
 
 *Prismatic* is a CUDA/C++/Python software package for fast image simulation in scanning transmission electron microscopy (STEM). It includes parallel, data-streaming implementations of both the plane-wave reciprocal-space interpolated scattering matrix (PRISM) and multislice algorithms using multicore CPUs and CUDA-enabled GPU(s), in some cases achieving accelerations as high as 1000x or more relative to traditional methods. *Prismatic* is fast, free, open-sourced, and contains a graphical user interface.
+
 
 ## File Formats
 
@@ -49,6 +51,9 @@ For example, the `prismatic` command
 `./prismatic -i atoms.XYZ -2D 0 10 -4D 1 -3D 1 -o example.mrc`
 will produce "prism\_2Doutput\_example.mrc" with the 2D bright field image integrated from 0-10 mrad, the 3D output in "example.mrc", and the 4D output consisting of many individual 2D images with names of the form  "example\_X##\_Y##\_FP##.mrc" where the number values indicate the integer index of the scan in X and Y, accordingly. For example, if the simulation parameters are such that the probe step size is 1 Angstrom, then the file "example\_X1_Y2_FP2.mrc" contains the 2D intensity values corresponding to probe position (1.0, 2.0) Angstroms for the second frozen phonon configuration. For the time being, it will likely require some scripting on the user's part to wrangle the 4D output. In the future, we intend to introduce an hdf5 format to contain each of these outputs in a unified way. 
 
+## GPU Compute Capability
+
+The GPU version of `Prismatic` requires a CUDA-enabled GPU with compute capability >= 3.0
 
 <a name ="cli-options"></a>
 ## Using `Prismatic` from the command line

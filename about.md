@@ -41,7 +41,7 @@ one unit cell of (100) silicon
 
 ### Output
 
-Outputs are written to binary [.mrc](http://bio3d.colorado.edu/imod/doc/mrc_format.txt) files with float-precision. There are potentially 2D, 3D, and 4D output. For all outputs, there are at least two dimensions corresponding to X and Y probe positions. At each position, `Prismatic` can output the full probe (4D), a radially integrated ouput into virtual detector bins (3D), or further integrated over a range of detector bins to produce a single value for each scan position (2D). The 3D output is considered to be the primary result and is the only output produced by default; however, any combination of 2D, 3D, and 4D outputs may be produced with a single simulation. The metadata parameter `filename_output`, set with "-o" at the command line, is used as a base filename and modified depending on the output type.
+Outputs are written to binary [.mrc](http://bio3d.colorado.edu/imod/doc/mrc_format.txt) files with float-precision. There are potentially 2D, 3D, and 4D output. For all outputs, there are at least two dimensions corresponding to X and Y probe positions. At each position, `Prismatic` can output the full probe (4D), a radially integrated ouput placed into virtual detector bins (3D), or further integrated over a range of detector bins to produce a single value for each scan position (2D). The 3D output is considered to be the primary result and is the only output produced by default; however, any combination of 2D, 3D, and 4D outputs may be produced with a single simulation. The metadata parameter `filename_output`, set with "-o" at the command line, is used as a base filename and modified depending on the output type.
 
 * 2D output: Produced by adding the command line option "-2D ang\_min ang\_max" where "ang\_min" and "ang\_max" are the inner and outer integration angles in mrad. The resulting image will be composed as either "prism\_2Doutput\_" + `filename_output` or "multislice\_2Doutput\_" + `filename_output`. By default this is off.
 * 3D output: Controlled by command line option "-3D 0/1" where 0 or 1 is a boolean on/off. The 3D output is saved to `filename_output`. By default this is on.
@@ -49,7 +49,7 @@ Outputs are written to binary [.mrc](http://bio3d.colorado.edu/imod/doc/mrc_form
 
 For example, the `prismatic` command 
 `./prismatic -i atoms.XYZ -2D 0 10 -4D 1 -3D 1 -o example.mrc`
-will produce "prism\_2Doutput\_example.mrc" with the 2D bright field image integrated from 0-10 mrad, the 3D output in "example.mrc", and the 4D output consisting of many individual 2D images with names of the form  "example\_X##\_Y##\_FP##.mrc" where the number values indicate the integer index of the scan in X and Y, accordingly. For example, if the simulation parameters are such that the probe step size is 1 Angstrom, then the file "example\_X1_Y2_FP2.mrc" contains the 2D intensity values corresponding to probe position (1.0, 2.0) Angstroms for the second frozen phonon configuration. For the time being, it will likely require some scripting on the user's part to wrangle the 4D output. In the future, we intend to introduce an hdf5 format to contain each of these outputs in a unified way. 
+will produce "prism\_2Doutput\_example.mrc" with the 2D bright field image integrated from 0-10 mrad, the 3D output in "example.mrc", and the 4D output consisting of many individual 2D images with names of the form  "example\_X##\_Y##\_FP##.mrc" where the number values indicate the integer index of the scan in X and Y, accordingly. For example, if the simulation parameters are such that the probe step size is 1 Angstrom, then the file "example\_X1_Y2_FP2.mrc" contains the 2D intensity values corresponding to probe position (1.0, 2.0) Angstroms for the second frozen phonon configuration (assuming that the scan window parameters are set to defaults). For the time being, it will likely require some scripting on the user's part to wrangle the 4D output. In the future, we intend to introduce an hdf5 format to contain each of these outputs in a unified way. 
 
 ## GPU Compute Capability
 
@@ -93,8 +93,8 @@ The following options are available with `prismatic` (you can also print availab
 * --probe-ytilt (-ty) value : probe X tilt (in mrad)
 * --probe-defocus (-df) value : probe defocus (in Angstroms)
 * --probe-semiangle (-sa) value : maximum probe semiangle (in mrad)
-* --scan-window-x (-wx) min max : size of the window to scan the probe in X (in fractional coordinates between 0 and 1)
-* --scan-window-y (-wy) min max : size of the window to scan the probe in Y (in fractional coordinates between 0 and 1)
+* --scan-window-x (-wx) min max : determines the size of the area over the sample in which to scan the probe in X (in fractional coordinates between 0 and 1)
+* --scan-window-y (-wy) min max : determines the size of the area over the sample in which to scan the probe in Y (in fractional coordinates between 0 and 1)
 * --num-FP (-F) value : number of frozen phonon configurations to calculate
 * --thermal-effects (-te) bool : whether or not to include Debye-Waller factors (thermal effects)
 * --occupancy (-oc) bool : whether or not to consider occupancy values for likelihood of atoms existing at each site

@@ -80,8 +80,8 @@ Whenever we end up at a point in the calculation that we want to consume in para
 // helper function for dispatching work
 
 namespace Prismatic {
-        WorkDispatcher::WorkDispatcher(size_t _current, size_t _stop):
-					   current(_current), stop(_stop){};
+        WorkDispatcher::WorkDispatcher(size_t _current, size_t _stop): 
+        current(_current), stop(_stop){};
 
 		bool WorkDispatcher::getWork(size_t& job_start, size_t& job_stop, size_t num_requested, size_t early_cpu_stop){
 			std::lock_guard<std::mutex> gatekeeper(lock);

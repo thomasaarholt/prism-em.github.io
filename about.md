@@ -107,6 +107,7 @@ The following options are available with `prismatic` (you can also print availab
 <a name="pyprismatic-metadata"></a>
 ## List of `PyPrismatic` Metadata parameters
 
+
 **interpolationFactorX** : PRISM interpolation factor in x-direction  
 **interpolationFactorY** : PRISM interpolation factor in y-direction  
 **filenameAtoms** : filename containing input atom information in XYZ format (see [here](http://prism-em.com/about/) for more details)  

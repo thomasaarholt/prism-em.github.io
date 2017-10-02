@@ -41,7 +41,7 @@ The following dependencies are needed by `Prismatic`:
 * [CUDA Toolkit](https://developer.nvidia.com/cuda-toolkit) (*For GPU support*)  
 * Python 3, a good choice is [the Anaconda distribution](https://www.continuum.io/downloads) (*For the python package*, `PyPrismatic`)  
 * [Qt 5](https://www.qt.io/) (*For building the GUI*)  
-
+* [GCC 4-x](https://gcc.gnu.org/gcc-4.9/changes.html) *For non-Windows systems, note you cannot use GCC-5 or greater with `nvcc` currently, so if you are enabling GPU support you must have gcc-4.7, 4.8, or 4.9*
 `Prismatic` was developed using CUDA 8.0, but likely works with older versions as well and we welcome feedback from any user who attempts to do so (CUDA 7.0, 7.5 also have been reported to work).
 *Note: Even if you download a binary version of the GPU codes, you will still need to have the CUDA toolkit installed so that the `cuFFT` libraries can be found at runtime.*
 
@@ -271,13 +271,16 @@ Once configuration is complete, click `Generate` and a MSVS .sln file will be cr
 * [The CUDA Toolkit](https://developer.nvidia.com/cuda-downloads) (*For GPU support*)    
 * [The `cuPrismatic` library](#`cuPrismatic`) (*For GPU support*)  
 
+If your C compiler is `gcc`, you must have version 4.7-4.9 installed (gcc-5 or greater will cause crashes because the CUDA code is compiled with gcc-4).*  
 
-*The optional dependencies are only necessary if you wish to use the GPU code. You will also need an NVIDIA GPU with compute capability 3.0 or greater and will add the `--enable-gpu` to the installation command. More details can be found below*  
+*The optional dependencies are only necessary if you wish to use the GPU code. You will also need an NVIDIA GPU with compute capability 3.0 or greater and will add the `--enable-gpu` to the installation command. More details can be found below.
+
 
 
 
 <a name="installing-with-pip-cuda"></a>
 ### Installing `PyPrismatic` with Pip
+
 
 If you have installed the above dependencies and [setup your environmental variables](#environmental-setup), `PyPrismatic` can be installed easily with `pip` using either 
 

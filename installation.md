@@ -271,9 +271,9 @@ Once configuration is complete, click `Generate` and a MSVS .sln file will be cr
 * [The CUDA Toolkit](https://developer.nvidia.com/cuda-downloads) (*For GPU support*)    
 * [The `cuPrismatic` library](#`cuPrismatic`) (*For GPU support*)  
 
-If your C compiler is `gcc`, you must have version 4.7-4.9 installed (gcc-5 or greater will cause crashes because the CUDA code is compiled with gcc-4).*  
+If your C compiler is `gcc`, you **MUST** have version 4.7-4.9 installed (gcc-5 or greater will cause crashes because the CUDA code is compiled with gcc-4).  
 
-*The optional dependencies are only necessary if you wish to use the GPU code. You will also need an NVIDIA GPU with compute capability 3.0 or greater and will add the `--enable-gpu` to the installation command. More details can be found below.
+*The optional dependencies are only necessary if you wish to use the GPU code. You will also need an NVIDIA GPU with compute capability 3.0 or greater and will add the `--enable-gpu` to the installation command. More details can be found below.*
 
 
 

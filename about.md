@@ -16,6 +16,8 @@ Table of Contents
 
 ### Input
 
+**Note: Currently the input files must be encoded as ASCII text (UTF-8). If your text editor is using another encoding like UTF-16 you may experience errors**
+
 Input files containing the atomic coordinates should be in the following XYZ format.
 
 * 1 comment line

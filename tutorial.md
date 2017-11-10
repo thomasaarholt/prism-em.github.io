@@ -20,7 +20,7 @@ Within the source code of `Prismatic` is an "examples" folder that contains some
 <a name="tutorialdeca"></a>
 ## Prismatic GUI simulation of decahedral NP
 
-[Issues with this tutorial?  Email Colin at clophus@lbl.gov]
+[Issues with this tutorial?  Email Colin at "clophus" at "lbl.gov"]
 
 In this example we will walk you through the entire procedure for generating a STEM simulation of a decahedral nanoparticle. This simulation should match the result shown in the PRISM algorithm paper: [DOI:10.1186/s40679-017-0046-1](http://dx.doi.org/10.1186/s40679-017-0046-1), specifically Figures 3, 4 and 5. Below is an overview of the sample we will construct, and an example of image simulations generated from both the multislice method, and the PRISM algorithm with varying degrees of accuracy.
 

@@ -7,6 +7,7 @@ Table of Contents
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Output](#output)  
   - [GPU Compute Capability](#gpu-compute-capability)
   - [Command Line Options](#cli-options)
+  - [Parameter File](#parameter-file)
   - [List of `PyPrismatic` Metadata parameters](#pyprismatic-metadata)
 
 *Prismatic* is a CUDA/C++/Python software package for fast image simulation in scanning transmission electron microscopy (STEM). It includes parallel, data-streaming implementations of both the plane-wave reciprocal-space interpolated scattering matrix (PRISM) and multislice algorithms using multicore CPUs and CUDA-enabled GPU(s), in some cases achieving accelerations as high as 1000x or more relative to traditional methods. *Prismatic* is fast, free, open-sourced, and contains a graphical user interface.
@@ -53,6 +54,8 @@ For example, the `prismatic` command
 `./prismatic -i atoms.XYZ -2D 0 10 -4D 1 -3D 1 -o example.mrc`
 will produce "prism\_2Doutput\_example.mrc" with the 2D bright field image integrated from 0-10 mrad, the 3D output in "example.mrc", and the 4D output consisting of many individual 2D images with names of the form  "example\_X##\_Y##\_FP##.mrc" where the number values indicate the integer index of the scan in X and Y, accordingly. For example, if the simulation parameters are such that the probe step size is 1 Angstrom, then the file "example\_X1_Y2_FP2.mrc" contains the 2D intensity values corresponding to probe position (1.0, 2.0) Angstroms for the second frozen phonon configuration (assuming that the scan window parameters are set to defaults). For the time being, it will likely require some scripting on the user's part to wrangle the 4D output. In the future, we intend to introduce an hdf5 format to contain each of these outputs in a unified way. 
 
+
+
 ## GPU Compute Capability
 
 The GPU version of `Prismatic` requires a CUDA-enabled GPU with compute capability >= 3.0
@@ -65,6 +68,7 @@ The GPU version of `Prismatic` requires a CUDA-enabled GPU with compute capabili
 The following options are available with `prismatic` (you can also print available options and default values with `prismatic --help`), each documented as **_long form_** **_(short form)_** *parameters* : description
 
 * --input-file (-i) filename : filename containing input atom information in XYZ format (see [here](http://prism-em.com/about/) for more details)  
+* --param-file (-pf) filename : filename containing simulation parameters. This optional file can contain any number of parameters in the form of a text file with one entry per line of the form param:value.
 * --output-file(-o) filename : base output filename
 * --interp-factor (-f) number : PRISM interpolation factor, used for both X and Y
 * --interp-factor-x (-fx) number : PRISM interpolation factor in X
@@ -104,7 +108,11 @@ The following options are available with `prismatic` (you can also print availab
 * --save-3D-output (-3D) bool=true : Also save the 3D output at the detector for each probe (3D output mode)
 * --save-4D-output (-4D) bool=false : Also save the 4D output at the detector for each probe (4D output mode)
 
+<a name ="parameter-file"></a> 
 
+## Parameter File
+
+Input parameters may also be provided in the form a plain-text parameter file with one line per option of the form "option:args" without quotes. These options are the same CLI options described in the previous section. This is useful for sharing simulation parameters with collaborators as an .XYZ file with associated parameter file uniquely determines a simulation. A parameter file is also written by default every time `prismatic` is run or a simulation is run within the GUI. For the GUI, this parameter file is loaded at startup and thus populates the GUI with the previous simulation parameters for convenience.
 
 <a name="pyprismatic-metadata"></a>
 ## List of `PyPrismatic` Metadata parameters

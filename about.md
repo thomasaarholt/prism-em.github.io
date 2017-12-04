@@ -112,7 +112,7 @@ The following options are available with `prismatic` (you can also print availab
 
 ## Parameter File
 
-Input parameters may also be provided in the form a plain-text parameter file with one line per option of the form "option:args" without quotes. These options are the same CLI options described in the previous section. This is useful for sharing simulation parameters with collaborators as an .XYZ file with associated parameter file uniquely determines a simulation. A parameter file is also written by default every time `prismatic` is run or a simulation is run within the GUI. For the GUI, this parameter file is loaded at startup and thus populates the GUI with the previous simulation parameters for convenience.
+Input parameters may also be provided in the form a plain-text parameter file with one line per option of the form "option:args" without quotes. Any number of arguments can be provided, and if repeat values exist the most recent one will be effectively applied. These options are the same CLI options described in the previous section. This is useful for sharing simulation parameters with collaborators as an .XYZ file with associated parameter file uniquely determines a simulation. A parameter file is also written by default every time `prismatic` is run or a simulation is run within the GUI. For the GUI, this parameter file is loaded at startup and thus populates the GUI with the previous simulation parameters for convenience. The "Load Parameters" buttons may be used to populate the GUI from an existing file and the current parameters may be outputted to a custom file with "Save Parameters".
 
 <a name="pyprismatic-metadata"></a>
 ## List of `PyPrismatic` Metadata parameters

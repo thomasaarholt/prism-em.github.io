@@ -202,10 +202,6 @@ cellDim,atoms(:,4),atoms(:,1:3).*repmat(cellDim,[size(atoms,1) 1]),1,0.08);
 
 It's time to run *Prismatic*!  You can find the GUI installers [here](installers.md). For this tutorial, I will show screenshots from the OSX build, but the Windows version should be essentially identical. Once you have installed *Prismatic*, run the program *prismatic-gui.app* or *prismatic-gui.exe*. You should see the startup GUI:
 
-<img src="img/PrismaticScreenshotFull.png" width="828">
-
-![Prismatic screenshot 01](img/PrismaticScreenshotFull.png =828x)
-
 ![Prismatic screenshot 01](img/PrismaticScreenshotFull.png){:width="828px"}
 
 The first step is to click **Load Coords**, and then browse to the file we created previously, `AuDeca_amorCarbon.xyz`. Once you load the file, the cell dimensions should immediately update to the correct values:
@@ -215,6 +211,8 @@ The first step is to click **Load Coords**, and then browse to the file we creat
 Now we will set the simulation parameters.  For this simulation we will use the default values for the pixel size (0.1 Angstroms), the electron energy (80 keV) and the potential boundary (1 Angstrom). The pixel size specified here is **NOT** the probe spacing value, i.e. the pixel size of a microscope STEM image. Instead, this value is the pixel size used to sample the atomic potentials and compute the propagating electron waves. A smaller pixel size will allow higher scattering values - try changing this value to see the updated maximum scattering angle, \alpha_max.
 
 We will also use the default probe semiangle of 20 millirads, and probe alpha limit of 24 millirads. This first value defines the size of the probe forming aperture (or pupil function) of our simulation.  The second limit is for `PRISM` calculations - because the probe forming aperture has a soft edge, some pixels outside of 20 millirads must be included in the calculation.  The next several settings refer to the defocus, spherical aberration coefficients C3 and C5, number of frozen phonon configurations, slice thickness and output detector angle separation. We can leave all of these settings at the default values. At this point, we can verify our simulation cell has loaded correctly by performing a potential-only calculation by clicking the **Calculate Potentials** button. After a brief calculation, we can tweak the plotting outputs to clearly show the simulation cell: (square root intensity of all slices)
+
+![Prismatic screenshot 03](img/PrismaticScreen03.png){:width="495px"}
 
 <img src="img/PrismaticScreen03.png" width="495">
 

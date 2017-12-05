@@ -255,7 +255,51 @@ We will also leave the thermal effects box checked, even though we are performin
 
 
 ### 7 - Generate final image outputs.
-[In Progress]
+
+After the simulation is completed, you have two ways to analyze the results. The first is directly inside of the Prismatic program. Clicking on the **Output** tab at the top of the imaging panel will bring up the 3D interactive output. You can now move the inner and outer detector angles using the sliders below. Once you have formed the desired image, the **Save Current Image** button can be used to export it. For example, below I have created a virtual bright field (BF) image by using an annular range of 0 - 20 millirads:
+
+![Prismatic screenshot 08](img/PrismaticScreen08.png){:width="375"}
+
+Better atomic contrast (especially for weakly scattering atoms) can be obtained with an annular bright field (ABF). Other types of images we might record such as annular dark field (ADF) or high angle annular dark field (HAADF) images are also shown below. The ability to set the detector position after the simulation has completed is why we typically export the STEM imaging signal as a function of scattering angle, with finely spaced angular steps.
+
+![Prismatic screenshot 09](img/PrismaticScreen09.png){:width="600"}
+
+The other way is to use external software to plots images taken from the saved .mrc file.  For example, in Matlab we might run something like:
+
+```matlab
+mrc = mrcReader('/Users/cophus/STEMsims/DecaSimulation.mrc');
+stack = permute(mrc.stack,[2 3 1]);
+
+figure(1)
+clf
+
+% bright field image
+axes('position',[0.0 0.5 0.5 0.5]); 
+imagesc([sum(stack(:,:,1:20),3)]); 
+axis equal off
+
+% annular bright field image
+axes('position',[0.5 0.5 0.5 0.5]); 
+imagesc([sum(stack(:,:,11:20),3)]); 
+axis equal off
+
+% annular dark field image
+axes('position',[0.0 0.0 0.5 0.5]); 
+imagesc([sum(stack(:,:,21:40),3)]); 
+axis equal off
+
+% high angle annular dark field image
+axes('position',[0.5 0.0 0.5 0.5]); 
+imagesc([sum(stack(:,:,61:end),3)]); 
+axis equal off
+
+colormap(gray(256))
+
+```
+
+Note that the .mrc data is written out in c array ordering, and so I permute the data to move the angular range to the third dimension, and the probe coordinates from dimensions (2,3) to (1,2). I also plot the 4 images into 4 different axes, because each requires a different colour range. This script produces the follow figure
+
+![Prismatic screenshot 10](img/PrismaticScreen10.png){:width="555"}
 
 
 

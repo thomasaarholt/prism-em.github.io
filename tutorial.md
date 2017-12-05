@@ -297,7 +297,7 @@ colormap(gray(256))
 
 ```
 
-Note that the .mrc data is written out in c array ordering, and so I permute the data to move the angular range to the third dimension, and the probe coordinates from dimensions (2,3) to (1,2). I also plot the 4 images into 4 different axes, because each requires a different colour range. This script produces the follow figure
+Note that the .mrc data is written out in c array ordering, and so I permute the data to move the angular range to the third dimension, and the probe coordinates from dimensions (2,3) to (1,2). I also plot the 4 images into 4 different axes, because each requires a different colour range. This script produces the follow figure:
 
 ![Prismatic screenshot 10](img/PrismaticScreen10.png){:width="555"}
 

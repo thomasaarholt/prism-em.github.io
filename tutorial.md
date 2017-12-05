@@ -199,10 +199,35 @@ cellDim,atoms(:,4),atoms(:,1:3).*repmat(cellDim,[size(atoms,1) 1]),1,0.08);
 
 
 ### 4 - Import atoms into Prismatic and set parameters.
-[In Progress]
+
+It's time to run *Prismatic*!  You can find the GUI installers [here](installers.md). For this tutorial, I will show screenshots from the OSX build, but the Windows version should be essentially identical. Once you have installed *Prismatic*, run the program *prismatic-gui.app* or *prismatic-gui.exe*. You should see the startup GUI:
+
+<img src="img/PrismaticScreenshotFull.png" width="828">
+
+The first step is to click **Load Coords**, and then browse to the file we created previously, `AuDeca_amorCarbon.xyz`. Once you load the file, the cell dimensions should immediately update to the correct values:
+
+<img src="img/PrismaticScreen02.png" width="271">
+
+Now we will set the simulation parameters.  For this simulation we will use the default values for the pixel size (0.1 Angstroms), the electron energy (80 keV) and the potential boundary (1 Angstrom). The pixel size specified here is **NOT** the probe spacing value, i.e. the pixel size of a microscope STEM image. Instead, this value is the pixel size used to sample the atomic potentials and compute the propagating electron waves. A smaller pixel size will allow higher scattering values - try changing this value to see the updated maximum scattering angle, \alpha_max.
+
+We will also use the default probe semiangle of 20 millirads, and probe alpha limit of 24 millirads. This first value defines the size of the probe forming aperture (or pupil function) of our simulation.  The second limit is for `PRISM` calculations - because the probe forming aperture has a soft edge, some pixels outside of 20 millirads must be included in the calculation.  The next several settings refer to the defocus, spherical aberration coefficients C3 and C5, number of frozen phonon configurations, slice thickness and output detector angle separation. We can leave all of these settings at the default values. At this point, we can verify our simulation cell has loaded correctly by performing a potential-only calculation by clicking the **Calculate Potentials** button. After a brief calculation, we can tweak the plotting outputs to clearly show the simulation cell: (square root intensity of all slices)
+
+<img src="img/PrismaticScreen03.png" width="495">
+
+
+The final set of simulation parameters will strongly affect the required simulation time. The first two values refer to the `PRISM` interpolation factors.  The output probe will only be calculated inside the cropping window, with a size given by the simulation cell size divided by the interpolation factor(s). These factors can (and should) be different in the x and y directions if the simulation cell is not square. For example, for a simulation cell size of 400 x 100 Angstroms, if we used interpolation factors of 20 and 20, the output cropped cell would be 20 x 5 Angstroms. The smaller dimension of 5 Angstroms is almost certainly too small to hold a STEM probe. It would be much better to use interpolation factors of 20 and 5, for a cropped region of 20 x 20 Angstroms.
+
+For our simulation, we are going to start with interpolation factors of 20 and 20, giving a cropped output probe size of 100 / 20 = 5 Angstroms. In the next section, we will test this interpolation factor for accuracy by comparing it with multislice simulations.  We can leave the other settings at the default values, i.e. the probe tilt, probe step size and scan window. The scan window values are fractional, ranging from 0 to 1.  Values of 0 and 0.99999 will span the simulation cell without duplicating the edge pixels (0 and 1). Your settings should be:
+
+<img src="img/PrismaticScreen04.png" width="250">
+
+
 
 ### 5 - Test PRISM vs Multislice accuracy.
+
 [In Progress]
+
+
 
 ### 6 - Run PRISM simulation, save output as .mrc.
 [In Progress]

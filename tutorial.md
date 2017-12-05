@@ -203,6 +203,7 @@ cellDim,atoms(:,4),atoms(:,1:3).*repmat(cellDim,[size(atoms,1) 1]),1,0.08);
 It's time to run *Prismatic*!  You can find the GUI installers [here](installers.md). For this tutorial, I will show screenshots from the OSX build, but the Windows version should be essentially identical. Once you have installed *Prismatic*, run the program *prismatic-gui.app* or *prismatic-gui.exe*. You should see the startup GUI:
 
 <img src="img/PrismaticScreenshotFull.png" width="828">
+[Prismatic screenshot 01](img/PrismaticScreenshotFull.png =828x)
 
 The first step is to click **Load Coords**, and then browse to the file we created previously, `AuDeca_amorCarbon.xyz`. Once you load the file, the cell dimensions should immediately update to the correct values:
 
@@ -213,7 +214,6 @@ Now we will set the simulation parameters.  For this simulation we will use the 
 We will also use the default probe semiangle of 20 millirads, and probe alpha limit of 24 millirads. This first value defines the size of the probe forming aperture (or pupil function) of our simulation.  The second limit is for `PRISM` calculations - because the probe forming aperture has a soft edge, some pixels outside of 20 millirads must be included in the calculation.  The next several settings refer to the defocus, spherical aberration coefficients C3 and C5, number of frozen phonon configurations, slice thickness and output detector angle separation. We can leave all of these settings at the default values. At this point, we can verify our simulation cell has loaded correctly by performing a potential-only calculation by clicking the **Calculate Potentials** button. After a brief calculation, we can tweak the plotting outputs to clearly show the simulation cell: (square root intensity of all slices)
 
 <img src="img/PrismaticScreen03.png" width="495">
-
 
 The final set of simulation parameters will strongly affect the required simulation time. The first two values refer to the `PRISM` interpolation factors.  The output probe will only be calculated inside the cropping window, with a size given by the simulation cell size divided by the interpolation factor(s). These factors can (and should) be different in the x and y directions if the simulation cell is not square. For example, for a simulation cell size of 400 x 100 Angstroms, if we used interpolation factors of 20 and 20, the output cropped cell would be 20 x 5 Angstroms. The smaller dimension of 5 Angstroms is almost certainly too small to hold a STEM probe. It would be much better to use interpolation factors of 20 and 5, for a cropped region of 20 x 20 Angstroms.
 

@@ -203,7 +203,8 @@ cellDim,atoms(:,4),atoms(:,1:3).*repmat(cellDim,[size(atoms,1) 1]),1,0.08);
 It's time to run *Prismatic*!  You can find the GUI installers [here](installers.md). For this tutorial, I will show screenshots from the OSX build, but the Windows version should be essentially identical. Once you have installed *Prismatic*, run the program *prismatic-gui.app* or *prismatic-gui.exe*. You should see the startup GUI:
 
 <img src="img/PrismaticScreenshotFull.png" width="828">
-[Prismatic screenshot 01](img/PrismaticScreenshotFull.png =828x)
+
+![Prismatic screenshot 01](img/PrismaticScreenshotFull.png =828x)
 
 The first step is to click **Load Coords**, and then browse to the file we created previously, `AuDeca_amorCarbon.xyz`. Once you load the file, the cell dimensions should immediately update to the correct values:
 

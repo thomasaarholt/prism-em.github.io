@@ -225,12 +225,34 @@ For our simulation, we are going to start with interpolation factors of 20 and 2
 
 ### 5 - Test PRISM vs Multislice accuracy.
 
-[In Progress]
+The `PRISM` algorithm is very fast - for a given interpolation factor *f*, it can provide a speedup of *f^2* to *f^4* relative to the multislice calculation time, depending on the simulation cell dimensions and the calculation parameters. However, it must sacrifice some accuracy to do so, with the error increasing as the interpolation factor *f* is increased. Ideally we want the error relative to multislice to be <1%, or even <0.1%, but this may not always be possible due to limited calculation times. Thus when choosing a value for *f*, we must balance accuracy against the time we are willing to alot for a given calculation.
+
+Now, we will compare the `PRISM` algorithm with the `multislice` algorithm, using a tool build into *Prismatic*.  Click on the *Probe Analyzer* button at the top of the image panel.  Immediately you should see an array of probe images below the atomic potential. Ignore the uninitialized images for now. Generally, we want to test the accuracy of `PRISM` vs `multislice` using a region of the sample where the probe will broaden the most. Therefore change the both X and Y settings next to the **calculate** button on the image panel to 50 Angstroms. Then, click the **calculate** button.  Note that even with a GPU, this calculation should be relatively fast (the settings on the bottom right panel control the number of CPU and GPU threads). You should now see:
+
+![Prismatic screenshot 05](img/PrismaticScreen05.png){:width="640px"}
+
+Note that the probe location is shown as a large white cross at the center of the image (50, 50 Angstroms). The bottom 6 panels compare `PRISM` simulations to `multislice` simulations. Huge artifacts are immediately visible in the `PRISM` Fourier space probe image - this is due the probe being far larger than the cropping region of 5 x 5 Angstroms for an interpolation factor of 20. Looking at the multislice probe image in realspace (top center panel) we see the probe is at least twice as large as this cropping region. Therefore we can next try halving the interpolation factor. Set both the x and y direction intepolation factors to 10, and then click the **calculate** button on the image panel.  This calculation will take approximately 4 times longer, since the `PRISM` compact S-matrix now contains 4 times as many plane waves. Once the calculation is complete, you should see:
+
+![Prismatic screenshot 06](img/PrismaticScreen06.png){:width="650px"}
+
+It is immediately obvious that the `PRISM` probe is significantly more accurate with an interpolation factor of 10 as opposed to 20.  Small ringing artifacts are present in the Fourier space probe image due to the cropping window clipping the tails of the probe in realspace, but these artifacts are fairly minor.  The various intensity features are very similar in both methods, which you can see in more detail by clicking the **Log Scale** box to scale the intensities.  The edge of the probe's aperture function shows some differences, but these are primarily due to the different sampling scales. Overall, this interpolation factor of 10 would be sufficiently accurate for an exploratory simulation, but probably not for a publication. Thus, we will halve the interpolation again to improve the accuracy further. Set both the x and y direction intepolation factors to 5, and then click the **calculate** button on the image panel. This calculation will require a few minutes on a fast modern computer, perhaps ten on an older laptop.  If you have a GPU (or more than one) it will be very fast. Once this calculation is complete, you will see:
+
+![Prismatic screenshot 07](img/PrismaticScreen07.png){:width="658px"}
+
+These settings should produce a high accuracy `PRISM` simulation. The correlation function plotted gives a good idea of the accuracy of the simulation, which is over 99%. Checking the **Log Scale** box shows that `PRISM` has captured all of the fine details of the STEM probe in Fourier space. 
 
 
 
-### 6 - Run PRISM simulation, save output as .mrc.
-[In Progress]
+### 6 - Run PRISM simulation, save 3D output as .mrc.
+
+We are now almost ready to run the full `PRISM` simulation in *Prismatic*. First, make sure the desited number of CPU threads and GPUs / GPU streams are selected. Using all of your computer's power will speed up the simulation, but could make watching videos on Youtube while the simulation runs difficult. Additionally, the CPU threads will run far more slowly than any GPU streams (if available).  Therefore a GPU-only simulation is a common configuration. 
+
+The other consideration is which outputs to save. By far the most common use-case is to output the 3D scattering signal, created by integrating radially in Fourier space. This allows us to create virtual detector images with any annular ranges. For example, in this simulation with a 20 millirad STEM probe, we could sum the output detectors from 1 to 20 millirads to form a bright field image. The output file name must also be specified - **make certain you have specified a valid output path**.  For example, on my OSX machine I am using the following output path and file name:
+
+/Users/cophus/STEMsims/DecaSimulation.mrc 
+
+We will also leave the thermal effects box checked, even though we are performing a single frozen phonon simulation. For a more accurate output, we can in the future run 8 or even 16 frozen phonon configurations. The final few settings control whether the simulation is a `PRISM` or `multislice` simulation, and whether to use streaming mode or not. The streaming mode will use less GPU RAM, but will take longer to compute. For this simulation, I am using 12 CPU threads and 0 GPUs, since my OSX workstation does not not have a CUDA capable GPU. Once all settings are correct, click the **Full Calculation** button.  Even without a GPU, this simulation will complete in under an hour on my machine.
+
 
 ### 7 - Generate final image outputs.
 [In Progress]

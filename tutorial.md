@@ -206,6 +206,8 @@ It's time to run *Prismatic*!  You can find the GUI installers [here](installers
 
 ![Prismatic screenshot 01](img/PrismaticScreenshotFull.png =828x)
 
+![Prismatic screenshot 01](img/PrismaticScreenshotFull.png){:width="828px"}
+
 The first step is to click **Load Coords**, and then browse to the file we created previously, `AuDeca_amorCarbon.xyz`. Once you load the file, the cell dimensions should immediately update to the correct values:
 
 <img src="img/PrismaticScreen02.png" width="271">

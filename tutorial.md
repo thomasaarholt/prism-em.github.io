@@ -220,6 +220,7 @@ For our simulation, we are going to start with interpolation factors of 20 and 2
 
 ![Prismatic screenshot 04](img/PrismaticScreen04.png){:width="250px"}
 
+a
 
 
 ### 5 - Test PRISM vs Multislice accuracy.

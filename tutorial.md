@@ -216,14 +216,11 @@ We will also use the default probe semiangle of 20 millirads, and probe alpha li
 
 The final set of simulation parameters will strongly affect the required simulation time. The first two values refer to the `PRISM` interpolation factors.  The output probe will only be calculated inside the cropping window, with a size given by the simulation cell size divided by the interpolation factor(s). These factors can (and should) be different in the x and y directions if the simulation cell is not square. For example, for a simulation cell size of 400 x 100 Angstroms, if we used interpolation factors of 20 and 20, the output cropped cell would be 20 x 5 Angstroms. The smaller dimension of 5 Angstroms is almost certainly too small to hold a STEM probe. It would be much better to use interpolation factors of 20 and 5, for a cropped region of 20 x 20 Angstroms.
 
-For our simulation, we are going to start with interpolation factors of 20 and 20, giving a cropped output probe size of 100 / 20 = 5 Angstroms. In the next section, we will test this interpolation factor for accuracy by comparing it with multislice simulations.  We can leave the other settings at the default values, i.e. the probe tilt, probe step size and scan window. The scan window values are fractional, ranging from 0 to 1.  Values of 0 and 0.99999 will span the simulation cell without duplicating the edge pixels (0 and 1). Your settings should be:
-
-![Prismatic screenshot 03](img/PrismaticScreen03.png){:width="495px"}
-
+For our simulation, we are going to start with interpolation factors of 20 and 20, giving a cropped output probe size of 100 / 20 = 5 Angstroms. In the next section, we will test this interpolation factor for accuracy by comparing it with multislice simulations.  We can leave the other settings at the default values, i.e. the probe tilt, probe step size and scan window. The scan window values are fractional, ranging from 0 to 1.  Values of 0 and 0.99999 will span the simulation cell without duplicating the edge pixels (0 and 1). Your settings should now be:
 
 ![Prismatic screenshot 04](img/PrismaticScreen04.png){:width="250px"}
 
-a
+
 
 
 ### 5 - Test PRISM vs Multislice accuracy.

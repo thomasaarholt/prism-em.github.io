@@ -6,6 +6,10 @@
 [Prismatic-OSX-v1.0.dmg](https://github.com/prism-em/prismatic-binaries/raw/master/Mac/Prismatic-v1.0.dmg.zip)  
 
 [Prismatic-OSX-v1.1.dmg (OSX 10.12.6 Sierra)](https://drive.google.com/open?id=1S1utdTErovvkf-o5P4gTRB5IeC4smYqZ)
+
+[Prismatic-OSX-v1.1.dmg (OSX 10.13.1 High Sierra)](https://drive.google.com/open?id=1OnclVmfDv9oIAXVdTbq6dp94DDiLuWfk) 
+
+
 ## Windows 
 
 

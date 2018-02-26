@@ -132,7 +132,7 @@ You can find the above code (with some included plotting code) at [this link](da
 
 ### 3 - Export coordinates in .xyz format for `Prismatic`.
 
-`Prismatic` uses the same .xyz input format as `computem`.  As in most .xyz files, the first two rows are reserved for comments and each following row contains "space-separated" values. The first row can be set to anything, typically it is used for a descriptive title of the simulation cell. We will use the second row to list the three values specified above as "cellDim" which represent the size of the simulatin cell in Angstroms.  All following rows consist of columns containing six values:
+`Prismatic` uses the same .xyz input format as `computem`.  As in most .xyz files, the first two rows are reserved for comments and each following row contains "space-separated" values. The first row can be set to anything, typically it is used for a descriptive title of the simulation cell. We will use the second row to list the three values specified above as "cellDim" which represent the size of the simulation cell in Angstroms.  All following rows consist of columns containing six values:
 
 1. atomic number
 2. x 
@@ -227,7 +227,7 @@ For our simulation, we are going to start with interpolation factors of 20 and 2
 
 The `PRISM` algorithm is very fast - for a given interpolation factor *f*, it can provide a speedup of *f^2* to *f^4* relative to the multislice calculation time, depending on the simulation cell dimensions and the calculation parameters. However, it must sacrifice some accuracy to do so, with the error increasing as the interpolation factor *f* is increased. Ideally we want the error relative to multislice to be <1%, or even <0.1%, but this may not always be possible due to limited calculation times. Thus when choosing a value for *f*, we must balance accuracy against the time we are willing to alot for a given calculation.
 
-Now, we will compare the `PRISM` algorithm with the `multislice` algorithm, using a tool build into *Prismatic*.  Click on the *Probe Analyzer* button at the top of the image panel.  Immediately you should see an array of probe images below the atomic potential. Ignore the uninitialized images for now. Generally, we want to test the accuracy of `PRISM` vs `multislice` using a region of the sample where the probe will broaden the most. Therefore change the both X and Y settings next to the **calculate** button on the image panel to 50 Angstroms. Then, click the **calculate** button.  Note that even with a GPU, this calculation should be relatively fast (the settings on the bottom right panel control the number of CPU and GPU threads). You should now see:
+Now, we will compare the `PRISM` algorithm with the `multislice` algorithm, using a tool built into *Prismatic*.  Click on the *Probe Analyzer* button at the top of the image panel.  Immediately you should see an array of probe images below the atomic potential. Ignore the uninitialized images for now. Generally, we want to test the accuracy of `PRISM` vs `multislice` using a region of the sample where the probe will broaden the most. Therefore change the both X and Y settings next to the **calculate** button on the image panel to 50 Angstroms. Then, click the **calculate** button.  Note that even without a GPU, this calculation should be relatively fast (the settings on the bottom right panel control the number of CPU and GPU threads). You should now see:
 
 ![Prismatic screenshot 05](img/PrismaticScreen05.png){:width="640px"}
 

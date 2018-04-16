@@ -555,7 +555,7 @@ void generateProjectedPotentials(Parameters<PRISMATIC_FLOAT_PRECISION>& pars,
 
 ~~~
 
-A new idiom you see here is `#ifdef PRISM_BUILDING_GUI`. There is a progress bar that pops up in the GUI, and this macro is used to indicate whether or not to update it. When this source file is included in the CLI, `prism`, this macro is not defined, and thus the CLI doesn't need any of the Qt libraries that would be required to define this progress bar.
+A new idiom you see here is `#ifdef PRISM_BUILDING_GUI`. There is a progress bar that pops up in the GUI, and this macro is used to indicate whether or not to update it. When this source file is included in the CLI, `prismatic`, this macro is not defined, and thus the CLI doesn't need any of the Qt libraries that would be required to define this progress bar.
 
 Next we calculate the actual potentials, and this is the first time we encounter the `WorkDispatcher` in action. In this case, each slice of the potential is a different job, and  CPU threads will be spawned to populate each slice.
 
@@ -1827,7 +1827,7 @@ From the beginning of this project, the intention was to create an cross-platfor
 
 That's a nice philosophy, but a lot easier said than done. The main challenge here is that NVIDIA has its own compiler, `nvcc` for compiling CUDA code, Qt has its own compiler, `moc`, which is an intermediate compiler that takes Qt specific directives for graphical objects and generates more C++ code which is then compiled with a normal C++ compiler like `gcc`. Getting source code to compile can be challenging on its own, so getting three different compilers to play nicely together alongsisde modern C++11 features and have it all run on Linux, Windows, and Mac was a bit daunting.
 
-`CMake` was absolutely critical to making this possible. Not only can it handle the process of managing the different compilers and combining all of the intermediate results, but it also made it easy for me to create additional configuration options. For example, if you are just compiling *Prismatic* for the CLI, `prism`, to run on a cluster -- you probably don't care about about building the GUI, which requires several libraries from the rather large Qt framework. By setting the CMake option `PRISM_ENABLE_GPU=0`, simple logic prevents compilation from ever including anything about Qt. The same goes for enabling GPU support. So by default, *Prismatic* compiles under the simplest of settings, only building the CLI with command line support without GPUs, and then the user can expand from there based upon their needs.
+`CMake` was absolutely critical to making this possible. Not only can it handle the process of managing the different compilers and combining all of the intermediate results, but it also made it easy for me to create additional configuration options. For example, if you are just compiling *Prismatic* for the CLI, `prismatic`, to run on a cluster -- you probably don't care about about building the GUI, which requires several libraries from the rather large Qt framework. By setting the CMake option `PRISM_ENABLE_GPU=0`, simple logic prevents compilation from ever including anything about Qt. The same goes for enabling GPU support. So by default, *Prismatic* compiles under the simplest of settings, only building the CLI with command line support without GPUs, and then the user can expand from there based upon their needs.
 
 ### Conclusion
 

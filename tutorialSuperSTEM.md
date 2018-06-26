@@ -1,8 +1,8 @@
-# Prismatic GUI Tutorial for SuperSTEM Summer School
+## Prismatic GUI Tutorial for SuperSTEM Summer School
 ---
 
 
-![Prismatic screenshot 01](img/SuperSTEM_topbar.png){:width="1184px"}
+![Prismatic screenshot 01](img/SuperSTEMtopbar.png){:width="1184px"}
 
 This tutorial is for the 2018 SuperSTEM summer school. We are placing it online to make it available for all users of Prismatic.
 

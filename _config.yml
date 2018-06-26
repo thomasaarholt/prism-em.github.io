@@ -29,6 +29,7 @@ navbar-links:
   Installation: "installation"
   Tutorials:
     - Tutorial: "tutorial"
+    - SuperSTEM Tutorial: "tutorialSuperSTEM"
     - Source Code Walkthrough: "source-code"
   Resources:
     - About: "about"

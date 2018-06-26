@@ -1,5 +1,3 @@
-## Prismatic GUI Tutorial for SuperSTEM Summer School
----
 
 
 ![Prismatic screenshot 01](img/SuperSTEMtopbar.png){:width="1184px"}

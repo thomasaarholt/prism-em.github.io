@@ -2,7 +2,7 @@
 ---
 
 
-![Prismatic screenshot 01](img/topbarSuperSTEM.png){:width="1184px"}
+![Prismatic screenshot 01](img/SuperSTEM_topbar.png){:width="1184px"}
 
 This tutorial is for the 2018 SuperSTEM summer school. We are placing it online to make it available for all users of Prismatic.
 
@@ -29,12 +29,30 @@ text
 text
 
 <a name="step3"></a>
-### 3 - Set up microscope parameters
+### 3 - Set microscope parameters and simulation settings.
 text
 
 <a name="step4"></a>
-### 3 - Set up microscope parameters
+### 4 - Calculate and view projected atomic potentials.
 text
+
+<a name="step5"></a>
+### 5 - Determine required unit cell tiling, examine PRISM accuracy.
+text
+
+<a name="step6"></a>
+### 6 - Run simulations using the PRISM algorithm.
+text
+
+<a name="step7"></a>
+### 7 - Save simulation results, save output images.
+text
+
+<a name="step8"></a>
+### 8 - Further simulations.
+text
+
+
 
 
 

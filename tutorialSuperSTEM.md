@@ -94,16 +94,44 @@ You should see x, y and z cell dimensions of 22.3, 12.2, and 7.7 Angstroms respe
 
 Besides loading and saving, this settings box shows the cell dimensions and allows us to tile the unit cell along the three primary dimensions. Initially, we are going to skip over the **Tile Cells** settings, because they require very careful analysis to set correctly.
 
-### Simulation Settings:
+### Simulation Settings Block 1:
 
 The first two buttons, **Load Parameters** and **Save Parameters** can save and load text files containing `Prismatic` settings. These files can be used in the GUI or command line versions of `Prismatic` and thus are very useful when submitting batch simulations.
 
-The first setting, **Pixel Size**, is extremely important because it controls the high angle scattering accuracy of the simulation. This is because the pixel size in real space defines the maximum coordinate value in Fourier space, using the formula:
+The first setting, **Pixel Size**, is extremely important because it controls the high angle scattering accuracy of the simulation. This is because the pixel size <img src="https://latex.codecogs.com/svg.latex?\Large&space;p"/>
+ in real space defines the maximum inverse spatial coordinate value in Fourier space <img src="https://latex.codecogs.com/svg.latex?\Large&space;q_{max}"/>, using the formula:
 
-<img src="https://latex.codecogs.com/svg.latex?\Large&space;x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}" title="\Large x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}" />
+<img src="https://latex.codecogs.com/svg.latex?\Large&space;q_{max}=\frac{1}{2 p}"/>
+
+`Prismatic` also includes a mathematical function to prevent an artifact called "aliasing" from occurring, which happens because of the periodicity assumption of the discrete Fourier transform. `Prismatic` uses an "anti-aliasing" aperture at 0.5 times the maximum scattering angle, which further reduces the maximum effective scattering angle by a factor of 0.5. This fact combined with the above equation and the formula 
+<img src="https://latex.codecogs.com/svg.latex?\Large&space;\alpha = \lambda q "/> gives the maximum scattering angle <img src="https://latex.codecogs.com/svg.latex?\Large&space;\alpha_{max}"/> equation
+
+
+<img src="https://latex.codecogs.com/svg.latex?\Large&space;\alpha_{max} = \frac{\lambda}{4 p}"/>
+
+where <img src="https://latex.codecogs.com/svg.latex?\Large&space;\lambda "/>  is the relativistic electron wavelength. As an example, consider a case where we want to simulate 300 kV electron scattering angles up to 100 mrads. At 300 kV, <img src="https://latex.codecogs.com/svg.latex?\Large&space;\lambda \approx "/> 0.02 Angstroms. Plugging these values into the above equation gives
+
+<img src="https://latex.codecogs.com/svg.latex?\Large&space;p = \frac{\lambda}{4 \alpha_{max}} = \frac{0.02}{(4)(0.1)} = 0.05"/>
+
+i.e. we require a 0.05 Angstrom pixel size <img src="https://latex.codecogs.com/svg.latex?\Large&space;p"/> in order to reach a maximum scattering angle <img src="https://latex.codecogs.com/svg.latex?\Large&space;\alpha_{max}"/> of 100 mrads.
 
 
 
+For this tutorial, we will use a **Pixel Size** value of <span style="color:red">**0.1 Angstroms**</span> in order to save time, and we will set the accelerating voltage (in kV) using the **Energy** box to <span style="color:red">**100 kV**</span>. Note that including these settings will immediately update the wavelength <img src="https://latex.codecogs.com/svg.latex?\Large&space;\lambda"/> and maximum scattering angle <img src="https://latex.codecogs.com/svg.latex?\Large&space;\alpha_{max}"/> displayed values to
+
+<img src="https://latex.codecogs.com/svg.latex?\Large&space;\lambda = "/> 0.037 Angstroms
+
+<img src="https://latex.codecogs.com/svg.latex?\Large&space;q_{max} = "/> 92.5 mrads
+
+The next value  **Potential Bound** specifies how far from the atomic core we will integrate the projected potentials. Set this value to <span style="color:red">**2 Angstroms**</span>
+ for reasonable accuracy.
+
+
+
+
+### Simulation Settings Block 2:
+
+The next set of parameters describe the values required to describe the incident converged electron probe. The semiangle of the probe specified by a condenser aperture is given by the **Probe Semiangle** box, which you should set to <span style="color:red">**30 mrads**</span>. For the `PRISM` algorithm we also need to specify the **Probe <img src="https://latex.codecogs.com/svg.latex?\Large&space;\alpha"/> limit**, which corresponds to the maximum scattering angle computed for the Compact S-Matrix. This value should be set slightly larger than the **Probe Semiangle**, so we will use a value of <span style="color:red">**32 mrads**</span> for the **Probe <img src="https://latex.codecogs.com/svg.latex?\Large&space;\alpha"/> limit**. 
 
 
 

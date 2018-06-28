@@ -18,7 +18,7 @@
 
 &nbsp;
 <a name="step1"></a>
-## 1 - Download and Install the GUI Version of Prismatic
+## 1 - Download and Install the `Prismatic` GUI
 
 The `Prismatic` GUI has been compiled for both Windows and OSX. For each of these operating systems, there are two possible versions of Prismatic you may wish to install.
 
@@ -38,15 +38,13 @@ If you are running OSX 10.13.1 (High Sierra), install:
 If you are running OSX 10.12.6 (Sierra), install:
 [Prismatic-OSX-v1.1.dmg (Sierra)](https://drive.google.com/open?id=1S1utdTErovvkf-o5P4gTRB5IeC4smYqZ)
 
-The GPU portions of `Prismatic` were developed using CUDA. This means that Apple laptops and Mac desktops running AMD GPUs cannot make use of CUDA GPU code. However, the PRISM algorithm is quite fast. Therefore you may be able to run STEM simulations on Apple laptops in reasonable times.
-
-After downloading and installing `Prismatic`, run it to verify the installation has succeeded.
+The GPU portions of `Prismatic` were developed using CUDA. This means that Apple laptops and Mac desktops running AMD GPUs cannot make use of CUDA GPU code. However, the PRISM algorithm is quite fast. Therefore you may be able to run STEM simulations on Apple laptops in reasonable times. After downloading and installing `Prismatic`, run it to verify the installation has succeeded.
 
 
 
 &nbsp;
 <a name="step2s"></a>
-## 2 - Download atomic coordinate files, load into Prismatic
+## 2 - Download atomic coordinates, load into `Prismatic`
 
 
 The sample we are going to examine in this tutorial is barium neodymium titanate. This material has a complex unit cell, with the tungsten bronze parent structure. From this unit cell, we have constructed 5 different zone axes by projecting the unit cell into new pseudo-orthogonal unit cells. This methodology is described below.
@@ -78,12 +76,36 @@ After downloading these files, load the first file ([0 1 0] zone axis) into `Pri
 
 ![SuperSTEM screenshot 01](img/SuperSTEM/screenshot01.png){:width="960"}
 
+You should see x, y and z cell dimensions of 22.3, 12.2, and 7.7 Angstroms respectively.
+
+
+
+
+
+
+
 
 
 &nbsp;
 <a name="step3"></a>
 ## 3 - Set microscope parameters and simulation settings.
-text
+
+### Sample Settings:
+
+Besides loading and saving, this settings box shows the cell dimensions and allows us to tile the unit cell along the three primary dimensions. Initially, we are going to skip over the **Tile Cells** settings, because they require very careful analysis to set correctly.
+
+### Simulation Settings:
+
+The first two buttons, **Load Parameters** and **Save Parameters** can save and load text files containing `Prismatic` settings. These files can be used in the GUI or command line versions of `Prismatic` and thus are very useful when submitting batch simulations.
+
+The first setting, **Pixel Size**, is extremely important because it controls the high angle scattering accuracy of the simulation. This is because the pixel size in real space defines the maximum coordinate value in Fourier space, using the formula:
+
+<img src="https://latex.codecogs.com/svg.latex?\Large&space;x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}" title="\Large x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}" />
+
+
+
+
+
 
 &nbsp;
 <a name="step4"></a>

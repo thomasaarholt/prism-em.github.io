@@ -217,7 +217,7 @@ Thus we arrive at the following conclusion: the total size of the simulation req
 
 ![SuperSTEM screenshot 09](img/SuperSTEM/screenshot09.png){:width="1272"}
 
-For the next sections of this tutorial, we will therefore set **Tile Cells** to <span style="color:red">**x = 2, y = 4, z = 52 unit cells**</span>.  If your computer is very slow, you may prefer to use settings of <span style="color:red">**x = 1, y = 2, z = 52 unit cells**</span>.
+For the next sections of this tutorial, we will therefore set **Tile Cells** to <span style="color:red">**x = 2, y = 4, z = 26 unit cells**</span>.  If your computer is very slow, you may prefer to use settings of <span style="color:red">**x = 1, y = 2, z = 26 unit cells**</span>. Note that we are using 26 unit cells (200 Angstrom thickness) instead of 52 unit cells to reduce the simulation time.
 
 
 
@@ -229,9 +229,20 @@ For the next sections of this tutorial, we will therefore set **Tile Cells** to 
 
 Now we turn to the simulation algorithm itself, specifically the questions of whether to use `multislice` or `PRISM`, and if we do use `PRISM` which interpolation factors to use. We will continue to use the **Probe Analyzer** tab to answer these questions, located in the upper left of the GUI.  Keeping the x and y test probe locations the same as the previous section, set the **PRISM Interpolation Factors** to  <span style="color:red">**8**</span>. Next click the **Calculate** button, and while making sure the **Log Scale** check box is <span style="color:red">**unchecked**</span>. Next, examine the two panels labeled **Real Space `PRISM` and `Multislice`**, which should look something like:
 
-![SuperSTEM screenshot 10](img/SuperSTEM/screenshot10.png){:width="651"}
+![SuperSTEM screenshot 10](img/SuperSTEM/screenshot10b.png){:width="648"}
 
-Clearly, the probe calculated by using the `PRISM` algorithm has been cropped at the edges compared to the `multislice` calculation.
+Clearly, the probe calculated by using the `PRISM` algorithm has been cropped at the edges compared to the `multislice` calculation. Examining the probes in the two below panels, **Fourier space** shows the large difference between the two simulations. And since `PRISM` is an approximation to a full `multislice` simulation, any difference between the two is due to inaccuracy of the `PRISM` simulation. Therefore we need to improve the simulation accuracy. Set the **PRISM Interpolation Factors** to <span style="color:red">**4**</span>, and click **Calculate**. Note that this will take substantially longer than using interpolation factors of 8.
+
+![SuperSTEM screenshot 11](img/SuperSTEM/screenshot11b.png){:width="658"}
+
+Much better!  The tails of the probe are cropped much further out in the **Real Space** images, and comparing the **Fourier Space** images shows that `PRISM` is now much closer to the `multislice` simulation.  However, if we click on the **Log Scale** check box, we can see that `PRISM` has still cropped the probe tails, shown here:
+
+![SuperSTEM screenshot 12](img/SuperSTEM/screenshot12b.png){:width="658"}
+
+If we want further accuracy, we can set the **PRISM Interpolation Factors** to <span style="color:red">**2**</span>, and then click **Calculate**.  **WARNING: only do this if your computer is fast / has a CUDA GPU!**. The results are shown here:
+
+![SuperSTEM screenshot 12](img/SuperSTEM/screenshot13b.png){:width="656"}
+
 
 
 

@@ -142,7 +142,7 @@ where
 
 <img src="https://latex.codecogs.com/svg.latex?\Large&space;\chi(\vec{q}\,) = \pi \lambda |\vec{q}\,|^2 C_1 + \frac{\pi}{2} \lambda^3 |\vec{q}\,|^4 C_3 + \frac{\pi}{3} \lambda^5 |\vec{q}\,|^6 C_5"/> 
 
-To keep this tutorial simple, we will assume an ideal microscope with no aberrations, where <span style="color:red">**C_1 = C_3 = C_5 = 0**</span>.
+To keep this tutorial simple, we will assume an ideal microscope with no aberrations, where <span style="color:red">**C1 = C3 = C5 = 0**</span>.
 
 The next parameter value on the right side is the **Random Seed**, which is only used to make the simulation more repeatable for testing - thus we do not care what this value is set to for the purposes of this tutorial. The next value is the **# of FP**, which means "number of frozen phonon (FP) configurations." These multiple FP configurations are used to average the scattering pathways due to thermal motion of the atoms over multiple simulations. All high accuracy simulations should use multiple FPs, and typically the more the better. I recommend using (at a minimum) 8 FPs for thick samples, and 32 FPs for thin samples. For this tutorial, we will use <span style="color:red">**1 FP**</span> configuration.
 
@@ -165,6 +165,7 @@ Now that you have entered the basic settings, your window should look like so:
 
 
 
+
 &nbsp;
 <a name="step4"></a>
 ## 4 - Calculate and view atomic potentials.
@@ -175,6 +176,12 @@ The first part of a STEM simulation is calculation of the atomic potentials. You
 
 ![SuperSTEM screenshot 03](img/SuperSTEM/screenshot03.png){:width="572"}
 
+Note that the individual atomic columns do not form round peaks - why?  The answer is two-fold: first, what you are seeing is the randomly generated atomic displacements due to thermal motions (Debye-Waller effect). Relativistic electrons move **much** faster than ions in solid materials. To the electron beam, the ions appear to have (semi) random shifts "frozen" in, due to the large number of of phonons present in the material at any given time. Technically speaking, each electron will see a different frozen phonon configuration, but simulating this is impractical. Instead we use a number of "frozen phonon (FP) configurations" and sum the results incoherently. To see this in action, try changing **Random Seed** to different values, and then clicking on **Calculate Potentials** again.  For example on my laptop, changing the seed value gives these potentials:
+
+![SuperSTEM screenshot 04](img/SuperSTEM/screenshot04.png){:width="518"}
+
+
+
 
 
 
@@ -182,7 +189,8 @@ The first part of a STEM simulation is calculation of the atomic potentials. You
 &nbsp;
 <a name="step5"></a>
 ## 5 - Determine unit cell tiling, and examine `PRISM` accuracy.
-text
+
+
 
 &nbsp;
 <a name="step6"></a>

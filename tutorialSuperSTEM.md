@@ -180,6 +180,9 @@ Note that the individual atomic columns do not form round peaks - why?  The answ
 
 ![SuperSTEM screenshot 04](img/SuperSTEM/screenshot04.png){:width="518"}
 
+There is a second reason why these shifts are so obvious - because the sample is extremely thin (<8 Angstroms). Because we are not yet tiling the cell along the beam direction, each atomic column has only a small number of atoms along the beam direction.  This is why more FP configurations are needed when running a simulation of a thin sample. Thicker samples will "average out" the atomic shifts to a greater degree. Note that all simulations used for quantitative analysis should still use multiple FP configurations, and more will always be more accurate. However we should also remember that we are not truly modeling the thermal motion of phonons inside a sample when we use random atomic shifts. Including correlations of the phonon wavevectors requires a much more accurate set of atomic positions, for example those calculated using molecular dynamics.
+
+
 
 
 
@@ -189,6 +192,19 @@ Note that the individual atomic columns do not form round peaks - why?  The answ
 &nbsp;
 <a name="step5"></a>
 ## 5 - Determine unit cell tiling, and examine `PRISM` accuracy.
+
+The first problem with the simulation is that the cell is far too small, especially along the horizontal direction. Even a sub-Angstrom STEM probe will have tails reaching a diameter of 1 nm. Thus we must prevent wraparound errors due to periodicity, where the probe tails self-interact. `Prismatic` includes a build in tool to examine these possible issues, and you can reach it by clicking on the **Probe Analyzer** tab in the upper left.
+
+The **Probe Analyzer** will compute STEM probes using both the `PRISM` and `multislice` algorithms. It consists of a few steps: first, specify where you want to place the test STEM probe. Here we will use <span style="color:red">**x = 11.1, y = 0 Angstroms**</span> for the initial test (middle of the left panel of the GUI). After specifying these settings, click on the **Calculate** button right next to the x,y position boxes. To better see the probe intensity, click on the **Log Scale** check box. You should see:
+
+![SuperSTEM screenshot 05](img/SuperSTEM/screenshot05.png){:width="670"}
+
+For now, ignore all of the panels except for the very center one, **Real Space Multislice**.  You can see where the STEM probe is located, halfway down the left and right edges (periodicity). In the middle of this panel, we see an interference pattern in the STEM probe due to this wraparound effect. To get rid of this artifact, we can tile the unit cell horizontally by changing **Tile Cells Y** from 1 to <span style="color:red">**2**</span>. Next, recompute the STEM probe tests by clicking on **Calculate** in the middle of the left panel. You should see:
+
+![SuperSTEM screenshot 06](img/SuperSTEM/screenshot06.png){:width="670"}
+
+
+
 
 
 

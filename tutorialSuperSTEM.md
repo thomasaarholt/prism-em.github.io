@@ -10,10 +10,11 @@ Instructors: Colin Ophus and Hamish Brown
 - [2 - Load atomic coordinates](#step2)
 - [3 - Set microscope parameters](#step3)
 - [4 - Projected atomic potentials](#step4)
-- [5 - Unit cell tiling and `PRISM` accuracy](#step5)
-- [6 - Run simulations](#step6)
-- [7 - Save results](#step7)
-- [8 - Further simulations](#step8)
+- [5 - Unit cell tiling](#step5)
+- [6 - `PRISM` accuracy](#step6)
+- [7 - Run simulations](#step7)
+- [8 - Save results](#step8)
+- [9 - Further simulations](#step9)
 
 
 
@@ -193,7 +194,7 @@ There is a second reason why these shifts are so obvious - because the sample is
 
 &nbsp;
 <a name="step5"></a>
-## 5 - Determine unit cell tiling, and examine `PRISM` accuracy.
+## 5 - Determine unit cell tiling.
 
 The first problem with the simulation is that the cell is far too small, especially along the horizontal direction. Even a sub-Angstrom STEM probe will have tails reaching a diameter of 1 nm. Thus we must prevent wraparound errors due to periodicity, where the probe tails self-interact. `Prismatic` includes a build in tool to examine these possible issues, and you can reach it by clicking on the **Probe Analyzer** tab in the upper left.
 
@@ -213,23 +214,34 @@ However we should keep in mind that **Log Scale** intensity range does not neces
 
 ![SuperSTEM screenshot 08](img/SuperSTEM/screenshot08.png){:width="634"}
 
+Thus we arrive at the following conclusion: the total size of the simulation required to hold the probe after delocalization / scattering is determined by your own tolerance for the wraparound error for a given simulation.  If the degree of error is too high, the simple solution is to increase the size of the field of view.  For example, if you change **Tile Cells** from x = 1, y = 2, z = 52 unit cells to <span style="color:red">**x = 2, y = 4, z = 52 unit cells**</span> and then click **Calculate** we see that even on the logarithmic scale, the probe does not contain wraparound error:
 
+![SuperSTEM screenshot 09](img/SuperSTEM/screenshot09.png){:width="1272"}
+
+
+
+
+
+
+&nbsp;
+<a name="step5"></a>
+## 6 - Examine `PRISM` vs `multislice` accuracy.
 
 
 
 &nbsp;
 <a name="step6"></a>
-## 6 - Run simulations using the `PRISM` algorithm.
+## 7 - Run simulations using the `PRISM` algorithm.
 text
 
 &nbsp;
 <a name="step7"></a>
-## 7 - Save simulation results, save output images.
+## 8 - Save simulation results, save output images.
 text
 
 &nbsp;
 <a name="step8"></a>
-## 8 - Further simulations.
+## 9 - Further simulations.
 text
 
 

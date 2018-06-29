@@ -243,7 +243,7 @@ If we want further accuracy, we can set the **PRISM Interpolation Factors** to <
 
 ![SuperSTEM screenshot 13](img/SuperSTEM/screenshot13b.png){:width="656"}
 
-While using an interpolation factor of 2 results in a highly accurate simulation, it is not necessary for reasonably accurate simulations where we investigate different bright field and dark field STEM images. However if you are running a simulation for a quantitative scientific study, you may wish to increase the accuracy for the final simulation runs. For the next section of this tutorial, set the **PRISM Interpolation Factors** to <span style="color:red">**4**</span>. If you run the **Probe Analyzer** again with these settings and uncheck **Log Scale** you will see that an interpolation factor of 4 does contain almost all of the probe intensity.
+While using an interpolation factor of 2 results in a highly accurate simulation, it is not necessary for reasonably accurate simulations where we investigate different bright field and dark field STEM images qualitatively. However if you are running a simulation for a quantitative scientific study, you may wish to increase the accuracy for the final simulation runs. For the next section of this tutorial, set the **PRISM Interpolation Factors** to <span style="color:red">**4**</span>. If you run the **Probe Analyzer** again with these settings and uncheck **Log Scale** you will see that an interpolation factor of 4 does contain almost all of the probe intensity.
 
 
 
@@ -261,19 +261,34 @@ After running this simulation, we will now use the interactive output portion of
 
 ![SuperSTEM screenshot 14](img/SuperSTEM/screenshot14.png){:width="1029"}
 
+If your computer is fast enough, you can change the PRISM interpolation factors to <span style="color:red">**2**</span> and re-run the simulation. If your computer is slower, you can reduce the number of STEM probes being calculated (ask the instructor). The same figure as above, but for interpolation factors of 2 instead of 4 looks like:
+
+![SuperSTEM screenshot 15](img/SuperSTEM/screenshot15.png){:width="1024"}
+
+Comparing these two figures, we see the result of using `PRISM` interpolation factors that are too large (worse approximation). The bright field images appear almost identical in the two cases, i.e. when the outer angle of the annular detector is still contained in the original probe semiangle, the more approximate `PRISM` simulation with interpolation factor 4 can still produce fairly accurate contrast. However this is not true for the annular dark field images, when we are counting electrons primarily outside of the probe semiangle. The lower center and lower left images contain artifacts when the `PRISM` interpolation factors are set to 4. 
+
+Thus we see why it is important to carefully check that the `PRISM` interpolation factors for accuracy. The best format method to do so is to run convergence tests comparing `PRISM` simulations to `multislice` - quite similar to how density functional theory (DFT) calculations must also be carefully checked for convergence.
+
+
 
 
 <a name="step8"></a>
 &nbsp;
 ## 8 - Save simulation results, save output images.
-text
+
+Currently `Prismatic` saves output files for image simulations as 3D arrays in this .mrc file format. This format is simple and can be loaded into Matlab, python, etc without too much effort. More output options will be added to `Prismatic` in the future. In order to save the 3D output in `Prismatic`, we need to input two settings.  The first is to check the box for **Save 3D Output**. Next, you must select a value path and output file name, and write them into the box labeled **Output File**. For example, on my laptop a valid output would be *"C:\Users\cophus\BaNdTiO_output.mrc"*. Once these settings are in place, you can re-run any simulation to generate the .mrc output file.
+
+To save a single output image (also in .mrc format), we can use the option at the bottom of the left panel. First, specify the output file name, for example I am using *"C:\Users\cophus\BaNdTiO_image.mrc"*. Next, simply click on the **Save Current Image** to output the image file.
+
+We can also output the full image of each STEM probe for 4D-STEM applications. However this currently saves many tiny files in `Prismatic` and so we will not consider it here.
+
 
 
 <a name="step9"></a>
 &nbsp;
 ## 9 - Further simulations.
-text
 
+This final section of the tutorial is where you can explore using `Prismatic` to perform other simulations. Try loading one or more of the other four .xyz files into `Prismatic` and run some `PRISM` simulations. Use what you have learned to balance the calculation speed with the accuracy, and if you have questions please just ask the instructors.
 
 
 

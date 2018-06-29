@@ -243,6 +243,7 @@ If we want further accuracy, we can set the **PRISM Interpolation Factors** to <
 
 ![SuperSTEM screenshot 12](img/SuperSTEM/screenshot13b.png){:width="656"}
 
+While using an interpolation factor of 2 results in a highly accurate simulation, it is not necessary for reasonably accurate simulations where we investigate different bright field and dark field STEM images. However if you are running a simulation for a quantitative scientific study, you may wish to increase the accuracy for the final simulation runs. For the next section of this tutorial, set the **PRISM Interpolation Factors** to <span style="color:red">**4**</span>. If you run the **Probe Analyzer** again with these settings and uncheck **Log Scale** you will see that an interpolation factor of 4 does contain almost all of the probe intensity.
 
 
 

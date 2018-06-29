@@ -64,15 +64,15 @@ Occupancy currently is assumed to be 1 for all atomic sites. The x, y, z, and RM
 
 For this tutorial, please download these five .xyz files:
 
-[Barium Neodymium Titanate - [0 1 0] zone axis](data/SuperSTEM/barium_neodymium_titanate_0_1_0.xyz)
+[Barium Neodymium Titanate - [0 1 0] zone axis](/data/SuperSTEM/barium_neodymium_titanate_0_1_0.xyz)
 
-[Barium Neodymium Titanate - [0 2 1] zone axis](data/SuperSTEM/barium_neodymium_titanate_0_2_1.xyz)
+[Barium Neodymium Titanate - [0 2 1] zone axis](/data/SuperSTEM/barium_neodymium_titanate_0_2_1.xyz)
 
-[Barium Neodymium Titanate - [0 1 1] zone axis](data/SuperSTEM/barium_neodymium_titanate_0_1_1.xyz)
+[Barium Neodymium Titanate - [0 1 1] zone axis](/data/SuperSTEM/barium_neodymium_titanate_0_1_1.xyz)
 
-[Barium Neodymium Titanate - [0 1 2] zone axis](data/SuperSTEM/barium_neodymium_titanate_0_1_2.xyz)
+[Barium Neodymium Titanate - [0 1 2] zone axis](/data/SuperSTEM/barium_neodymium_titanate_0_1_2.xyz)
 
-[Barium Neodymium Titanate - [0 0 1] zone axis](data/SuperSTEM/barium_neodymium_titanate_0_0_1.xyz)
+[Barium Neodymium Titanate - [0 0 1] zone axis](/data/SuperSTEM/barium_neodymium_titanate_0_0_1.xyz)
 
 After downloading these files, load the first file ([0 1 0] zone axis) into `Prismatic` using the **Load Coords** button. The below screenshot shows what you should see after loading this file, specifically the unit cell dimensions along x, y and z:
 

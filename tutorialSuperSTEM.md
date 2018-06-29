@@ -241,7 +241,7 @@ Much better!  The tails of the probe are cropped much further out in the **Real 
 
 If we want further accuracy, we can set the **PRISM Interpolation Factors** to <span style="color:red">**2**</span>, and then click **Calculate**.  **WARNING: only do this if your computer is fast / has a CUDA GPU!**. The results are shown here:
 
-![SuperSTEM screenshot 12](img/SuperSTEM/screenshot13b.png){:width="656"}
+![SuperSTEM screenshot 13](img/SuperSTEM/screenshot13b.png){:width="656"}
 
 While using an interpolation factor of 2 results in a highly accurate simulation, it is not necessary for reasonably accurate simulations where we investigate different bright field and dark field STEM images. However if you are running a simulation for a quantitative scientific study, you may wish to increase the accuracy for the final simulation runs. For the next section of this tutorial, set the **PRISM Interpolation Factors** to <span style="color:red">**4**</span>. If you run the **Probe Analyzer** again with these settings and uncheck **Log Scale** you will see that an interpolation factor of 4 does contain almost all of the probe intensity.
 
@@ -250,7 +250,17 @@ While using an interpolation factor of 2 results in a highly accurate simulation
 <a name="step7"></a>
 &nbsp;
 ## 7 - Run simulations using the `PRISM` algorithm.
-text
+
+We can now run some simulations!  The key question to answer in this section is to evaluate the difference in speed between a `PRISM` and `multislice` simulation. If `multislice` can be run quickly enough, I definitely recommend using it. It has the additional advantage that we do not need to worry about the errors introduced by using an interpolation factor that is too large.  So, let's start with `multislice` simulations.
+
+Set the probe **Scan Window** range from <span style="color:red">**0 - 0.1 for both x and y**</span>. Next, in the **Calculation Settings** box, change the **Algorithm** from `PRISM` to  <span style="color:red">**`multislice`**</span>. After making sure both of these ranges are 10% of the field of view (0 to 0.1), click on **Full Calculation**. This simulation takes approximately 30 seconds on my GPU laptop.  If we were to scale that up to the entire field of view, the calculation time will increase by a factor of 100, making the total simulation time for a single FP configuration equal to about 50 minutes!  Because this is over 50% of the total tutorial time, we will not be running this simulation.
+
+Next, set the **Algorithm** to <span style="color:red">**`PRISM`**</span>, and click on **Full Calculation**. On my GPU laptop, the second step of `PRISM` (calculate compact S-matrix) requires about 18 seconds, while the third step (probe output calculations) takes <2 seconds. This total calculation time of 20 seconds is barely better than the `multislice` algorithm time of 30 seconds ... or is it?  No, it is much, ***much*** better. Why?  The `PRISM` algorithm second step only need to be completed a single time - it is independent of the number of probes / size of the field of view of the output image. To show this, change **Scan Window** for x and y both to a range of <span style="color:red">**0 - 0.9999**</span>. After making these changes, click on the **Full Calculation** to run the entire `PRISM` simulation.  On my GPU laptop, the total calculation time is approximately 1 minute - a 50-fold speed up over the `multislice` algorithm!
+
+After running this simulation, we will now use the interactive output portion of `Prismatic`, which you can access by clicking on the **Output** tab in the upper left corner of the GUI. Next, play with the slider bars at the bottom of the left side panel.  These sliders allow you to change the inner and outer detector angles, producing many different virtual STEM images. Try making these images:
+
+![SuperSTEM screenshot 14](img/SuperSTEM/screenshot14.png){:width="1029"}
+
 
 
 <a name="step8"></a>

@@ -217,7 +217,7 @@ Thus we arrive at the following conclusion: the total size of the simulation req
 
 ![SuperSTEM screenshot 09](img/SuperSTEM/screenshot09.png){:width="1272"}
 
-For the next sections of this tutorial, we will therefore set **Tile Cells** to <span style="color:red">**x = 2, y = 4, z = 26 unit cells**</span>.  If your computer is very slow, you may prefer to use settings of <span style="color:red">**x = 1, y = 2, z = 26 unit cells**</span>. Note that we are using 26 unit cells (200 Angstrom thickness) instead of 52 unit cells to reduce the simulation time.
+For the next sections of this tutorial, we will therefore set **Tile Cells** to <span style="color:red">**x = 2, y = 4, z = 26 unit cells**</span>.  If your computer is very slow, you may prefer to use settings of x = 1, y = 2, z = 26 unit cells. Note that we are using 26 unit cells (200 Angstrom thickness) instead of 52 unit cells to reduce the simulation time.
 
 
 

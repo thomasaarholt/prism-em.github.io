@@ -278,9 +278,12 @@ Thus we see why it is important to carefully check that the `PRISM` interpolatio
 
 Currently `Prismatic` saves output files for image simulations as 3D arrays in this .mrc file format. This format is simple and can be loaded into Matlab, python, etc without too much effort. More output options will be added to `Prismatic` in the future. In order to save the 3D output in `Prismatic`, we need to input two settings.  The first is to check the box for **Save 3D Output**. Next, you must select a value path and output file name, and write them into the box labeled **Output File**. For example, on my laptop a valid output would be *"C:\Users\cophus\BaNdTiO_output.mrc"*. Once these settings are in place, you can re-run any simulation to generate the .mrc output file.
 
-To save a single output image (also in .mrc format), we can use the option at the bottom of the left panel. First, specify the output file name, for example I am using *"C:\Users\cophus\BaNdTiO_image.mrc"*. Next, simply click on the **Save Current Image** to output the image file.
+To save a single output image (also in .mrc format), we can use the option at the bottom of the left panel. First, specify the output file name, for example I am using *"C:\Users\cophus\BaNdTiO_image.mrc"*. Next, simply click on the **Save Current Image** to output the image file. We can also output the full image of each STEM probe for 4D-STEM applications. However this currently saves many tiny files in `Prismatic` and so we will not consider it here.
 
-We can also output the full image of each STEM probe for 4D-STEM applications. However this currently saves many tiny files in `Prismatic` and so we will not consider it here.
+Finally, using a virtual detector from 60 - 92 mrads, on an accurate `PRISM` simulation of this sample with a thickness of 400 Angstroms, we can produce a simulation that is a very good match to the experimental dark field image: (experimental image courtesy of Demie Kepaptsoglou, F. Azough, and R. Freer)
+
+![SuperSTEM screenshot 16](img/SuperSTEM/screenshot16.png){:width="837"}
+
 
 
 

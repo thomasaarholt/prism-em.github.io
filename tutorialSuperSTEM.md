@@ -18,9 +18,8 @@ Instructors: Colin Ophus and Hamish Brown
 
 
 
-
-&nbsp;
 <a name="step1"></a>
+&nbsp;
 ## 1 - Download and Install the `Prismatic` GUI.
 
 The `Prismatic` GUI has been compiled for both Windows and OSX. For each of these operating systems, there are two possible versions of Prismatic you may wish to install.
@@ -45,8 +44,8 @@ The GPU portions of `Prismatic` were developed using CUDA. This means that Apple
 
 
 
+<a name="step2"></a>
 &nbsp;
-<a name="step2s"></a>
 ## 2 - Download coordinates, load into `Prismatic`.
 
 
@@ -89,8 +88,8 @@ You should see x, y and z cell dimensions of 22.3, 12.2, and 7.7 Angstroms respe
 
 
 
-&nbsp;
 <a name="step3"></a>
+&nbsp;
 ## 3 - Microscope parameters and simulation settings.
 
 In the following sections, I have highlighted each `Prismatic` setting using <span style="color:red">**bold red text**</span>. This is to ensure that you can easily find the parameters used in this tutorial.
@@ -169,8 +168,8 @@ Now that you have entered the basic settings, your window should look like so:
 
 
 
-&nbsp;
 <a name="step4"></a>
+&nbsp;
 ## 4 - Calculate and view atomic potentials.
 
 We can now start using `Prismatic` interactively, to determine the remaining settings for our simulation. This section will show you why it is very important to visualize your STEM simulation components, whether you are using the `PRISM` or `multislice` algorithms. Running a simulation blindly over a console (the first time) can easily cause you to overlook potential issues.
@@ -192,8 +191,8 @@ There is a second reason why these shifts are so obvious - because the sample is
 
 
 
-&nbsp;
 <a name="step5"></a>
+&nbsp;
 ## 5 - Determine unit cell tiling.
 
 The first problem with the simulation is that the cell is far too small, especially along the horizontal direction. Even a sub-Angstrom STEM probe will have tails reaching a diameter of 1 nm. Thus we must prevent wraparound errors due to periodicity, where the probe tails self-interact. `Prismatic` includes a build in tool to examine these possible issues, and you can reach it by clicking on the **Probe Analyzer** tab in the upper left.
@@ -222,25 +221,26 @@ Thus we arrive at the following conclusion: the total size of the simulation req
 
 
 
-
+<a name="step6"></a>
 &nbsp;
-<a name="step5"></a>
 ## 6 - Examine `PRISM` vs `multislice` accuracy.
 
 
 
+<a name="step7"></a>
 &nbsp;
-<a name="step6"></a>
 ## 7 - Run simulations using the `PRISM` algorithm.
 text
 
+
+<a name="step8"></a>
 &nbsp;
-<a name="step7"></a>
 ## 8 - Save simulation results, save output images.
 text
 
+
+<a name="step9"></a>
 &nbsp;
-<a name="step8"></a>
 ## 9 - Further simulations.
 text
 

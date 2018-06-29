@@ -18,7 +18,7 @@
 
 &nbsp;
 <a name="step1"></a>
-## 1 - Download and Install the `Prismatic` GUI
+## 1 - Download and Install the `Prismatic` GUI.
 
 The `Prismatic` GUI has been compiled for both Windows and OSX. For each of these operating systems, there are two possible versions of Prismatic you may wish to install.
 
@@ -38,13 +38,13 @@ If you are running OSX 10.13.1 (High Sierra), install:
 If you are running OSX 10.12.6 (Sierra), install:
 [Prismatic-OSX-v1.1.dmg (Sierra)](https://drive.google.com/open?id=1S1utdTErovvkf-o5P4gTRB5IeC4smYqZ)
 
-The GPU portions of `Prismatic` were developed using CUDA. This means that Apple laptops and Mac desktops running AMD GPUs cannot make use of CUDA GPU code. However, the PRISM algorithm is quite fast. Therefore you may be able to run STEM simulations on Apple laptops in reasonable times. After downloading and installing `Prismatic`, run it to verify the installation has succeeded.
+The GPU portions of `Prismatic` were developed using CUDA. This means that Apple laptops and Mac desktops running AMD GPUs cannot make use of CUDA GPU code. However, the PRISM algorithm is quite fast. Therefore you may be able to run STEM simulations on Apple laptops in reasonable times. After downloading and installing `Prismatic`, run it to verify the installation has succeeded. At this stage, we will discuss the best settings for the number of GPU and CPU threads to use for best results in `Prismatic`.
 
 
 
 &nbsp;
 <a name="step2s"></a>
-## 2 - Download atomic coordinates, load into `Prismatic`
+## 2 - Download coordinates, load into `Prismatic`.
 
 
 The sample we are going to examine in this tutorial is barium neodymium titanate. This material has a complex unit cell, with the tungsten bronze parent structure. From this unit cell, we have constructed 5 different zone axes by projecting the unit cell into new pseudo-orthogonal unit cells. This methodology is described below.
@@ -88,7 +88,7 @@ You should see x, y and z cell dimensions of 22.3, 12.2, and 7.7 Angstroms respe
 
 &nbsp;
 <a name="step3"></a>
-## 3 - Set microscope parameters and simulation settings.
+## 3 - Microscope parameters and simulation settings.
 
 In the following sections, I have highlighted each `Prismatic` setting using <span style="color:red">**bold red text**</span>. This is to ensure that you can easily find the parameters used in this tutorial.
 
@@ -163,14 +163,25 @@ Now that you have entered the basic settings, your window should look like so:
 
 
 
+
+
 &nbsp;
 <a name="step4"></a>
-## 4 - Calculate and view projected atomic potentials.
-text
+## 4 - Calculate and view atomic potentials.
+
+We can now start using `Prismatic` interactively, to determine the remaining settings for our simulation. This section will show you why it is very important to visualize your STEM simulation components, whether you are using the `PRISM` or `multislice` algorithms. Running a simulation blindly over a console (the first time) can easily cause you to overlook potential issues.
+
+The first part of a STEM simulation is calculation of the atomic potentials. You can always run this part of the STEM simulation independently in `Prismatic`, by clicking on the **Calculate Potentials** button at the bottom the right hand side of the GUI. This should take only a few moments of CPU time. Next, select the **Potential** tab on the upper left corner. You will immediately see the first potential slice.  To see the sum of all slices, select the **Max** slider bar on the lower left and drag it all the way to the right, giving a slice range from 1 to 4 slices [***Bug*** - both sliders are labeled **Min**, but the lower one refers to **Max**]. To make it easier to view the potentials, you can next click on the **Square Root Intensity** check box. Your window should now look like this:
+
+![SuperSTEM screenshot 03](img/SuperSTEM/screenshot03.png){:width="572"}
+
+
+
+
 
 &nbsp;
 <a name="step5"></a>
-## 5 - Determine required unit cell tiling, examine `PRISM` accuracy.
+## 5 - Determine unit cell tiling, and examine `PRISM` accuracy.
 text
 
 &nbsp;

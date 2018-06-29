@@ -8,7 +8,7 @@
 - [2 - Load atomic coordinates](#step2)
 - [3 - Set microscope parameters](#step3)
 - [4 - Projected atomic potentials](#step4)
-- [5 - Unit cell tiling and PRISM accuracy](#step5)
+- [5 - Unit cell tiling and `PRISM` accuracy](#step5)
 - [6 - Run simulations](#step6)
 - [7 - Save results](#step7)
 - [8 - Further simulations](#step8)
@@ -90,6 +90,8 @@ You should see x, y and z cell dimensions of 22.3, 12.2, and 7.7 Angstroms respe
 <a name="step3"></a>
 ## 3 - Set microscope parameters and simulation settings.
 
+In the following sections, I have highlighted each `Prismatic` setting using <span style="color:red">**bold red text**</span>. This is to ensure that you can easily find the parameters used in this tutorial.
+
 ### Sample Settings:
 
 Besides loading and saving, this settings box shows the cell dimensions and allows us to tile the unit cell along the three primary dimensions. Initially, we are going to skip over the **Tile Cells** settings, because they require very careful analysis to set correctly.
@@ -123,8 +125,7 @@ For this tutorial, we will use a **Pixel Size** value of <span style="color:red"
 
 <img src="https://latex.codecogs.com/svg.latex?\Large&space;q_{max} = "/> 92.5 mrads
 
-The next value  **Potential Bound** specifies how far from the atomic core we will integrate the projected potentials. Set this value to <span style="color:red">**2 Angstroms**</span>
- for reasonable accuracy.
+The next value  **Potential Bound** specifies how far from the atomic core we will integrate the projected potentials. Set this value to <span style="color:red">**2 Angstroms**</span> for reasonable accuracy.
 
 
 
@@ -132,6 +133,33 @@ The next value  **Potential Bound** specifies how far from the atomic core we wi
 ### Simulation Settings Block 2:
 
 The next set of parameters describe the values required to describe the incident converged electron probe. The semiangle of the probe specified by a condenser aperture is given by the **Probe Semiangle** box, which you should set to <span style="color:red">**30 mrads**</span>. For the `PRISM` algorithm we also need to specify the **Probe <img src="https://latex.codecogs.com/svg.latex?\Large&space;\alpha"/> limit**, which corresponds to the maximum scattering angle computed for the Compact S-Matrix. This value should be set slightly larger than the **Probe Semiangle**, so we will use a value of <span style="color:red">**32 mrads**</span> for the **Probe <img src="https://latex.codecogs.com/svg.latex?\Large&space;\alpha"/> limit**. 
+
+The next three values are **C1**, **C3**, and **C5**, corresponding to defocus, and the first two orders of spherical aberration respectively. The convention used in `Prismatic` is a probe defined by
+
+<img src="https://latex.codecogs.com/svg.latex?\Large&space;\Psi(\vec{q}\,) = \exp[ -i \chi (\vec{q}\,)]"/> 
+
+where
+
+<img src="https://latex.codecogs.com/svg.latex?\Large&space;\chi(\vec{q}\,) = \pi \lambda |\vec{q}\,|^2 C_1 + \frac{\pi}{2} \lambda^3 |\vec{q}\,|^4 C_3 + \frac{\pi}{3} \lambda^5 |\vec{q}\,|^6 C_5"/> 
+
+To keep this tutorial simple, we will assume an ideal microscope with no aberrations, where <span style="color:red">**C_1 = C_3 = C_5 = 0**</span>.
+
+The next parameter value on the right side is the **Random Seed**, which is only used to make the simulation more repeatable for testing - thus we do not care what this value is set to for the purposes of this tutorial. The next value is the **# of FP**, which means "number of frozen phonon (FP) configurations." These multiple FP configurations are used to average the scattering pathways due to thermal motion of the atoms over multiple simulations. All high accuracy simulations should use multiple FPs, and typically the more the better. I recommend using (at a minimum) 8 FPs for thick samples, and 32 FPs for thin samples. For this tutorial, we will use <span style="color:red">**1 FP**</span> configuration.
+
+The next value is **Slice Thickness** which defines the spacing of potential slices used in the atomic potentials. A smaller value here will make the simulation more accurate, while a larger value will speed up the simulation. For this simulation we will use a typical value of <span style="color:red">**2 Angstroms**</span>. The last value in this column is **Detector Angle Step**, which is used for the 3D simulation output to specify the width of each annular bin used in the output integration. The 3D output is a series of concentric rings for different scattering angles, recorded for each probe position. This value should be small enough to allow any necessary virtual detector to be constructed from the simulation. We will use the default value of <span style="color:red">**1 mrad**</span>.
+
+
+
+### Simulation Settings Block 3:
+
+The final group of simulation settings deals with the `PRISM` interpolation factors, the STEM probe positions and tilts. We will be changing these settings later, but for now set **PRISM Interpolation Factors** to <span style="color:red">**4**</span> for both x and y.  The spacing of STEM probes is set by the **Probe Step** box, which we will set to <span style="color:red">**0.2 Angstroms**</span>. **Probe Tilt** should be set to <span style="color:red">**0 mrads**</span> for both x and y, and the **Scan Window** should run from <span style="color:red">**0 to 0.9999**</span> for both x and y. This will create a square grid of STEM probes that will cover the entire field of view. The reason to not set the maximum range to 1.0 is that if the probe step can be evenly divided into the simulation cell size, we would duplicate the probe located at 0.0 with the probe located at 1.0, due to the periodicity of the simulation.
+
+Note that it is very important to remember the difference between **Pixel Size** and **Probe Step** settings, both in units of Angstroms. The **Pixel Size** setting refers to the sampling of pixels for the atomic potentials, the STEM probes, and the various numerical operator functions used during the simulation. By contrast, **Probe Step** refers only to the spacing of the STEM probes, and no other parts of the simulation. Later in the tutorial, we will for example run simulations consisting of only single STEM probe positions.
+
+Now that you have entered the basic settings, your window should look like so:
+
+![SuperSTEM screenshot 02](img/SuperSTEM/screenshot02.png){:width="898"}
+
 
 
 
@@ -142,12 +170,12 @@ text
 
 &nbsp;
 <a name="step5"></a>
-## 5 - Determine required unit cell tiling, examine PRISM accuracy.
+## 5 - Determine required unit cell tiling, examine `PRISM` accuracy.
 text
 
 &nbsp;
 <a name="step6"></a>
-## 6 - Run simulations using the PRISM algorithm.
+## 6 - Run simulations using the `PRISM` algorithm.
 text
 
 &nbsp;

@@ -217,6 +217,8 @@ Thus we arrive at the following conclusion: the total size of the simulation req
 
 ![SuperSTEM screenshot 09](img/SuperSTEM/screenshot09.png){:width="1272"}
 
+For the next sections of this tutorial, we will therefore set **Tile Cells** to <span style="color:red">**x = 2, y = 4, z = 52 unit cells**</span>.  If your computer is very slow, you may prefer to use settings of <span style="color:red">**x = 1, y = 2, z = 52 unit cells**</span>.
+
 
 
 
@@ -224,6 +226,12 @@ Thus we arrive at the following conclusion: the total size of the simulation req
 <a name="step6"></a>
 &nbsp;
 ## 6 - Examine `PRISM` vs `multislice` accuracy.
+
+Now we turn to the simulation algorithm itself, specifically the questions of whether to use `multislice` or `PRISM`, and if we do use `PRISM` which interpolation factors to use. We will continue to use the **Probe Analyzer** tab to answer these questions, located in the upper left of the GUI.  Keeping the x and y test probe locations the same as the previous section, set the **PRISM Interpolation Factors** to  <span style="color:red">**8**</span>. Next click the **Calculate** button, and while making sure the **Log Scale** check box is <span style="color:red">**unchecked**</span>. Next, examine the two panels labeled **Real Space `PRISM` and `Multislice`**, which should look something like:
+
+![SuperSTEM screenshot 10](img/SuperSTEM/screenshot10.png){:width="651"}
+
+Clearly, the probe calculated by using the `PRISM` algorithm has been cropped at the edges compared to the `multislice` calculation.
 
 
 

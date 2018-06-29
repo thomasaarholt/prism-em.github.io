@@ -2,6 +2,8 @@
 
 ![Prismatic screenshot 01](img/SuperSTEMtopbar.png){:width="1184px"}
 
+Instructors: Colin Ophus and Hamish Brown
+
 
 ## Table of Contents  
 - [1 - Install `Prismatic`](#step1)
@@ -199,10 +201,17 @@ The **Probe Analyzer** will compute STEM probes using both the `PRISM` and `mult
 
 ![SuperSTEM screenshot 05](img/SuperSTEM/screenshot05.png){:width="670"}
 
-For now, ignore all of the panels except for the very center one, **Real Space Multislice**.  You can see where the STEM probe is located, halfway down the left and right edges (periodicity). In the middle of this panel, we see an interference pattern in the STEM probe due to this wraparound effect. To get rid of this artifact, we can tile the unit cell horizontally by changing **Tile Cells Y** from 1 to <span style="color:red">**2**</span>. Next, recompute the STEM probe tests by clicking on **Calculate** in the middle of the left panel. You should see:
+For now, ignore all of the panels except for the very center one, **Real Space Multislice**.  You can see where the STEM probe is located, halfway down the left and right edges (periodicity). In the middle of this panel, we see an interference pattern in the STEM probe due to this wraparound effect. To get rid of this artifact, we can tile the unit cell horizontally by changing **Tile Cells Y** from 1 to <span style="color:red">**2 unit cells**</span>. Next, recompute the STEM probe tests by clicking on **Calculate** in the middle of the left panel. You should see:
 
 ![SuperSTEM screenshot 06](img/SuperSTEM/screenshot06.png){:width="670"}
 
+As you can see, the self-interference of the STEM probe is much reduced. Generally for atomic resolution simulations, I suggest unit cell dimensions of at least 20 Angstroms. However as we will see next, this guideline is often insufficient for thick simulation cells. The probe may start out fitting inside a 20 Angstrom cell, but after propagating some distance it can expand bue the large convergence semiangle and scattering from the atomic columns. We will now examine this effect. In order to speed up these calculations, first set the **PRISM Interpolation Factors** to <span style="color:red">**10**</span>. Next, create a 100 Angstrom simulation cell thickness by changing **Tile Cells Z* to <span style="color:red">**13 unit cells**</span>. Then click **Calculate** and look at the **Real Space Multislice** panel. You can also try setting **Tile Cells Z* to <span style="color:red">**26 unit cells**</span> for a 200 Angstrom thick simulation, or  <span style="color:red">**52 unit cells**</span> for a 400 Angstrom simulation thickness. See below:
+
+![SuperSTEM screenshot 07](img/SuperSTEM/screenshot07.png){:width="520"}
+
+However we should keep in mind that **Log Scale** intensity range does not necessarily give us a good idea of how much intensity of the STEM probe is actually present at some distance from the nominal probe position. But, the current STEM probe position is not representative of a "worst case scenario," where the probe scattering is maximized. To address both of these issues, first uncheck the **Log Scale** box and then move the STEM test probe to <span style="color:red">**x = 13.0, y = 9.2 Angstroms**</span>. Once again, try setting **Tile Cells Z** set to <span style="color:red">**13, 26 and 52 unit cells**</span>, clicking **Calculate** after each change. You will see the probe become more delocalized as the sample becomes thicker: (this image is not a direct representation of the GUI window)
+
+![SuperSTEM screenshot 08](img/SuperSTEM/screenshot08.png){:width="634"}
 
 
 

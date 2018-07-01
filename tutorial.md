@@ -1,3 +1,4 @@
+&nbsp;
 
 # GUI Tutorial
 ## Decahedral Nanoparticle

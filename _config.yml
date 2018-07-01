@@ -28,8 +28,9 @@ navbar-links:
     - Installers: "installers"
   Installation: "installation"
   Tutorials:
-    - Tutorial: "tutorial"
+    - GUI Tutorial: "tutorial"
     - SuperSTEM Tutorial: "tutorialSuperSTEM"
+    - Python and Bash: "tutorialPython"
     - Source Code Walkthrough: "source-code"
   Resources:
     - About: "about"

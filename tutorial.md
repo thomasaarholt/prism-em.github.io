@@ -1,26 +1,27 @@
-# Prismatic Tutorial 
+# Prismatic GUI Tutorial - Decahedral NP 
 ---
-*This tutorial is a work in progress and will be finished in the very near future*
+
+Authored by Colin Ophus - for questions email "clophus" at "lbl.gov"
+
+
+
 
 ## Table of Contents  
-- [Examples](#examples)
-- [Prismatic GUI simulation of decahedral NP](#tutorialdeca)
-- [PyPrismatic: Using Prismatic through Python](#pyprismatic)  
+The steps we will follow for this tutorial are:
+- [1 - Download atomic coordinates](#step1)
+- [2 - Make unified model in 'Matlab'](#step2)
+- [3 - Export coordinates in 'Prismatic' .xyz](#step3)
+- [4 - Import coordinates into `Prismatic`](#step4)
+- [5 - 'PRISM' vs 'multislice'](#step5)
+- [6 - Run `PRISM` simulations, save .mrc outputs](#step6)
+- [7 - Generate output images](#step7)
 
 
 
-## Examples
-
-Within the source code of `Prismatic` is an "examples" folder that contains some example scripts of how one might run simulations using *Prismatic*. There is a mixture of Python examples use `PyPrismatic` and bash shell scripts using `prismatic`. Both tools are accessing the exact same underlying code -- they just provide different entry points. Use whatever you feel most comfortable with.
 
 
-
-
-
-<a name="tutorialdeca"></a>
 ## Prismatic GUI simulation of decahedral NP
 
-[Issues with this tutorial?  Email Colin at "clophus" at "lbl.gov"]
 
 In this example we will walk you through the entire procedure for generating a STEM simulation of a decahedral nanoparticle. This simulation should match the result shown in the PRISM algorithm paper: [DOI:10.1186/s40679-017-0046-1](http://dx.doi.org/10.1186/s40679-017-0046-1), specifically Figures 3, 4 and 5. Below is an overview of the sample we will construct, and an example of image simulations generated from both the multislice method, and the PRISM algorithm with varying degrees of accuracy.
 
@@ -31,16 +32,8 @@ In this example we will walk you through the entire procedure for generating a S
 | Atomic model of a decahedral nanoparticle resting upon an amorphous carbon substrate. | STEM annular bright field and annular dark field image simulations taken from Figure 4 of the [PRISM algorithm paper](http://dx.doi.org/10.1186/s40679-017-0046-1). |
 
 
-The steps we will follow for this tutorial are:
-
-1. Download atomic coordinate files.
-2. Construct unified atomic model in `Matlab`.
-3. Export coordinates in .xyz format for `Prismatic`.
-4. Import atoms into Prismatic and set parameters.
-5. Test PRISM vs Multislice accuracy.
-6. Run PRISM simulation, save output as .mrc.
-7. Generate final image outputs.
-
+<a name="step1"></a>
+&nbsp;
 ### 1 - Download atomic coordinate files.
 
 To simulate a realistic nanoparticle sample, we require two sets of atomic coordinates. The first is (obviously) the nanoparticle itself. We have chosen to simulate a defected nanoparticle, as this is a more realistic sample with more interesting features than the ideal nanoparticles often used in atomic model simulations. Such a structure is available for download from a page on the [Miao group website](http://www.physics.ucla.edu/research/imaging/dislocations/index.html). I've saved the coordinates as a .csv file [here](data/atoms_deca_cartesian_x_y_z_ID.csv). Each row corresponds to an atom, and the four columns are [x y z ID] where (x,y,z) are the 3D position in Angstroms, and ID is the atomic Z number of the atoms. In this case I've used 78 for platinum, but this can be changed to any atomic species for this example simulation.
@@ -53,7 +46,8 @@ We now have all of the atomic coordinates required to build our simulation "scen
 
 
 
-
+<a name="step2"></a>
+&nbsp;
 ### 2 - Construct unified atomic model in `Matlab`.
 
 This section can be completed using any interactive programming language. I will describe the procedure using `Matlab` code as an example, which can be easily adapted to the language of your choice. First, import the data into `Matlab` (right click on the .csv files and select "Import Data," naming the two arrays something suitable).  Next, we perform a few simple steps:
@@ -130,6 +124,9 @@ You can find the above code (with some included plotting code) at [this link](da
 
 
 
+
+<a name="step3"></a>
+&nbsp;
 ### 3 - Export coordinates in .xyz format for `Prismatic`.
 
 `Prismatic` uses the same .xyz input format as `computem`.  As in most .xyz files, the first two rows are reserved for comments and each following row contains "space-separated" values. The first row can be set to anything, typically it is used for a descriptive title of the simulation cell. We will use the second row to list the three values specified above as "cellDim" which represent the size of the simulation cell in Angstroms.  All following rows consist of columns containing six values:
@@ -197,7 +194,8 @@ cellDim,atoms(:,4),atoms(:,1:3).*repmat(cellDim,[size(atoms,1) 1]),1,0.08);
 ```
 
 
-
+<a name="step4"></a>
+&nbsp;
 ### 4 - Import atoms into Prismatic and set parameters.
 
 It's time to run *Prismatic*!  You can find the GUI installers [here](installers.md). For this tutorial, I will show screenshots from the OSX build, but the Windows version should be essentially identical. Once you have installed *Prismatic*, run the program *prismatic-gui.app* or *prismatic-gui.exe*. You should see the startup GUI:
@@ -222,7 +220,8 @@ For our simulation, we are going to start with interpolation factors of 20 and 2
 
 
 
-
+<a name="step5"></a>
+&nbsp;
 ### 5 - Test PRISM vs Multislice accuracy.
 
 The `PRISM` algorithm is very fast - for a given interpolation factor *f*, it can provide a speedup of *f^2* to *f^4* relative to the multislice calculation time, depending on the simulation cell dimensions and the calculation parameters. However, it must sacrifice some accuracy to do so, with the error increasing as the interpolation factor *f* is increased. Ideally we want the error relative to multislice to be <1%, or even <0.1%, but this may not always be possible due to limited calculation times. Thus when choosing a value for *f*, we must balance accuracy against the time we are willing to alot for a given calculation.
@@ -243,6 +242,9 @@ These settings should produce a high accuracy `PRISM` simulation. The correlatio
 
 
 
+
+<a name="step6"></a>
+&nbsp;
 ### 6 - Run PRISM simulation, save 3D output as .mrc.
 
 We are now almost ready to run the full `PRISM` simulation in *Prismatic*. First, make sure the desited number of CPU threads and GPUs / GPU streams are selected. Using all of your computer's power will speed up the simulation, but could make watching videos on Youtube while the simulation runs difficult. Additionally, the CPU threads will run far more slowly than any GPU streams (if available).  Therefore a GPU-only simulation is a common configuration. 
@@ -254,6 +256,10 @@ The other consideration is which outputs to save. By far the most common use-cas
 We will also leave the thermal effects box checked, even though we are performing a single frozen phonon simulation. For a more accurate output, we can in the future run 8 or even 16 frozen phonon configurations. The final few settings control whether the simulation is a `PRISM` or `multislice` simulation, and whether to use streaming mode or not. The streaming mode will use less GPU RAM, but will take longer to compute. For this simulation, I am using 12 CPU threads and 0 GPUs, since my OSX workstation does not not have a CUDA capable GPU. Once all settings are correct, click the **Full Calculation** button.  Even without a GPU, this simulation will complete in under an hour on my machine.
 
 
+
+
+<a name="step7"></a>
+&nbsp;
 ### 7 - Generate final image outputs.
 
 After the simulation is completed, you have two ways to analyze the results. The first is directly inside of the Prismatic program. Clicking on the **Output** tab at the top of the imaging panel will bring up the 3D interactive output. You can now move the inner and outer detector angles using the sliders below. Once you have formed the desired image, the **Save Current Image** button can be used to export it. For example, below I have created a virtual bright field (BF) image by using an annular range of 0 - 20 millirads:
@@ -301,21 +307,6 @@ Note that the .mrc data is written out in c array ordering, and so I permute the
 
 ![Prismatic screenshot 10](img/PrismaticScreen10.png){:width="555"}
 
-
-
-<a name="pyprismatic"></a>
-## PyPrismatic: Using Prismatic through Python  
-
-*Instructions for installing `PyPrismatic` may be found at [here](installation.md)*
-
-To run a simulation with `PyPrismatic`, you simple create a `Metadata` object, adjust the parameters, and then execute the calculation with the `go` method. A list of adjustable parameters is [in the About section](http://www.prism-em.com/about). These parameters can either be set with keyword arguments when constructing the `Metadata` object, or directly with the `.` operator. A simple example script utilizing both methods of setting parameters follows where the hypothetical input atomic coordinate information exists in the file "myInput.XYZ", the electron energy is set to 100 keV, and a 3x3x3 unit cell tiling is desired. The remaining parameters will be set to the default values (the `toString()` method can be used to print out all of the current settings).
-
-~~~ python
-import pyprismatic as pr
-meta = pr.Metadata(filenameAtoms="myInput.XYZ", E0=100e3)
-meta.tileX = meta.tileY = meta.tileZ = 3
-meta.go()
-~~~
 
 
 

@@ -2,8 +2,7 @@
 
 ![Prismatic screenshot 01](img/SuperSTEMtopbar.png){:width="1184px"}
 
-Instructors: Colin Ophus and Hamish Brown
-
+Tutorial by Colin Ophus (clophus 'at' lbl.gov)
 
 ## Table of Contents  
 - [1 - Install `Prismatic`](#step1)

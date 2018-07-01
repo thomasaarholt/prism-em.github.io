@@ -1,6 +1,6 @@
 &nbsp;
 
-# GUI Tutorial
+# Prismatic GUI Tutorial
 ## Decahedral Nanoparticle
 ---
 

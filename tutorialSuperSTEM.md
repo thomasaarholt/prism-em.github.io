@@ -1,5 +1,4 @@
 
-
 ![Prismatic screenshot 01](img/SuperSTEMtopbar.png){:width="1184px"}
 
 Tutorial by Colin Ophus (clophus 'at' lbl.gov)

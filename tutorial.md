@@ -1,4 +1,5 @@
-# Prismatic GUI Tutorial - Decahedral NP 
+# GUI Tutorial
+## Decahedral Nanoparticle
 ---
 
 Authored by Colin Ophus - for questions email "clophus" at "lbl.gov"

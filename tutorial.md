@@ -60,7 +60,7 @@ This section can be completed using any interactive programming language. I will
 * Position nanoparticle in center of cell, just above / slightly inside the substrate.
 * Delete substrate atoms too close to / overlapping nanoparticle atoms.
 
-First, let's tile the subtrace block 2x2 times to make it large enough to hold the nanoparticle, without periodic wrap-around artifacts.  We will also permute the dimensions of 3 out of 4 blocks to prevent tiling artifacts.  The boundaries will not be perfectly physical, but this error will be small.  Assuming we import the xyz coordinates of the substrate block as "xyzSub" we can use the below code to tilt the subtrate (and cell boundaries) by 2x2x1:
+First, let's tile the substrate block 2x2 times to make it large enough to hold the nanoparticle, without periodic wrap-around artifacts.  We will also permute the dimensions of 3 out of 4 blocks to prevent tiling artifacts.  The boundaries will not be perfectly physical, but this error will be small.  Assuming we import the xyz coordinates of the substrate block as "xyzSub" we can use the below code to tilt the subtrate (and cell boundaries) by 2x2x1:
 
 ```matlab
 cellSub = [50 50 50];       % Original substrate cell size

@@ -134,7 +134,7 @@ Input parameters may also be provided in the form a plain-text parameter file wi
 **tileY** : number of unit cells to tile in Y direction  
 **tileZ** : number of unit cells to tile in Z direction  
 **E0** : electron beam energy (in eV)  
-**alphaBeamMax** : the maximum probe angle to consider (in mrad)  
+**alphaBeamMax** : the maximum probe angle to consider (in **rad**)  
 **numGPUs** : number of GPUs to use. A runtime check is performed to check how many are actually available, and the minimum of these two numbers is used   
 **numStreamsPerGPU** : number of CUDA streams to use per GPU  
 **numThreads** : number of CPU worker threads to use  
@@ -145,8 +145,8 @@ Input parameters may also be provided in the form a plain-text parameter file wi
 **probeStepY** : step size of the probe in Y direction (in Angstroms)  
 **probeDefocus** : probe defocus (in Angstroms)  
 **C3** : microscope C3 (in Angstroms)    
-**probeSemiangle** : probe convergence semi-angle (in mrad)  
-**detectorAngleStep** : angular step size for detector integration bins (in mrad)  
+**probeSemiangle** : probe convergence semi-angle (in rad)  
+**detectorAngleStep** : angular step size for detector integration bins (in rad)  
 **probeXtilt** : probe X tilt (in mrad)  
 **probeYtilt** : probe X tilt (in mrad)  
 **scanWindowXMin** : lower X size of the window to scan the probe (in fractional coordinates)  
@@ -160,6 +160,6 @@ Input parameters may also be provided in the form a plain-text parameter file wi
 **save2DOutput** : save the 2D STEM image integrated between integrationAngleMin and integrationAngleMax  
 **save3DOutput** : true/false Also save the 3D output at the detector for each probe (3D output mode)  
 **save4DOutput** : true/false Also save the 4D output at the detector for each probe (4D output mode)  
-**integrationAngleMin** : inner detector position (for 2D output mode) (in mrad)  
-**integrationAngleMax** : outer detector position (for 2D output mode) (in mrad)  
+**integrationAngleMin** : inner detector position (for 2D output mode) (in rad)  
+**integrationAngleMax** : outer detector position (for 2D output mode) (in rad)  
 **transferMode** : memory model to use, either "streaming", "singlexfer", or "auto"  

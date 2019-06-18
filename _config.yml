@@ -51,7 +51,10 @@ avatar: "/img/prism.png"
 # Important: you must keep the "name" parameter, everything else you can remove
 author:
   name: Alan (AJ) Pryor, Jr.
+  <!--
+  Removing email link at bottom to stop users from emailing AJ for Prismatic bugs - however we still will leave his name / github link since he did make this website!
   email: "apryor6@gmail.com"
+  -->
   github: apryor6
 
 # Select which links to show in the footer

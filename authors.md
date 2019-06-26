@@ -13,5 +13,5 @@
 
 ### Past Contributors
 
-[AJ Pryor](https://www.linkedin.com/in/alan-pryor-02a52b57/) is a 5th year physics Ph.D. student in the [Coherent Imaging Group](http://www.physics.ucla.edu/research/imaging/) at UCLA. AJ is a data scientist and HPC software engineer, and he maintains [a blog](http://alanpryorjr.com/) about these and other topics. You can find some of his other software projects [on Github](https://github.com/apryor6), and he can be contacted via email at apryor6@gmail.com.
+[AJ Pryor, Ph.D.,](https://www.linkedin.com/in/alan-pryor-02a52b57/) is a Principal Data Scientist at American Tire Distributors (ATD), where he is a member of the Advanced Analytics Center of Excellence, and was the original principal architect of Prismatic. His Ph.D. Research was in the [Coherent Imaging Group](http://www.physics.ucla.edu/research/imaging/) at UCLA and focused on  developing, implementing, and accelerating 2D image simulation and 3D reconstruction algorithms. AJ is a data scientist and HPC software engineer, and he maintains [a blog](http://alanpryorjr.com/) about these and other topics. You can find some of his other software projects [on Github](https://github.com/apryor6), and he can be contacted via email at apryor6@gmail.com.
 

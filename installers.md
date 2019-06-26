@@ -1,22 +1,45 @@
-# Installers
+
+
+# Current Version (`Prismatic v1.2`)
+
+## Installers
+
+### Windows 
+[Prismatic-v1.2.msi](https://drive.google.com/open?id=1jVtyi4Rbqa5CrWKnEFwoIAW5zoNJDKRo)
+
+[Primatic-GPU-v1.2.msi](https://drive.google.com/open?id=1pL4NUEigjo1WfEq_B56ZPXyn8RHuXB71)
+
+### Mac OS X (coming soon!)
+[Prismatic-OSX-v1.2.dmg](http://www.nooooooooooooooo.com/)
+
+## Source Code (coming soon!)
+
+[Current Build](http://www.github.com/prism-em/prismatic)
+
+Zip file
+
+.7z file
+
+tar file
 
 ---
 
-## Mac OS X
-[Prismatic-OSX-v1.0.dmg](https://github.com/prism-em/prismatic-binaries/raw/master/Mac/Prismatic-v1.0.dmg.zip)  
+# Old Versions
 
-[Prismatic-OSX-v1.1.dmg (OSX 10.12.6 Sierra)](https://drive.google.com/open?id=1S1utdTErovvkf-o5P4gTRB5IeC4smYqZ)
+## Installers
 
-[Prismatic-OSX-v1.1.dmg (OSX 10.13.1 High Sierra)](https://drive.google.com/open?id=1OnclVmfDv9oIAXVdTbq6dp94DDiLuWfk) 
+### Windows 
+[Prismatic-v1.1.msi](https://drive.google.com/open?id=13TZZc1ZAzMMx-cmfiCJCL4pBPqW_icWS)
 
-
-## Windows 
-
+[Prismatic-GPU-v1.1.msi](https://drive.google.com/open?id=1B9Yq-BBWY3VvNRD-aiKTWGzDME7s8qPh)  
 
 [Prismatic-v1.0.msi](https://drive.google.com/open?id=13TZZc1ZAzMMx-cmfiCJCL4pBPqW_icWS)
 
 [Prismatic-GPU-v1.0.msi](https://drive.google.com/open?id=1MiIWWZTqMEfl-eRi3HQDdgf3iNmIgDS-)
 
-[Prismatic-v1.1.msi](https://drive.google.com/open?id=13TZZc1ZAzMMx-cmfiCJCL4pBPqW_icWS)
+### Mac OS X
+[Prismatic-OSX-v1.1.dmg (OSX 10.12.6 Sierra)](https://drive.google.com/open?id=1S1utdTErovvkf-o5P4gTRB5IeC4smYqZ)
 
-[Prismatic-GPU-v1.1.msi](https://drive.google.com/open?id=1B9Yq-BBWY3VvNRD-aiKTWGzDME7s8qPh)  
+[Prismatic-OSX-v1.1.dmg (OSX 10.13.1 High Sierra)](https://drive.google.com/open?id=1OnclVmfDv9oIAXVdTbq6dp94DDiLuWfk) 
+
+[Prismatic-OSX-v1.0.dmg](https://github.com/prism-em/prismatic-binaries/raw/master/Mac/Prismatic-v1.0.dmg.zip)  

@@ -3,8 +3,8 @@
 
 Table of Contents    
   - [File Formats](#file-formats)  
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Input](#input)  
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Output](#output)  
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Input](#input)  
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - [Output](#output)  
   - [GPU Compute Capability](#gpu-compute-capability)
   - [Command Line Options](#cli-options)
   - [Parameter File](#parameter-file)
@@ -44,21 +44,27 @@ one unit cell of (100) silicon
 
 ### Output
 
-Outputs are written to binary [.mrc](http://bio3d.colorado.edu/imod/doc/mrc_format.txt) files with float-precision. There are potentially 2D, 3D, and 4D output. For all outputs, there are at least two dimensions corresponding to X and Y probe positions. At each position, `Prismatic` can output the full probe (4D), a radially integrated ouput placed into virtual detector bins (3D), or further integrated over a range of detector bins to produce a single value for each scan position (2D). The 3D output is considered to be the primary result and is the only output produced by default; however, any combination of 2D, 3D, and 4D outputs may be produced with a single simulation. The metadata parameter `filename_output`, set with "-o" at the command line, is used as a base filename and modified depending on the output type.
+Outputs are written to [HDF5 files](https://www.hdfgroup.org/solutions/hdf5/) with a format compatible with the analysis package [py4DSTEM](https://www.github.com/py4DSTEM/py4DSTEM). All output from `Prismatic` is packed into a single file. There are potentially 2D, 3D, and 4D outputs, as well as calculations of DPC center of mass and the calculated projected potential slices. For all outputs, there are at least two dimensions corresponding to X and Y probe positions. At each position, `Prismatic` can output the full probe (4D), a radially integrated output placed into virtual detector bins (3D), an image further integrated over a range of detector bins to produce a single value for each scan position (2D), the differential phase contrast center of mass, and the projected potential. The 3D output is considered to be the primary result and is the only output produced by default; however, any combination of 2D, 3D, 4D, DPC, and potential slice outputs may be produced with a single simulation. The metadata parameter `filename_output` is set with "-o" at the command line.
 
-* 2D output: Produced by adding the command line option "-2D ang\_min ang\_max" where "ang\_min" and "ang\_max" are the inner and outer integration angles in mrad. The resulting image will be composed as either "prism\_2Doutput\_" + `filename_output` or "multislice\_2Doutput\_" + `filename_output`. By default this is off.
-* 3D output: Controlled by command line option "-3D 0/1" where 0 or 1 is a boolean on/off. The 3D output is saved to `filename_output`. By default this is on.
-* 4D output: Controlled by command line option "-4D 0/1" where 0 or 1 is a boolean on/off. The 4D output saves a separate 2D MRC image for each X/Y probe scan position. The output name for each image is tagged with the X and Y scan position index + `filename_output`. By default this is off.
+* 2D output: Produced by adding the command line option "-2D ang\_min ang\_max" where "ang\_min" and "ang\_max" are the inner and outer integration angles in mrad. By default this is off. The 2D output is saved into a single array in the HDF5 file under `/4DSTEM_experiment/data/realslices/annular_detector_depth####/realslice`, where `####` is the output layer (always `0000` if using the `PRISM` algorithm).
+* 3D output: Controlled by command line option "-3D 0/1" where 0 or 1 is a boolean on/off. The 3D output is saved to `filename_output`. By default this is on.  The 3D output is saved into a series of realslice arrays in the HDF5 file under `/4DSTEM_experiment/data/realslices/virtual_detector_depth####/bin$$$$`where `####` is the output layer (always `0000` if using the `PRISM` algorithm) and `$$$$` is the virtual detector bin.
+* 4D output: Controlled by command line option "-4D 0/1" where 0 or 1 is a boolean on/off. By default this is off. The 4D output is saved into a single, chunked array in the HDF5 file under `/4DSTEM_experiment/data/datacubes/CBED_array_depth####/datacube`, where `####` is the output layer (always `0000` if using the `PRISM` algorithm).
+* DPC Center of Mass: Controlled by command line option "-DPC 0/1" where 0 or 1 is a boolean on/off. By default this is off. The DPC output is saved into two realslice arrays in the HDF5 file under `/4DSTEM_experiment/data/realslices/DPC_CoM_depth####/DPC_CoM_$`, where `####` is the output layer (always `0000` if using the `PRISM` algorithm) and `$` is either `x` or `y`.
+* Potential Slices: Controlled by command line option "-ps 0/1" where 0 or 1 is a boolean on/off. By default this is off. The potential slice output is saved into a series of realslice arrays  in the HDF5 file under `/4DSTEM_experiment/data/realslices/ppotential/slice_####`where `####` is the potential slice (increasing in Z).
 
 For example, the `prismatic` command 
-`./prismatic -i atoms.XYZ -2D 0 10 -4D 1 -3D 1 -o example.mrc`
-will produce "prism\_2Doutput\_example.mrc" with the 2D bright field image integrated from 0-10 mrad, the 3D output in "example.mrc", and the 4D output consisting of many individual 2D images with names of the form  "example\_X##\_Y##\_FP##.mrc" where the number values indicate the integer index of the scan in X and Y, accordingly. For example, if the simulation parameters are such that the probe step size is 1 Angstrom, then the file "example\_X1_Y2_FP2.mrc" contains the 2D intensity values corresponding to probe position (1.0, 2.0) Angstroms for the second frozen phonon configuration (assuming that the scan window parameters are set to defaults). For the time being, it will likely require some scripting on the user's part to wrangle the 4D output. In the future, we intend to introduce an hdf5 format to contain each of these outputs in a unified way. 
+`./prismatic -i atoms.XYZ -2D 0 10 -4D 1 -3D 1 -o example.h5`
+will produce "prism\_2Doutput\_example.h5" with the 2D bright field image integrated from 0-10 mrad, the 3D output, and the 4D output, but will not include the DPC calculation nor potential slices. Physically relevant metadata from the simulation is saved into the `metadata` group under `/4DSTEM_experiment/metadata/metadata_0/original/simulation_parameters` as a series of attributes that can be accessed as key-value pairs. A parameter file is also generated at the end of the simulation and placed into the home directory of the user. 
+
+|![file_tree](img/fileTree.png)|
+|:---:|
+| File structure of `Prismatic` HDF5 output. |
 
 
 
 ## GPU Compute Capability
 
-The GPU version of `Prismatic` requires a CUDA-enabled GPU with compute capability >= 3.0
+The GPU version of `Prismatic` requires a CUDA-enabled GPU with compute capability >= 3.0.
 
 <a name ="cli-options"></a>
 ## Using `Prismatic` from the command line
@@ -67,46 +73,61 @@ The GPU version of `Prismatic` requires a CUDA-enabled GPU with compute capabili
 
 The following options are available with `prismatic` (you can also print available options and default values with `prismatic --help`), each documented as **_long form_** **_(short form)_** *parameters* : description
 
-* --input-file (-i) filename : filename containing input atom information in XYZ format (see [here](http://prism-em.com/about/) for more details)  
+Basic usage is prismatic -i filename [other options]:
+
+* --input-file (-i) filename :  filename containing the atomic coordinates, see www.prism-em.com/about for details (default: /path/to/atoms.txt)
 * --param-file (-pf) filename : filename containing simulation parameters. This optional file can contain any number of parameters in the form of a text file with one entry per line of the form param:value.
-* --output-file(-o) filename : base output filename
-* --interp-factor (-f) number : PRISM interpolation factor, used for both X and Y
-* --interp-factor-x (-fx) number : PRISM interpolation factor in X
-* --interp-factor-y (-fy) number : PRISM interpolation factor in Y
-* --num-threads (-j) value : number of CPU threads to use
-* --num-streams (-S) value : number of CUDA streams to create per GPU
-* --num-gpus (-g) value : number of GPUs to use. A runtime check is performed to check how many are actually available, and the minimum of these two numbers is used.
-* --batch-size (-b) value : number of probes/beams to propagate simultaneously for both CPU and GPU workers.
-* --batch-size-cpu (-bc) value : number of probes/beams to propagate simultaneously for CPU workers.
-* --batch-size-gpu (-bg) value : number of probes/beams to propagate simultaneously for GPU workers.
-* --slice-thickness (-s) thickness : thickness of each slice of projected potential (in Angstroms)
+* --output-file(-o) filename : output filename (default: output.h5)
+* --interp-factor (-f) number : PRISM interpolation factor, used for both X and Y (default: 4)
+* --interp-factor-x (-fx) number : PRISM interpolation factor in X (default: 4)
+* --interp-factor-y (-fy) number : PRISM interpolation factor in Y (default: 4)
+* --num-threads (-j) value : number of CPU threads to use (default: 12)
+* --num-streams (-S) value : number of CUDA streams to create per GPU (default: 3)
+* --num-gpus (-g) value : number of GPUs to use. A runtime check is performed to check how many are actually available, and the minimum of these two numbers is used. (default: 4)
+* --slice-thickness (-s) thickness : thickness of each slice of projected potential (in Angstroms) (default: 2)
+* --num-slices (-ns) number of slices: in multislice mode, number of slices before intermediate output is given (default: 0)
+* --zstart-slices (-zs) value: in multislice mode, depth Z at which to begin intermediate output (default: 0)
+* --batch-size (-b) value : number of probes/beams to propagate simultaneously for both CPU and GPU workers. (default: 1)
+* --batch-size-cpu (-bc) value : number of probes/beams to propagate simultaneously for CPU workers. (default: 1)
+* --batch-size-gpu (-bg) value : number of probes/beams to propagate simultaneously for GPU workers. (default: 1)
 * --help(-h) : print information about the available options
-* --pixel-size (-p) pixel_size : size of simulation pixel size
-* --detector-angle-step (-d) step_size : angular step size for detector integration bins (in mrad)
-* --cell-dimension (-c) x y z : size of sample in x, y, z directions (in Angstroms)
-* --tile-uc (-t) x y z : tile the unit cell x, y, z number of times in x, y, z directions, respectively
-* --algorithm (-a) p/m : the simulation algorithm to use, either (p)rism or (m)ultislice
-* --energy (-E) value : the energy of the electron beam (in keV)
-* --alpha-max (-A) angle : the maximum probe angle to consider (in mrad)
-* --potential-bound (-P) value : the maximum radius from the center of each atom to compute the potental (in Angstroms)
-* --also-do-cpu-work (-C) bool=true : boolean value used to determine whether or not to also create CPU workers in addition to GPU ones
-* --streaming-mode 0/1 : boolean value to force code to use (true) or not use (false) streaming versions of GPU codes. The default behavior is to estimate the needed memory from input parameters and choose automatically.
-* --probe-step (-r) step_size : step size of the probe for both X and Y directions (in Angstroms)
-* --probe-step-x (-rx) step_size : step size of the probe in X direction (in Angstroms)
-* --probe-step-y (-ry) step_size : step size of the probe in Y direction (in Angstroms)
-* --random-seed (-rs) step_size : random number seed, integer
-* --probe-xtilt (-tx) value : probe X tilt (in mrad)
-* --probe-ytilt (-ty) value : probe X tilt (in mrad)
-* --probe-defocus (-df) value : probe defocus (in Angstroms)
-* --probe-semiangle (-sa) value : maximum probe semiangle (in mrad)
-* --scan-window-x (-wx) min max : determines the size of the area over the sample in which to scan the probe in X (in fractional coordinates between 0 and 1)
-* --scan-window-y (-wy) min max : determines the size of the area over the sample in which to scan the probe in Y (in fractional coordinates between 0 and 1)
-* --num-FP (-F) value : number of frozen phonon configurations to calculate
-* --thermal-effects (-te) bool : whether or not to include Debye-Waller factors (thermal effects)
-* --occupancy (-oc) bool : whether or not to consider occupancy values for likelihood of atoms existing at each site
-* --save-2D-output (-2D) ang_min ang_max : save the 2D STEM image integrated between ang_min and ang_max (in mrads)
-* --save-3D-output (-3D) bool=true : Also save the 3D output at the detector for each probe (3D output mode)
-* --save-4D-output (-4D) bool=false : Also save the 4D output at the detector for each probe (4D output mode)
+* --pixel-size (-p) pixel_size : size of simulated potential/probe X/Y pixel size (default: 0.1). Note this is different from the size of a pixel in the output, which is determined by probe_stepX(Y)
+* --pixel-size-x (-px) pixel_size : size of simulated potential/probe X pixel size (default: 0.1). Note this is different from the size of a pixel in the output, which is determined by probe_stepX(Y)
+* --pixel-size-y (-py) pixel_size : size of simulated potential/probe Y pixel size (default: 0.1). Note this is different from the size of a pixel in the output, which is determined by probe_stepX(Y)
+* --detector-angle-step (-d) step_size : angular step size for detector integration bins (in mrad) (default: 1)
+* --cell-dimension (-c) x y z : size of sample in x, y, z directions (in Angstroms) (default: 20 20 20)
+* --tile-uc (-t) x y z : tile the unit cell x, y, z number of times in x, y, z directions, respectively (default: 1 1 1)
+* --algorithm (-a) p/m : the simulation algorithm to use, either (p)rism or (m)ultislice (default: PRISM)
+* --energy (-E) value : the energy of the electron beam (in keV) (default: 80)
+* --alpha-max (-A) angle : the maximum probe angle to consider (in mrad) (default: 24)
+* --potential-bound (-P) value : the maximum radius from the center of each atom to compute the potental (in Angstroms) (default: 2)
+* --also-do-cpu-work (-C) bool=true : boolean value used to determine whether or not to also create CPU workers in addition to GPU ones (default: 1)
+* --streaming-mode 0/1 : boolean value to force code to use (true) or not use (false) streaming versions of GPU codes. The default behavior is to estimate the needed memory from input parameters and choose automatically. (default: Auto)
+* --probe-step (-r) step_size : step size of the probe for both X and Y directions (in Angstroms) (default: 0.25)
+* --probe-step-x (-rx) step_size : step size of the probe in X direction (in Angstroms) (default: 0.25)
+* --probe-step-y (-ry) step_size : step size of the probe in Y direction (in Angstroms) (default: 0.25)
+* --random-seed (-rs) step_size : random integer number seed
+* --probe-xtilt (-tx) value : probe X tilt (in mrad) (default: 0)
+* --probe-ytilt (-ty) value : probe X tilt (in mrad) (default: 0)
+* --probe-defocus (-df) value : probe defocus (in mrad) (default: 0)
+* -C3 value : microscope C3 aberration constant (in Angstrom) (default: 0)
+* -C5 value : microscope C5 aberration constant (in Angstrom) (default: 0)
+* --probe-semiangle (-sa) value : maximum probe semiangle (in mrad) (default: 20)
+* --scan-window-x (-wx) min max : size of the window to scan the probe in X (in fractional coordinates between 0 and 1) (default: 0 0.99999)
+* --scan-window-y (-wy) min max : size of the window to scan the probe in Y (in fractional coordinates between 0 and 1) (default: 0 0.99999)
+* --scan-window-xr (-wxr) min max : size of the window to scan the probe in X (in Angstroms) (defaults to fractional coordinates) )
+* --scan-window-yr (-wyr) min max : size of the window to scan the probe in Y (in Angstroms) (defaults to fractional coordiantes) )
+* --num-FP (-F) value : number of frozen phonon configurations to calculate (default: 1)
+* --thermal-effects (-te) bool : whether or not to include Debye-Waller factors (thermal effects) (default: True)
+* --occupancy (-oc) bool : whether or not to consider occupancy values for likelihood of atoms existing at each site (default: True)
+* --save-2D-output (-2D) ang_min ang_max : save the 2D STEM image integrated between ang_min and ang_max (in mrads) (default: Off)
+* --save-3D-output (-3D) bool=true : Also save the 3D output at the detector for each probe (3D output mode) (default: On)
+* --save-4D-output (-4D) bool=false : Also save the 4D output at the detector for each probe (4D output mode) (default: Off)
+* --save-DPC-CoM (-DPC) bool=false : Also save the DPC Center of Mass calculation (default: Off)
+* --save-real-space-coords (-rsc) bool=false : Also save the real space coordinates of the probe dimensions (default: Off)
+* --save-potential-slices (-ps) bool=false : Also save the calculated potential slices (default: Off)
+* --nyquist-sampling (-nqs) bool=false : Set number of probe positions at Nyquist sampling limit (default: Off)]
+
 
 <a name ="parameter-file"></a> 
 

@@ -4,11 +4,11 @@
 
 ### Current Contributors
 
-[Colin Ophus](http://foundry.lbl.gov/people/colin_ophus.html) is currently a research scientist at the National Center for Electron Microscopy (NCEM) at Lawrence Berkeley National Labs in Berkeley, California. He can be contacted via email at clophus@lbl.gov.
+[Dr. Colin Ophus](http://foundry.lbl.gov/people/colin_ophus.html) is currently a research scientist at the National Center for Electron Microscopy (NCEM) at Lawrence Berkeley National Labs in Berkeley, California. He can be contacted via email at clophus@lbl.gov.
 
-[Luis Rangel DaCosta](http://foundry.lbl.gov/) is a student in the Department of Materials Science at University of Michigan. Luiz is currently a Summer Undergraduate Laboratory Intern (SULI) at the Molecular Foundry, Berkeley Lab. 
+[Dr. Hamish Brown](https://scholar.google.com.au/citations?user=QN2mSeoAAAAJ&hl=en) is currently working as a Postdoctoral Researcher at the National Center for Electron Microscopy at Lawrence Berkeley.  Dr. Brown completed his Ph.D. in Theoretical Condensed Matter Physics at the University of Melbourne under the advisement of Prof. Les Allen, and a previous Postdoctoral appointment at the Monash University, Melbourne with Dr. Scott Findlay. His research interests include image simulation and retrieval of structural information in electron microscopy.
 
-
+[Luis Rangel DaCosta](http://www.linkedin.com/in/lerandc/) is a student in the Department of Materials Science and in the School of Music, Theatre and Dance at the University of Michigan. Luis is currently working as a Summer Undergraduate Laboratory Intern (SULI) at the Molecular Foundry, Berkeley Lab, and can be contacted via email at lrangeldacosta@lbl.gov.
 
 
 ### Past Contributors

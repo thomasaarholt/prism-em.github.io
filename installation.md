@@ -35,15 +35,15 @@ The following dependencies are needed by `Prismatic`:
 * [CMake](https://CMake.org/) (*For compiling the source code*)  
 * [Boost](http://www.boost.org)  
 * [FFTW](http://www.fftw.org) (compiled with `--enable-float`, `--enable-shared`, and `--enable-threads`)  
+* [HDF5](https://www.hdfgroup.org/solutions/hdf5/) (compiled with `--enable-threadsafe`,`--enable-cxx`, and `--enable-unsupported` )
 
 *Optional*
 
 * [CUDA Toolkit](https://developer.nvidia.com/cuda-toolkit) (*For GPU support*)  
 * Python 3, a good choice is [the Anaconda distribution](https://www.continuum.io/downloads) (*For the python package*, `PyPrismatic`)  
 * [Qt 5](https://www.qt.io/) (*For building the GUI*)  
-* [GCC 4-x](https://gcc.gnu.org/gcc-4.9/changes.html) *For non-Windows systems, note you cannot use GCC-5 or greater with `nvcc` currently, so if you are enabling GPU support you must have gcc-4.7, 4.8, or 4.9*
-`Prismatic` was developed using CUDA 8.0, but likely works with older versions as well and we welcome feedback from any user who attempts to do so (CUDA 7.0, 7.5 also have been reported to work).
-*Note: Even if you download a binary version of the GPU codes, you will still need to have the CUDA toolkit installed so that the `cuFFT` libraries can be found at runtime.*
+* [GCC](https://gcc.gnu.org/) *For non-Windows systems, you must check the compatibility between your CUDA toolkit version, GCC version, and operating system. Check compatibilities within the [CUDA toolkit online documentations](https://developer.nvidia.com/cuda-toolkit-archive) under installation guides.* `Prismatic v1.2` was developed using CUDA 10.1, but likely works with older versions as well and we welcome feedback from any user who attempts to do so.
+  *Note: Even if you download a binary version of the GPU codes, you will still need to have the CUDA toolkit installed so that the `cuFFT` libraries can be found at runtime.*
 
 
 ## Installers
@@ -57,8 +57,8 @@ Download Mac installers [here](http://prism-em.com/installers/)
 
 Download Windows installers [here](http://prism-em.com/installers/)
 
-
 <a name="from-source"></a>
+
 ## Building `Prismatic` from the source code
 
 
@@ -70,7 +70,7 @@ Microsoft Visual Studio projects, Mac OS XCode projects, etc.
 <a name="get-source-code"></a>
 ### Getting the source code 
 
-Once the [dependencies](#dependencies) are installed get the `Prismatic` source either from [compressed source files](https://github.com/prism-em/prismatic/archive/master.zip) or directly 
+Once the [dependencies](#dependencies) are installed get the `Prismatic` source either from [compressed source files](http://prism-em.com/installers/) or directly 
 from [Github](https://github.com/prism-em/prismatic) using `git clone`. Next, follow the instructions appropriate for your operating system.
 
 <a name="environmental-setup"></a>
@@ -97,8 +97,7 @@ export LIBRARY_PATH=/usr/local/cuda-8.0/lib64:$LIBRARY_PATH
 
 You can make these changes persistent by adding the same lines to your `~/.bashrc` file so that they are executed at startup every time you open a terminal. 
 
-Depending how your system is configured and what portions of `Prismatic` you are building you may need to add additional paths. For example, if you are building the GUI, you will also need to provide the paths to Qt5 headers and libraries. See the [dependencies](#dependencies) for details about what is required.
-
+Depending how your system is configured and what portions of `Prismatic` you are building you may need to add additional paths. For example, if you are building the GUI, you will also need to provide the paths to Qt5 headers and libraries. See the [dependencies](#dependencies) for details about what is required. For linking HDF5, it may help CMake to provide the path to the root HDF5 install directory `HDF5_ROOT` and to directly link the individual libraries `HDF5_HL_LIBRARY`,`HDF5_LIBRARY`,`HDF5_HL_CPP_LIBRARY`, and `HDF5_CPP_LIBRARY` .
 
 <a name="environmental-setup-mac"></a>
 
@@ -119,7 +118,7 @@ export LIBRARY_PATH=/usr/local/cuda-8.0/lib64:$LIBRARY_PATH
 
 You can make these changes persistent by adding the same lines to your `~/.bash_profile` file so that they are executed at startup every time you open a terminal. 
 
-Depending how your system is configured and what portions of `Prismatic` you are building you may need to add additional paths. For example, if you are building the GUI, you will also need to provide the paths to Qt5 headers and libraries. See the [dependencies](#dependencies) for details about what is required.
+Depending how your system is configured and what portions of `Prismatic` you are building you may need to add additional paths. For example, if you are building the GUI, you will also need to provide the paths to Qt5 headers and libraries. See the [dependencies](#dependencies) for details about what is required. For linking HDF5, it may help CMake to provide the path to the root HDF5 install directory `HDF5_ROOT` and to directly link the individual libraries `HDF5_HL_LIBRARY`,`HDF5_LIBRARY`,`HDF5_HL_CPP_LIBRARY`, and `HDF5_CPP_LIBRARY` .
 
 <a name="environmental-setup-win"></a>
 
@@ -131,9 +130,9 @@ These are the relevant environmental variables on Windows
 * `INCLUDE` - default search location for C++ headers  
 * `LIB` - default search location for C++ libraries
 
-These environmental variables can be set graphically through system settings. The specfic details of how to this will vary depending on which version of Windows you are using, but a quick Google search should be able to provide you step-by-step instructions. For example, on Windows 10, typing "variable" into the search feature on the taskbar reveals "Edit the system environmental variables".
+These environmental variables can be set graphically through system settings. The specific details of how to this will vary depending on which version of Windows you are using, but a quick Google search should be able to provide you step-by-step instructions. For example, on Windows 10, typing "variable" into the search feature on the taskbar reveals "Edit the system environmental variables". 
 
-Depending how your system is configured and what portions of `Prismatic` you are building you may need to add additional paths. For example, if you are building the GUI, you will also need to provide the paths to Qt5 headers and libraries. See the [dependencies](#dependencies) for details about what is required.
+Depending how your system is configured and what portions of `Prismatic` you are building you may need to add additional paths. For example, if you are building the GUI, you will also need to provide the paths to Qt5 headers and libraries. See the [dependencies](#dependencies) for details about what is required. For linking HDF5, it may help CMake to provide the path to the root HDF5 install directory `HDF5_ROOT` and to directly link the individual libraries `HDF5_HL_LIBRARY`,`HDF5_LIBRARY`,`HDF5_HL_CPP_LIBRARY`, and `HDF5_CPP_LIBRARY` . If using the graphical CMake interface, the configure process will automatically raise flags for any dependency not found with the environment variables. and you will be able to add them through the file browser.
 
 <a name="linux-install"></a>
 ## Installing on Linux  
@@ -251,14 +250,14 @@ which may require `sudo` privileges. This will place the files in `/usr/local/bi
 <a name="compiling-win"></a>
 ### Compiling with `CMake`'s GUI on Windows
 
-To build `Prismatic` on Windows with the `CMake` GUI, first open `CMake` and set the location of the source code to the top level directory of `Prismatic` (this is the directory  containing "CMakeLists.txt"). Next, choose the location to build the binaries. It is recommended to create a separate folder, perhaps called "build", for this purpose. Click `Configure`, and choose the C++ compiler you would like to use. I have successfully tested Microsoft Visual Studio 2015 (64-bit) and would recommend this version if possible, particularly if you are compiling with GPU-support due to the fact that both NVIDIA and Microsoft are proprietary vendors, there is often some conflict between the newest versions of `nvcc` and MSVS. 
+To build `Prismatic` on Windows with the `CMake` GUI, first open `CMake` and set the location of the source code to the top level directory of `Prismatic` (this is the directory  containing "CMakeLists.txt"). Next, choose the location to build the binaries. It is recommended to create a separate folder, perhaps called "build", for this purpose. Click `Configure`, and choose the C++ compiler you would like to use. `Prismatic v1.2` was successfully built with Microsoft Visual Studio 2019 (64-bit) and CUDA 10.1, though older versions may be more stable depending on your particular CUDA toolkit if you are compiling with GPU-support due to the fact that both NVIDIA and Microsoft are proprietary vendors, there is often some conflict between the newest versions of `nvcc` and MSVS. 
 
 Based on the [option settings](cmake-options), `CMake` will then attempt to find the necessary dependencies. If you [have fully setup your environment](#environmental-setup-win), then configuration should succeed. If it fails, then variables it cannot satisfy will be set to NOTFOUND. For example, if the `Boost_INCLUDE_DIR` (the location of the Boost libraries), is not found, it will be set to `Boost_INCLUDE_DIR-NOTFOUND`. You will need to manually set the path to boost (see [below](#cmake-options) for how to set options), and then rerun `Configure`. Sometimes it is not necessary to specify a value for every "NOTFOUND" variable if there are multiple ones from the same dependency as CMake may be able to find them relative to one of the variables you do specify. For example, if you specify the path to one of the Qt libraries and reconfigure the other ones will likely be found automatically. Other `CMake` variables, like `FFTW_MPI_LIBRARY`, are not used by `Prismatic` and if they can be left "NOTFOUND". In my opinion the easiest thing to do is to specify the value of whatever variables are causing error messages one-by-one until configuration succeeds.
 
-Once configuration is complete, click `Generate` and a MSVS .sln file will be created. Open this file, set the build mode to "Release" (*make sure you done forget this! If the build mode is not Release when you build `cuPrismatic.dll` then bad things will happen later down the road*), and then run "Build Solution" to compile the code. You may find that the build process randomly fails and then works after trying a second (or third, or fourth) time. You can then find the executable `prismatic-gui.exe` inside of the "Release" folder within the build directory you selected in the `CMake` GUI.
-
+Once configuration is complete, click `Generate` and a MSVS .sln file will be created. Open this file, set the build mode to "Release" (*make sure you done forget this! If the build mode is not Release when you build `cuPrismatic.dll` then bad things will happen later down the road*), and then run "Build Solution" to compile the code. You may find that the build process randomly fails and then works after trying a second (or third, or fourth) time. This is often due to project access issues since multiple projects often access the same object files. Turning off parallel project building in Visual Studio can make the build process more consistently stable. You can then find the executable `prismatic-gui.exe` inside of the "Release" folder within the build directory you selected in the `CMake` GUI. The `Install` project is not automatically built, but if done, it will automatically install `Prismatic` into your Program Files.
 
 <a name="python-installing-pyprismatic"></a>
+
 ## Python: Installing `PyPrismatic`
 `PyPrismatic` is a Python package for invoking the C++/CUDA code in `Prismatic`. It can be installed easily with `pip` provided the following dependencies are installed:  
 
@@ -317,7 +316,7 @@ To install the python package from the source code with `setup.py`, first [get t
 
 ~~~
 pip3 install -r requirements.txt
-~~~ 
+~~~
 
 To install the Python dependencies. Next enter either (*you should change the actual names of the paths to match your machine, this is just an example*)
 
@@ -345,7 +344,7 @@ If you have [setup your environmental variables](#environmental-setup), you can 
 
 One of the great features about `CMake` is that it can easily tolerate the complicated task of compiling a single program with multiple compilers, which is necessary when mixing CUDA and Qt (discussed more [here](http://prism-em.com/source-code/#combining)).  For a CPU-only version of `PyPrismatic`, the necessary C++ source code can be distributed with the Python package, and `setuptools` can easily compile the necessary C++ extension module. Unfortunately, to my knowledge `setuptools` does not play nicely with `nvcc`, which makes distributing a Python package that utilizes custom GPU code more challenging. My solution was to compile the CUDA code into a a single shared library called `cuPrismatic`, which can then be linked against in the Python package as if it were any other C++ library. There is no "new" code in `cuPrismatic`, it simply serves as an intermediate step to help Python out by bundling the GPU code together into something it can work with. As an aside, this type of step is all `CMake` is doing under-the-hood to make CUDA and Qt play nicely in the first place -- it's just compiling the various formats of source code into a commonly understood form.
 
-With that being said, in order to install the GPU-enabled version of `PyPrismatic`, you must first build `cuPrismatic`. To do so, you will need to [get the source code](#get-source-code), set the `PRISMATIC_ENABLE_PYTHON=1` variable in `CMake`, then configure and compile the project. More detail on this process of using `CMake` is [described above](#from-source). Once the library is installed, then proceed below.
+With that being said, in order to install the GPU-enabled version of `PyPrismatic`, you must first build `cuPrismatic`. To do so, you will need to [get the source code](#get-source-code), set the `PRISMATIC_ENABLE_PYTHON_GPU=1` variable in `CMake`, then configure and compile the project. More detail on this process of using `CMake` is [described above](#from-source). Once the library is installed, then proceed below.
 
 <a name="testing-`PyPrismatic`"></a>
 ### Testing `PyPrismatic`

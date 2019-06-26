@@ -24,8 +24,7 @@ description: Documentation, tutorials, and source code for the software package 
 # List of links in the navigation bar
 navbar-links: 
   Downloads:
-    - Source Code: "http://github.com/prism-em/prismatic"
-    - Installers: "installers"
+    - Downloads: "installers"
   Installation: "installation"
   Tutorials:
     - GUI Tutorial: "tutorial"
@@ -52,13 +51,13 @@ avatar: "/img/prism.png"
 author:
   name: Alan (AJ) Pryor, Jr.
   email: "apryor6@gmail.com"
-  github: apryor6
+  github: prism-em
 
 # Select which links to show in the footer
 footer-links-active:
   rss: false
   facebook: false
-  email: true
+  email: false
   twitter: false
   google-plus: false
   github: true

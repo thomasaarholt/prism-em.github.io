@@ -148,6 +148,8 @@ Input parameters may also be provided in the form a plain-text parameter file wi
 **potBound** : limiting radius within which to compute projected potentials from the center of each atom (in Angstroms)  
 **numFP** : number of frozen phonon configurations to average over  
 **sliceThickness** : thickness of potential slices (in Angstroms)  
+**numSlices** : number of slices between intermediate outputs
+**zStart**: depth before intermediate output begins (in Angstroms)
 **cellDimX** : unit cell dimension X (in Angstroms)  
 **cellDimY** : unit cell dimension Y (in Angstroms)  
 **cellDimZ** : unit cell dimension Z (in Angstroms)  
@@ -173,7 +175,11 @@ Input parameters may also be provided in the form a plain-text parameter file wi
 **scanWindowXMin** : lower X size of the window to scan the probe (in fractional coordinates)  
 **scanWindowXMax** : upper X size of the window to scan the probe (in fractional coordinates)  
 **scanWindowYMin** : lower Y size of the window to scan the probe (in fractional coordinates)  
-**scanWindowYMax** : upper Y size of the window to scan the probe (in fractional coordinates)  
+**scanWindowYMax** : upper Y size of the window to scan the probe (in fractional coordinates) 
+**scanWindowXMin_r**: lower X size of the window to scan the probe (in Angstroms)
+**scanWindowYMin_r** : lower Y size of the window to scan the probe (in Angstroms)
+**scanWindowXMax_r**: upper X size of the window to scan the probe (in Angstroms)
+**scanWindowYMax_r** : upper Y size of the window to scan the probe (in Angstroms)
 **randomSeed** : number to use for random seeding of thermal effects  
 **algorithm** : simulation algorithm to use, "prism" or "multislice"  
 **includeThermalEffects** : true/false to apply random thermal displacements (Debye-Waller effect)  
@@ -181,6 +187,9 @@ Input parameters may also be provided in the form a plain-text parameter file wi
 **save2DOutput** : save the 2D STEM image integrated between integrationAngleMin and integrationAngleMax  
 **save3DOutput** : true/false Also save the 3D output at the detector for each probe (3D output mode)  
 **save4DOutput** : true/false Also save the 4D output at the detector for each probe (4D output mode)  
+**:saveDPC_CoM** : true/false Also save the DPC center of mass calculation for each probe
+**:savePotentialSlices**  : true/false Also save the projected potential array
+**:nyquistSampling** : set number of probe positions at Nyquist sampling limit
 **integrationAngleMin** : inner detector position (for 2D output mode) (in mrad)  
 **integrationAngleMax** : outer detector position (for 2D output mode) (in mrad)  
 **transferMode** : memory model to use, either "streaming", "singlexfer", or "auto"  

@@ -1,13 +1,18 @@
 
 
+# Downloads
+
+---
+
 # Current Version (`Prismatic v1.2`)
 
+---
 ## Installers
 
 ### Windows 
-[Prismatic-v1.2.msi](https://drive.google.com/open?id=1jVtyi4Rbqa5CrWKnEFwoIAW5zoNJDKRo)
+[Prismatic-v1.2.msi]
 
-[Primatic-GPU-v1.2.msi](https://drive.google.com/open?id=1pL4NUEigjo1WfEq_B56ZPXyn8RHuXB71)
+[Primatic-GPU-v1.2.msi]
 
 ### Mac OS X (coming soon!)
 [Prismatic-OSX-v1.2.dmg](http://www.nooooooooooooooo.com/)
@@ -25,6 +30,8 @@ tar file
 ---
 
 # Old Versions
+
+---
 
 ## Installers
 

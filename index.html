@@ -57,7 +57,8 @@ use-site-title: true
 </div>
 
 
-<img src="img/front-page-figure-v01.png" alt="Prismatic GUI" width= 600 align="center">
+<center><img src="img/front-page-figure-v01.png" alt="Prismatic GUI" width=600></center>
+
 {% if paginator.total_pages > 1 %}
 <ul class="pager main-pager">
   {% if paginator.previous_page %}
@@ -80,11 +81,12 @@ Prismatic is the name of our simulation code which performs quantum-mechanical s
 </p>
 Prismatic is an implementation of two related algorithms for STEM simulation:
 </p>
+
 <ul>
-  <li{  margin: 10px 0;
-}><b>Multislice</b></li> 
+  <li><b>Multislice</b></li> 
   In this method, we use first compute the projected potentials from a set of atomic coordinates. Next, for all STEM probes, we solve the Schrodinger equation for fast electrons using a split-step method, where we alternate between the transmission operator (which gives the phase shift atoms impart onto the electron wave) and the propagation operator (describing free-space propagation of the electron wave).
-  
+</ul>  
+<ul>  
   <li><b>PRISM</b></li>
   Multslice STEM simulations can be quite slow, because the scattering of each new STEM probe is recomputed from scratch. An alternative is to use the multislice method to compute a scattering matrix, which is then used to construct each STEM probe. This algorithm often requires roughly the same computational time as the mutlislice method, but also allows for huge speed-ups by using Fourier interpolation of the scattering matrix. Thus we call this approach the plane-wave recriprocal-space interpolated scattering matrix (PRISM) algorithm.
 </ul>  

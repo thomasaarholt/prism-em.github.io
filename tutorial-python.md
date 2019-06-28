@@ -1,6 +1,6 @@
 &nbsp;
 
-# Prismatic - Python and Bash
+# Prismatic - Python
 ---
 
 ## Table of Contents  

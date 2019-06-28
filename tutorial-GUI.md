@@ -15,6 +15,8 @@ In this tutorial, you will learn how to recreate th annular bright field (ABF) a
 
 | [![animated decahedral nanoparticle](img/decaRotate01.gif)](http://prism-em.com/tutorial-classic)  | [![example STEM image simulations](img/deca_sim_01_overview.png)](http://prism-em.com/tutorial-classic) | 
 |:---:|:---:|
+|  |  |
+
 
 
 

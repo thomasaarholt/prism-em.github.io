@@ -29,8 +29,9 @@ navbar-links:
     - Atomic Coordinates: "downloads-coordinates"
   Documentation:
     - Change Log: "docs-change-log"
-    - Input Files and Parameters: "docs-inputs-params"
-    - Output Files: "docs-outputs"
+    - Input Parameters: "docs-params"
+    - Input File Format: "docs-inputs"
+    - Output File Format: "docs-outputs"
     - Compiling Prismatic: "docs-compiling"
     - Source Code Walkthrough: "docs-source-code-walkthrough"  
   Resources:

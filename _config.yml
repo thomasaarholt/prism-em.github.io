@@ -25,11 +25,12 @@ description: Documentation, tutorials, and source code for the software package 
 navbar-links: 
   Downloads:
     - Source Code: "http://github.com/prism-em/prismatic"
-    - GUI Binarys: "downloads-binary"
+    - GUI Binarys: "downloads-binaries"
     - Atomic Coordinates: "downloads-coordinates"
   Documentation:
     - Change Log: "docs-change-log"
-    - Inputs and Parameters: "docs-inputs-params"
+    - Input Files and Parameters: "docs-inputs-params"
+    - Output Files: "docs-outputs"
     - Compiling Prismatic: "docs-compiling"
     - Source Code Walkthrough: "docs-source-code-walkthrough"  
   Resources:

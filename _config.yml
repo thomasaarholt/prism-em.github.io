@@ -24,12 +24,13 @@ description: Documentation, tutorials, and source code for the software package 
 # List of links in the navigation bar
 navbar-links: 
   Downloads:
-    - Downloads: "installers"
-  Installation: "installation"
-  Tutorials:
-    - GUI Tutorial: "tutorial"
+    - Source Code: "installers"
+    - GUI Binarys: "installers"
+    - Installation: "installation"
+  Resources:
+    - GUI Tutorials: "tutorial-GUI"
+    - Python Tuorials: "tutorial-python"
     - SuperSTEM Tutorial: "tutorialSuperSTEM"
-    - Python and Bash: "tutorialPython"
     - Source Code Walkthrough: "source-code"
   Resources:
     - About: "about"

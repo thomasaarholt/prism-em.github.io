@@ -4,4 +4,4 @@
 
 
 
-Here I will put general information about STEM simulation and best practices.
+Here we will put general information about STEM simulation and best practices.

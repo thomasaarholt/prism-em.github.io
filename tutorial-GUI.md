@@ -1,4 +1,3 @@
-# *Prismatic* GUI Tutorials
 ---
 ---
 

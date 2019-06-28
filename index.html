@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Prismatic
-subtitle: CPU/GPU software for fast simulation of Scanning Transmission Electron Microscopy (STEM) experiments.
+subtitle: CPU / GPU software for fast simulation of Scanning Transmission Electron Microscopy (STEM) experiments.
 use-site-title: true
 ---
 
@@ -57,7 +57,7 @@ use-site-title: true
 </div>
 
 
-<img src="img/prismatic-gui.png" alt="Prismatic GUI" width=827 height=767>
+<img src="img/prismatic-gui.png" alt="Prismatic GUI" width=400>
 {% if paginator.total_pages > 1 %}
 <ul class="pager main-pager">
   {% if paginator.previous_page %}
@@ -74,5 +74,20 @@ use-site-title: true
 {% endif %}
 
 <p>
-Prismatic is beta software - please keep that in mind when performing simulations!  
+Prismatic is the name of our simulation code, performs quantum-mechanical simulation of images and diffraction patterns for scanning tranmsmission electron microscopy (STEM).  STEM experiments are routinely used for atomic-resolution imaging of samples in materials science and other fields. STEM simulations are difficult primarily because of the "scanning" aspect, where the electron probe is moved over the sample surface - each new probe location requires a full multiple-scattering simulation, and STEM images often contain millions of pixels
+</p>
+
+</p>
+Prismatic is an implementation of two related algorithms for STEM simulation:
+</p>
+<ul>
+  <li><b>Multislice</b></li> 
+  In this method, we use first compute the projected potentials from a set of atomic coordinates. Next, for all STEM probes, we solve the Schrodinger equation for fast electrons using a split-step method, where we alternate between the transmission operator (which gives the phase shift atoms impart onto the electron wave) and the propagation operator (describing free-space propagation of the electron wave).
+  
+  <li><b>PRISM</b></li>
+  Multslice STEM simulations can be quite slow, because the scattering of each new STEM probe is recomputed from scratch. An alternative is to use the multislice method to compute a scattering matrix, which is then used to construct each STEM probe. This algorithm often requires roughly the same computational time as the mutlislice method, but also allows for huge speed-ups by using Fourier interpolation of the scattering matrix. Thus we call this approach the plane-wave recriprocal-space interpolated scattering matrix (PRISM) algorithm.
+</ul>  
+
+<p>
+We have released Prismatic as open source code for the benefit of the microscopy community. While we tried to extensively testit, please keep in mind that Prismatic is beta software. We are not responsible for any errors or inaccuracies caused by using Prismatic, and we strongly recommend that all users carefully test the convergence and accuracy of their simulations.
 </p>

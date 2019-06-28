@@ -26,10 +26,11 @@ navbar-links:
   Downloads:
     - Source Code: "installers"
     - GUI Binarys: "installers"
-    - Installation: "installation"
+    - Compiling Prismatic: "prismatic-compiling"
   Resources:
     - GUI Tutorials: "tutorial-GUI"
-    - Python Tuorials: "tutorial-python"
+    - Python Tutorials: "tutorial-python"
+    - STEM Simulation: "tutorial-STEM"
     - SuperSTEM Tutorial: "tutorialSuperSTEM"
     - Source Code Walkthrough: "source-code"
   About:

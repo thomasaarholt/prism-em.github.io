@@ -32,7 +32,7 @@ navbar-links:
     - Python Tuorials: "tutorial-python"
     - SuperSTEM Tutorial: "tutorialSuperSTEM"
     - Source Code Walkthrough: "source-code"
-  Resources:
+  About:
     - About: "about"
     - Citing Prismatic: "citeus"
     - About the Authors: "authors"

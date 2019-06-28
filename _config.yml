@@ -24,19 +24,23 @@ description: Documentation, tutorials, and source code for the software package 
 # List of links in the navigation bar
 navbar-links: 
   Downloads:
-    - Source Code: "installers"
-    - GUI Binarys: "installers"
-    - Compiling Prismatic: "prismatic-compiling"
+    - Source Code: "http://github.com/prism-em/prismatic"
+    - GUI Binarys: "downloads-binary"
+    - Atomic Coordinates: "downloads-coordinates"
+  Documentation:
+    - Change Log: "docs-change-log"
+    - Inputs and Parameters: "docs-inputs-params"
+    - Compiling Prismatic: "docs-compiling"
+    - Source Code Walkthrough: "docs-source-code-walkthrough"  
   Resources:
+    - STEM Simulations: "tutorial-STEM"
     - GUI Tutorials: "tutorial-GUI"
     - Python Tutorials: "tutorial-python"
-    - STEM Simulation: "tutorial-STEM"
-    - SuperSTEM Tutorial: "tutorialSuperSTEM"
-    - Source Code Walkthrough: "source-code"
+    - Analysis of STEM Data: "resources-analysis-codes"
+    - Other STEM Simulation Codes: "resources-sim-codes"
   About:
-    - About: "about"
-    - Citing Prismatic: "citeus"
-    - About the Authors: "authors"
+    - About the Authors: "about-authors"
+    - Citing Prismatic: "about-cite"
 
 # Image to show in the navigation bar - image must be a square (width = height)
 # Remove this parameter if you don't want an image in the navbar

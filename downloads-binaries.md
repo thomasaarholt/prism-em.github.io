@@ -1,7 +1,4 @@
 
-
-# Downloads
-
 ---
 
 # Current Version (`Prismatic v1.2`)

@@ -1,4 +1,4 @@
-# *Prismatic* Change Log
+# `Prismatic` Change Log
 ---
 
 

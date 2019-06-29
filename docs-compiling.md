@@ -1,4 +1,4 @@
-# Installing `Prismatic`  
+# Compiling `Prismatic`  
 ---
 Table of Contents    
 	- [Dependencies](#dependencies)  

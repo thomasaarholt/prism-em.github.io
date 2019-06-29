@@ -1,4 +1,4 @@
-# *Prismatic* Output File Format
+# `Prismatic` Output File Format
 ---
 
 

@@ -1,5 +1,7 @@
 ---
+
 # Compiling `Prismatic`  
+
 ---
 Table of Contents    
 	- [Dependencies](#dependencies)  

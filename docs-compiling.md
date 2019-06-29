@@ -1,3 +1,4 @@
+---
 # Compiling `Prismatic`  
 ---
 Table of Contents    

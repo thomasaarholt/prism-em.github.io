@@ -6,9 +6,9 @@
 ## Installers
 
 ### Windows 
-[Prismatic-v1.2.msi]
+[Prismatic-v1.2.msi](https://github.com/prism-em/prismatic/releases/download/v1.2/Prismatic-v1.2.msi)
 
-[Primatic-GPU-v1.2.msi]
+[Primatic-GPU-v1.2.msi](https://github.com/prism-em/prismatic/releases/download/v1.2/Prismatic-GPU-v1.2.msi)
 
 ### Mac OS X (coming soon!)
 [Prismatic-OSX-v1.2.dmg](http://www.nooooooooooooooo.com/)
@@ -17,11 +17,9 @@
 
 [Current Build](http://www.github.com/prism-em/prismatic)
 
-Zip file
+[zip file](https://github.com/prism-em/prismatic/archive/v1.2.zip)
 
-.7z file
-
-tar file
+[tar file](https://github.com/prism-em/prismatic/archive/v1.2.tar.gz)
 
 ---
 

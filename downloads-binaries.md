@@ -13,13 +13,13 @@
 ### Mac OS X (coming soon!)
 [Prismatic-OSX-v1.2.dmg](http://www.nooooooooooooooo.com/)
 
-## Source Code (coming soon!)
+## Source Code
 
 [Current Build](http://www.github.com/prism-em/prismatic)
 
-[zip file](https://github.com/prism-em/prismatic/archive/v1.2.zip)
+[Prismatic v1.2 zip file](https://github.com/prism-em/prismatic/archive/v1.2.zip)
 
-[tar file](https://github.com/prism-em/prismatic/archive/v1.2.tar.gz)
+[Prismatic v1.2 tar file](https://github.com/prism-em/prismatic/archive/v1.2.tar.gz)
 
 ---
 

@@ -10,8 +10,8 @@
 
 [Primatic-GPU-v1.2.msi](https://github.com/prism-em/prismatic/releases/download/v1.2/Prismatic-GPU-v1.2.msi)
 
-### Mac OS X (coming soon!)
-[Prismatic-OSX-v1.2.dmg](http://www.nooooooooooooooo.com/)
+### Mac OS X
+[Prismatic-MacOSx-GUI-v1.2.tar.gz](https://github.com/prism-em/prismatic/releases/download/v1.2/Prismatic-MacOSx-GUI-v1.2.tar.gz)
 
 ## Source Code
 

@@ -1,4 +1,3 @@
----
 # `Prismatic` Change Log
 ---
 

@@ -3,4 +3,5 @@
 
 
 
-List of changes introduced in version 1.2
+List of changes introduced in Prismatic version 1.2
+

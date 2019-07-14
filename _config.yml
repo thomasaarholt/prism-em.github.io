@@ -24,8 +24,8 @@ description: Documentation, tutorials, and source code for the software package 
 # List of links in the navigation bar
 navbar-links: 
   Downloads:
-    - GUI Programs: "downloads-binaries"
     - Source Code: "http://github.com/prism-em/prismatic"
+    - GUI Programs: "downloads-binaries"
     - Atomic Coordinates: "downloads-coordinates"
   Documentation:
     - Change Log: "docs-change-log"

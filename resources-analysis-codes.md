@@ -7,7 +7,7 @@ subtitle: Guide for using and analyzing STEM simulation results.
 
 ## 4D-STEM Analysis
 
-For analyzing 4D-STEM simulations (and experiments), we recommend using [py4DSTEM](https://github.com/py4dstem/py4DSTEM). `Prismatic` already saves all output in an HDF5 format that is fully compatible with py4DSTEM. For more information about 4D-STEM, see this review paper:
+For analyzing 4D-STEM simulations (and experiments), we recommend using a python package [py4DSTEM](https://github.com/py4dstem/py4DSTEM). an analysis code also developed at NCEM in Berkeley Lab. `Prismatic` already saves all output in an HDF5 format that is fully compatible with py4DSTEM. For more information about 4D-STEM, see this review paper:
 
 
 

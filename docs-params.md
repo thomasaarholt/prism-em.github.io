@@ -1,3 +1,9 @@
+---
+title: Input Parameters
+subtitle: Description of Prismatic input parameters.
+---
+
+
 # About *Prismatic*
 ---
 

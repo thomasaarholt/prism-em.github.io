@@ -58,7 +58,6 @@ use-site-title: true
 
 
 <center><img src="img/front-page-figure-v01.png" alt="Prismatic GUI" width=600></center>
-
 {% if paginator.total_pages > 1 %}
 <ul class="pager main-pager">
   {% if paginator.previous_page %}
@@ -76,6 +75,10 @@ use-site-title: true
 
 <p>
 <span style="background-color: #FFDDDD"><font color="#FF0000" face="Courier New">Prismatic</font></span> is the name of our simulation code which performs quantum-mechanical simulation of images and diffraction patterns for scanning transmission electron microscopy (STEM).  STEM experiments are routinely used for atomic-resolution imaging of samples in materials science and other fields. STEM simulations are difficult primarily because of the "scanning" aspect, where the electron probe is moved over the sample surface - each new probe location requires a full multiple-scattering simulation, and STEM images often contain millions of pixels
+</p>
+
+<p>
+<span style="background-color: #FFDDDD"><font color="#FF0000" face="Courier New">Prismatic</font></span> is a CUDA/C++/Python software package for fast image simulation in scanning transmission electron microscopy (STEM). It includes parallel, data-streaming implementations of both the plane-wave reciprocal-space interpolated scattering matrix (PRISM) and multislice algorithms using multicore CPUs and CUDA-enabled GPU(s), in some cases achieving accelerations as high as 1000x or more relative to traditional methods. *Prismatic* is fast, free, open-sourced, and contains a graphical user interface.
 </p>
 
 </p>

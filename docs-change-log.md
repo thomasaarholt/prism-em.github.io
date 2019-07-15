@@ -1,6 +1,6 @@
 ---
 title: Prismatic Change log
-subtitle: Changes added in new versions of Prismatic.
+subtitle: Changes added in new versions of Prismatic
 ---
 
 

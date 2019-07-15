@@ -1,4 +1,10 @@
 ---
+title: GUI Programs
+subtitle: Binary installer files for Prismatic.
+---
+
+
+---
 
 # Current Version (`Prismatic v1.2`)
 

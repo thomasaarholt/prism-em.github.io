@@ -1,6 +1,6 @@
 ---
 title: STEM Simulations
-subtitle: General information for STEM simulaion best practices
+subtitle: General information for best practices for STEM simulations
 ---
 
 

@@ -4,7 +4,6 @@ subtitle: Download binary installation files for Prismatic
 ---
 
 
----
 
 # Current Version (`Prismatic v1.2`)
 

@@ -1,6 +1,6 @@
 ---
 title: Prismatic Packaging 
-subtitle: instructions for how to create Prismatic packages from the source code
+subtitle: Instructions creating Prismatic packages from source
 ---
 
 

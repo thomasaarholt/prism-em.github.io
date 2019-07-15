@@ -28,6 +28,8 @@ subtitle: Download binary installation files for Prismatic
 [Prismatic v1.2 tar file](https://github.com/prism-em/prismatic/archive/v1.2.tar.gz)
 
 ---
+---
+---
 
 # Old Versions
 

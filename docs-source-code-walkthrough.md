@@ -1,7 +1,7 @@
-&nbsp;
-
-# Prismatic Source Code Walkthrough
 ---
+title: Source Code Walkthrough
+---
+
 
 Just because a project is open source doesn't mean that it is immediately obvious how all of its moving parts fit together.  I've spent a lot of time thinking about *Prismatic* and how to design it from a software engineering perspective, and I'm fairly satisfied with the result. This document is meant to be a sort of tour through the source code of *Prismatic* in a much more casual environment than a formal academic paper. This is not a tutorial for how to use the code (that is [here](www.example.com)), but rather an explanation of the code itself. Thus it is more focused towards developers and less so to most users. For those of you who haven't frantically closed the browser at this point, I hope that you find it useful either as a GPU programming example, or as a guide to become a future developer of *Prismatic* itself.
 
@@ -193,7 +193,7 @@ static std::map<std::string, parseFunction> parser{
         {"--input-file", parse_i}, {"-i", parse_i},
         {"--interp-factor", parse_f}, {"-f", parse_f}
         // ... more values follow
-~~~ 
+~~~
 
 So the variable `parser` connects both the verbose and shorthand keywords "--interp-factor" and "-f" to the function `parse_f`, which is the function responsible for populating the PRISM interpolation factor in the metadata.
 

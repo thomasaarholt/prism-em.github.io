@@ -7,4 +7,4 @@ subtitle: General information for STEM simulaion best practices
 Here we will put general information about STEM simulation and best practices.  For now, we suggest reading Earl Kirkland's textbook in detail:
 
 
-[<img src="http://www.google.com.au/images/nav_logo7.png">](http://google.com.au/)
+[<img src="/img/STEMinfo/TextBookKirkland.jpg">](http://google.com.au/)

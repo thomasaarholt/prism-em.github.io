@@ -3,7 +3,7 @@ title: 'Prismatic' Change log
 subtitle: Changes added in new versions of 'Prismatic'.
 ---
 
-# `Prismatic` Change Log
+## `Prismatic` Change Log
 ---
 
 

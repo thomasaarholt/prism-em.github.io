@@ -43,7 +43,7 @@ The following dependencies are needed by `Prismatic`:
 * [CMake](https://CMake.org/) (*For compiling the source code*)  
 * [Boost](http://www.boost.org)  
 * [FFTW](http://www.fftw.org) (compiled with `--enable-float`, `--enable-shared`, and `--enable-threads`)  
-* [HDF5](https://www.hdfgroup.org/solutions/hdf5/) (compiled with `--enable-threadsafe`,`--enable-cxx`, and `--enable-unsupported` )
+* [HDF5](https://www.hdfgroup.org/solutions/hdf5/) (compiled with `--enable-threadsafe`,`--enable-cxx`,  `--enable-unsupported` )
 
 *Optional*
 

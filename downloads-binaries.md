@@ -1,6 +1,6 @@
 ---
 title: GUI Programs
-subtitle: Binary installer files for Prismatic.
+subtitle: Download binary installation files for Prismatic
 ---
 
 

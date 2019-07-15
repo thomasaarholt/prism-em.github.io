@@ -1,6 +1,6 @@
 ---
 title: Atomic Coordinates
-subtitle: Coordinate files in Prismatic .xyz format.
+subtitle: Coordinate files in Prismatic .xyz format
 ---
 
 

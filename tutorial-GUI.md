@@ -1,4 +1,6 @@
 ---
+title: Prismatic GUI Tutorials
+subtitle: List of tutorials written for the Prismatic GUI Program
 ---
 
 We strongly suggest that GUI users start with this tutorial - it's the most comprehensive, covering virtually all aspects of atomic-resolution STEM image simulation, ending with a comparison to an experimental STEM image.

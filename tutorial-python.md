@@ -1,7 +1,8 @@
-&nbsp;
-
-# Prismatic - Python
 ---
+title: Prismatic in Python
+subtitle: Performing Prismatic simulations using python
+---
+
 
 ## Table of Contents  
 - [Examples](#examples)

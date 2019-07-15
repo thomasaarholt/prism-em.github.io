@@ -4,13 +4,8 @@ subtitle: General information for compiling Prismatic
 ---
 
 
-### GPU Compute Capability
-
-The GPU version of `Prismatic` requires a CUDA-enabled GPU with compute capability >= 3.0.
-
-
----
 Table of Contents    
+	- [GPU Compute Capability](#gpucompute)  
 	- [Dependencies](#dependencies)  
 	- [Installers](#installers)  
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - [Mac OS X](#binary-installers-mac)  
@@ -35,9 +30,13 @@ Table of Contents
 	- [List of `Prismatic` `CMake` options](#make-options)  
 
 
+## GPU Compute Capability
+<a name="gpucompute"></a>
+The GPU version of `Prismatic` requires a CUDA-enabled GPU with compute capability >= 3.0.
+
 
 ## Dependencies
-
+<a name="dependencies"></a>
 The following dependencies are needed by `Prismatic`:
 
 *Required*

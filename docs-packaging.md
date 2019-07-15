@@ -1,6 +1,8 @@
-# Prismatic Packaging Instructions
+---
+title: Prismatic Packaging 
+subtitle: instructions for how to create Prismatic packages from the source code
+---
 
-These are the steps necessary to create Prismatic packages from the source code
 
 ## Mac OS X
 

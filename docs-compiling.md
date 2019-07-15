@@ -29,14 +29,13 @@ Table of Contents
 	- [Setting `CMake` Options](#setting-cmake-options)  
 	- [List of `Prismatic` `CMake` options](#make-options)  
 
-
-## GPU Compute Capability
 <a name="gpucompute"></a>
+## GPU Compute Capability
 The GPU version of `Prismatic` requires a CUDA-enabled GPU with compute capability >= 3.0.
 
 
-## Dependencies
 <a name="dependencies"></a>
+## Dependencies
 The following dependencies are needed by `Prismatic`:
 
 *Required*
@@ -54,9 +53,8 @@ The following dependencies are needed by `Prismatic`:
 * [GCC](https://gcc.gnu.org/) *For non-Windows systems, you must check the compatibility between your CUDA toolkit version, GCC version, and operating system. Check compatibilities within the [CUDA toolkit online documentations](https://developer.nvidia.com/cuda-toolkit-archive) under installation guides.* `Prismatic v1.2` was developed using CUDA 10.1, but likely works with older versions as well and we welcome feedback from any user who attempts to do so.
   *Note: Even if you download a binary version of the GPU codes, you will still need to have the CUDA toolkit installed so that the `cuFFT` libraries can be found at runtime.*
 
-
-## Installers
 <a name="binary-installers-mac"></a>
+## Installers
 ### Binary Installers (Mac OS X) 
 
 Download Mac installers [here](http://prism-em.com/installers/)

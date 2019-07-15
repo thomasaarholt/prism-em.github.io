@@ -1,6 +1,13 @@
 ---
+title: Compiling Prismatic
+subtitle: General information for compiling Prismatic
+---
 
-# Compiling `Prismatic`  
+
+### GPU Compute Capability
+
+The GPU version of `Prismatic` requires a CUDA-enabled GPU with compute capability >= 3.0.
+
 
 ---
 Table of Contents    

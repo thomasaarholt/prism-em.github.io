@@ -4,4 +4,4 @@
 
 
 
-List of alternative STEM analysis codes.
+List of STEM analysis codes.

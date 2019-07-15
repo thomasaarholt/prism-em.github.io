@@ -4,9 +4,7 @@ subtitle: Alternatives to Prismatic for STEM simulation
 ---
 
 
-
 `Prismatic` is not the only software package capable of performing STEM simulations!  While we think `Prismatic` is likely the fastest due to our implementation of the `PRISM` algorithm, there are many other codes that have implemented the multislice and Bloch wave algorithms. Some of these codes are far more developed and flexible than `Prismatic`, and so we would encourage researchers to investigate other software.
-
 
 
 ## List of other STEM simulation codes

@@ -1,5 +1,7 @@
-## About the Authors
 ---
+title: About the Authors
+---
+
 
 
 ### Current Contributors

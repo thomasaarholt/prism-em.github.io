@@ -11,16 +11,18 @@ subtitle: Download binary installation files for Prismatic
 ## Installers
 
 ### Windows 
-[Prismatic-GPU-v1.2.1msi](https://github.com/prism-em/prismatic/releases/download/1.2.1/Prismatic-GPU-v1.2.1.msi)
+[Prismatic-GPU-v1.2.1.msi](https://github.com/prism-em/prismatic/releases/download/1.2.1/Prismatic-GPU-v1.2.1.msi)
 
-[Prismatic-v1.2.1msi](https://github.com/prism-em/prismatic/releases/download/1.2.1/Prismatic-v1.2.1.msi)
+[Prismatic-v1.2.1.msi](https://github.com/prism-em/prismatic/releases/download/1.2.1/Prismatic-v1.2.1.msi)
 
 ### Mac OS X
 v1.2.1 installer coming soon.
 
 ## Source Code
 [Current Build](http://www.github.com/prism-em/prismatic)
+
 [Prismatic v1.2.1 zip file](https://github.com/prism-em/prismatic/archive/v1.2.1.zip)
+
 [Prismatic v1.2.1 tar file](https://github.com/prism-em/prismatic/archive/v1.2.1.tar.gz)
 
 ---

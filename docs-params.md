@@ -47,7 +47,7 @@ Basic usage is prismatic -i filename [other options]:
 * --random-seed (-rs) step_size : random integer number seed
 * --probe-xtilt (-tx) value : probe X tilt (in mrad) (default: 0)
 * --probe-ytilt (-ty) value : probe X tilt (in mrad) (default: 0)
-* --probe-defocus (-df) value : probe defocus (in mrad) (default: 0)
+* --probe-defocus (-df) value : probe defocus (in Å) (default: 0)
 * -C3 value : microscope C3 aberration constant (in Angstrom) (default: 0)
 * -C5 value : microscope C5 aberration constant (in Angstrom) (default: 0)
 * --probe-semiangle (-sa) value : maximum probe semiangle (in mrad) (default: 20)
